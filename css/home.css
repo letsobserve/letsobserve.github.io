@@ -81,8 +81,8 @@ hr {
 }
 .header-h1 {
 	font-family:impact;
-	font-size:15vh;
-	width:auto;
+	font-size:15vw;
+	width:100%;
 	text-align:center;
 }
 .mySlides {
