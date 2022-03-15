@@ -1,13 +1,13 @@
-*{
+* {
 	margin:0;
 	padding:0;
 	box-sizing:border-box;
 }
-head{
+head {
 	margin:0;
 	padding:0;
 }
-body{
+body {
 	margin:0;
 	padding:0;
 	background-image:linear-gradient(rgba(20,20,20,1),rgba(10,10,10,1));
@@ -15,9 +15,9 @@ body{
 	width:100%;
 	position:relative;
 }
-.navbar{
+.navbar {
 	width:100%;
-	height:10%;
+	height:10vh;
 	position:sticky;
 	background-color:rgba(25,25,25,1);
 	border-style:solid;
@@ -37,7 +37,7 @@ ul.no-bullets {
 	padding: 0;
 	z-index:1;
 }
-li{
+li {
 	float:left;
 	text-decoration:none;
 }
@@ -45,26 +45,32 @@ li a{
 	display:flex;
 	color:white;
 	text-align:center;
-	padding:3vw;
+	padding:15px;
+	width:80%;
 	text-decoration:none;
 }
 .navicon:hover {
-	background-color:rgba(70,70,70,1);
-	border-radius:5%;	
+	background-image:radial-gradient(rgba(70,70,70,1),rgba(80,80,80,0.5));
+	border-radius:5%;
+	transition: 1s ease;
 }
-.link-icon:hover{
+.link-icon:hover {
 	background-color:rgba(70,70,70,1);
 	border-radius:5%;
 }
 .homeHeader {
 	border:5px solid white;
 	background-color:rgba(70,70,70,0.2);
+	margin:2.5%;
+	width:100%
+	text-align:center;
+}
+.latest-title {
 	text-align:center;
 }
 .latest {
-	display:flex;
-	padding:15vh;
-	background-image:radial-gradient(rgba(50,60,50,0.2),rgba(0,0,0,0));
+	padding:2vh;
+	background-image:radial-gradient(rgba(50,60,50,0.3),rgba(0,0,0,0));
 	text-align:center;
 }
 hr {
@@ -76,9 +82,8 @@ hr {
 .header-h1 {
 	font-family:impact;
 	font-size:15vh;
-	margin:auto;
+	width:auto;
 	text-align:center;
- width:100%;
 }
 .mySlides {
 	display:none;
@@ -86,6 +91,7 @@ hr {
 
 /* Slideshow container */
 .home-slideshow {
+	box-sizing:border-box;
 	width:90%;
 	padding:0;
 	position:relative;
@@ -95,12 +101,12 @@ hr {
 
 /* Next & previous buttons */
 .prev, .next {
-  cursor: pointer;
+  cursor:pointer;
   position:absolute;
   top: 50%;
   width: auto;
   padding:5%;
-  margin-top: -22px;
+  margin-top:-22px;
   color: white;
   font-weight: bold;
   font-size: 18px;
@@ -115,19 +121,19 @@ hr {
   border-radius: 3px 0 0 3px;
 }
 
-/* On hover, add a black background color with a little bit see-through */
+/* On hover, add a background color with see-through */
 .prev:hover, .next:hover {
-  background-color: rgba(0,0,0,0.8);
+  background-color: rgba(255,255,255,0.5);
 }
 
 /* Number text (1/3 etc) */
 .numbertext {
-	display:block;
+	display:flex;
 	color: #f2f2f2;
 	background-color:rgba(0,0,0,0.25);
-	border-radius:5%;
+	border-radius:0;
 	font-size: 22px;
-	padding: 8px 12px;
+	padding:0;
 	position: absolute;
 	top: 0;
 }
@@ -146,7 +152,7 @@ hr {
 }
 
 .active, .dot:hover {
-  background-color: #717171;
+  background-color:rgb(50,50,50);
 }
 
 /* Fading animation */
@@ -169,7 +175,7 @@ hr {
 
 /* On smaller screens, decrease text size */
 @media only screen and (max-width: 300px) {
-  .prev, .next,.text {font-size: 11px}
+.prev, .next,.text {font-size: 11px}
 }
 p {
 	padding:2vw;
@@ -185,12 +191,18 @@ img {
 	max-width:100%;
 }
 .link-icon {
-	display:block;
+	display:flow-root;
+	float:left;
 	margin-left:auto;
 	margin-right:auto;
 	padding:2vw;
-	width:auto;
+	width:30%;
 	max-height:50%;
+}
+.link-text {
+	display:flow-root;
+	text-align:right;
+	clear:both;
 }
 .about-icon {
 	margin-left:auto;
@@ -205,19 +217,6 @@ img {
 	width:100%;
 	position:sticky;
 	z-index:0;
-}
-.column {
-	display:flex;
-	background:grey;
-	float:left;
-	width:50%;
-	height:5%;
-}
-/* Clear floats after the columns */
-.row:after {
-	content:"";
-	display:table:
-	clear:both;
 }
 /* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
 @media screen and (max-width: 600px) {
