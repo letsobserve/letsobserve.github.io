@@ -78,6 +78,7 @@ hr {
 	font-size:15vh;
 	margin:auto;
 	text-align:center;
+ width:100%;
 }
 .mySlides {
 	display:none;
