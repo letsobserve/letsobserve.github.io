@@ -53,6 +53,11 @@ li.table-of-contents {
 .center-text {
 	text-align: center;
 }
+.float-image-left{
+	float: left;
+	max-width: 60%;
+	max-height:60%;
+}
 .list-image {
 	display:block;
 	width:100%;
@@ -265,6 +270,7 @@ hr {
 }
 .column1 {
 	grid-column-start: 1;
+	width:auto;
 }
 .column2 {
 	grid-column-start: 2;
@@ -294,7 +300,6 @@ img {
 	padding:0;
 	height:200px;
 	width:100%;
-	position:sticky;
 	z-index:0;
 }
 .blog-post-teaser {
@@ -302,6 +307,11 @@ img {
 	display:grid;
 	grid-column-gap: 0.5rem;
 	grid-template-columns: 1fr 1fr;
+}
+.blog-column {
+	display:grid;
+	grid-template-columns: 1fr 1fr;
+	max-height: 50%;
 }
 .footer {
 	display:grid;
@@ -320,4 +330,5 @@ text-align: center;
 	grid-column-end: 3;
 	display: flex;
 	align-items:center;
+	justify-content: center;
 }
