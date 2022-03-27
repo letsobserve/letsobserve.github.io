@@ -1,31 +1,99 @@
 * {
-	margin:0;
-	padding:0;
-	box-sizing:border-box;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: courier, sans-serif;
 }
 head {
-	margin:0;
-	padding:0;
+	margin: 0;
+	padding: 0;
+	background-color: rgb(30,30,30);
+	width: 100%;
+	text-align: center;
 }
 .banner {
-	margin:0;
-	padding:0;
-	max-height:200px;
-	width:100%;
-	z-index:0;
-	object-fit:cover;
-}
-.homeHeader {
-	border:0.2em solid rgba(200,200,200,0.3);
-	background-color:rgba(70,70,70,0.2);
-	margin:0;
-	width:100%;
-	text-align:center;
+	margin: 0;
+	padding: 0;
+	max-height: 200px;
+	width: 100%;
+	z-index: 0;
+	object-fit: cover;
 }
 .header-h1 {
-	font-family:impact;
-	font-size:15.5vw;
-	text-align:center;
+	font-size: 22vw;
+	width: 100%;
+	line-height: 100%;
+	text-align: center;
+	text-transform: uppercase;
+	text-shadow: 1px 1px 1px rgba(30, 30, 30, 0.2);
+	color: rgba(30,30,30,0.2);
+
+	background-image: url(../images/low-ground-shot.jpg);
+	background-size: 100%;
+	background-position: 50% 50%;
+
+	-webkit-background-clip: text;
+}
+.h1-nature {
+	font-size: 22vw;
+	width: 100%;
+	line-height: 100%;
+	text-align: center;
+	text-transform: uppercase;
+	text-shadow: 1px 1px 1px rgba(30, 30, 30, 0.2);
+	color: rgba(30,30,30,0.2);
+
+	background-image: url(../images/low-ground-shot.jpg);
+	background-size: 100%;
+	background-position: 50% 50%;
+
+	-webkit-background-clip: text;
+}
+.h1-food {
+	font-size: 22vw;
+	width: 100%;
+	line-height: 100%;
+	text-align: center;
+	text-transform: uppercase;
+	text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.3);
+	color: rgba(30,30,30,0.2);
+
+	background-image: url(../images/sunflower-close.jpg);
+	background-size: 100%;
+	background-position: 20% 20%;
+
+	-webkit-background-clip: text;
+}
+.h1-dreams {
+	font-size: 22vw;
+	width: 100%;
+	line-height: 100%;
+	text-align: center;
+	text-transform: uppercase;
+	text-shadow: 1px 1px 1px rgba(30, 30, 30, 0.2);
+	color: rgba(255,255,255,0.3);
+
+	background-image: url(../images/banner_nightscene1.png);
+	background-size: 100%;
+	background-position: 50% 50%;
+
+	-webkit-background-clip: text;
+}
+.navbar {
+	width: 100%;
+	height: auto;
+	position: sticky;
+	background-color: rgb(30,30,30);
+	border-style: solid;
+	border-width: 5px;
+	border-color: rgba(55,55,55,0.5);
+	top: 0;
+	left: 0;
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	padding: 1vw;
+	z-index: 1;
 }
 body {
 	margin:0;
@@ -34,26 +102,10 @@ body {
 	color:white;
 	width:100%;
 }
-.navbar {
-	width:100%;
-	height:auto;
-	position:sticky;
-	background-color:rgb(25,25,25);
-	border-style:solid;
-	border-width:5px;
-	border-color:rgba(55,55,55,0.2);
-	top:0;
-	left:0;
-	display: flex;
-	justify-content: space-around;
-	align-items:center;
-	padding:1vw;
-	z-index:1;
-}
 button {
 	padding: 5%;
 	border: none;
-	background-color: rgba(25,25,25,0.3);
+	background-color: rgba(25,25,25,0);
 	color: white;
 	font-family: impact;
 	font-size: 110%;
@@ -63,14 +115,30 @@ button {
 }
 button:hover {
 	padding: 5%;
-	background-color: rgba(80,80,80,1);
+	background-color: rgba(100,100,100,1);
 	border-radius: 20%;
 	transition: 0.1s ease;
 }
+.quick-nav-media {
+	padding: 2%;
+	border-radius: 10%;
+	justify-content: center;
+}
+.quick-nav-media:hover {
+	padding: 2%;
+}
+.top-media {
+	padding: 1%;
+	float: right;
+}
+.top-media:hover {
+	padding:1%;
+}
 .latest-text {
-	clear:both;
+	clear: both;
+	color: white;
 	text-decoration: none;
-	text-align:center;
+	text-align: center;
 }
 .latest-video-box {
 	margin: 5%;
@@ -143,7 +211,6 @@ grid-column: span 2;
 	margin:0;
 	width:100%;
 	max-height:50%;
-	border:0.4rem solid rgba(70,70,70,0.2);
 	display:grid;
 	grid-template-columns: 2fr 1fr;
 	grid-template-rows: 50px 1fr;
@@ -192,14 +259,12 @@ grid-column: span 2;
 
 /* Slideshow container */
 .slideshow {
-	box-sizing:border-box;
-	border: 0.3rem solid rgba(150,150,150,0.2);
-	background-color:rgba(40,40,40,0.5);
-	width:100%;
-	padding:0;
-	position:relative;
-	margin-left:auto;
-	margin-right:auto;
+	box-sizing: border-box;
+	width: 100%;
+	padding: 5%;
+	position :relative;
+	margin-left: auto;
+	margin-right: auto;
 }
 .slideshow-header {
 	text-align: center;
@@ -207,12 +272,13 @@ grid-column: span 2;
 }
 /* Next & previous buttons */
 .prev, .next {
-  cursor:pointer;
-  position:absolute;
+  cursor: pointer;
+  position: absolute;
   top: 50%;
-  width:auto;
-  padding:5%;
-  margin-top:-2rem;
+  width: auto;
+  padding: 5%;
+	left: 0;
+  margin-top: -2rem;
   color: white;
   font-weight: bold;
   font-size: 2rem;
@@ -224,24 +290,26 @@ grid-column: span 2;
 /* Position the "next button" to the right */
 .next {
   right: 0;
+	left: auto;
+	padding: 5%;
   border-radius: 3px 0 0 3px;
 }
 
 /* On hover, add a background color with see-through */
 .prev:hover, .next:hover {
-  background-color: rgba(255,255,255,0.5);
+  background-color: rgba(255,255,255,0.8);
 }
 
 /* Number text (1/3 etc) */
 .numbertext {
-	display:flex;
+	display: flex;
 	color: #f2f2f2;
-	background-color:rgba(80,80,80,0.2);
-	border-radius:0;
+	background-color: rgba(80,80,80,0.2);
+	border-radius: 0;
 	font-size: 1.5rem;
-	padding:0.2rem;
+	padding: 0.2rem;
 	position: absolute;
-	top: 0.1rem;
+	top: 0;
 }
 
 /* The dots/bullets/indicators */
