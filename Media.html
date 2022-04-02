@@ -7,9 +7,7 @@
 	<link rel="stylesheet" href="css/home.css">
 	<script src="observescript.js"></script>
 	<img class="banner" src="images/banner_nightscene2.png" alt="Observe Banner Image">
-	<section id="media-top" title="media-header">
-		<h1 class="header-h1">Media</h1>
-	</section>
+	<h1 class="header-h1">Media</h1>
 	<nav class="navbar">
 		<a href="index.html"><button class="navbutton" type="navigation">Home</button></a>
 		<a href="Nature.html"><button class="navbutton" type="navigation">Nature</button></a>
@@ -22,68 +20,66 @@
 </head>
 <body>
 	<nav class="center-text">
-		<strong>Show Me:</strong>
-		<br>
+		<h2>Show Me:</h2>
 		<a href="#Nature"><button class="quick-nav-media" type="navigation">Nature</button></a>
 		<a href="#Food"><button class="quick-nav-media" type="navigation">Food</button></a>
 		<a href="#Dreams"><button class="quick-nav-media" type="navigation">Dreams</button></a>
 	</nav>
-	<section title="All Media">
-		<div id='Nature'><a name="Nature"></a></div>
-			<hr>
-			<br>
-			<button class="top-media" onclick="topFunction()" id="topBtn" title="Go to top">Top</button>
-			<h2 class="center-text">Nature</h2>
-			<br>
-			<hr>
-			<div class="image-list">
-				<img class="span-2-column" src="images/baby-breath.jpg">
-				<img class="span-2-column" src="images/coleus-red-vein.jpg">
-				<img class="span-2-column" src="images/dark-knight-close.jpg">
-				<img class="span-2-column" src="images/low-ground-shot.jpg">
-				<img class="span-2-column" src="images/praying-mantis-upsidedown.png">
-				<img class="span-2-column" src="images/purple-flowers.jpg">
-				<img class="span-2-column" src="images/sunflower-close.jpg">
-				<img class="span-2-column" src="images/colourful-bug.png">
-				<img class="span-2-column" src="images/white-daisy.jpg">
-		</div>
-		<div id='Food'><a name="Food"></a></div>
-			<br>
-			<hr>
-			<br>
-			<button class="top-media" onclick="topFunction()" id="topBtn" title="Go to top">Top</button>
-			<h2 class="center-text">Food</h2>
-			<br>
-			<hr>
-			<div class="image-list">
-				<p>Incoming</p>
-		</div>
-		<div id='Dreams'><a name="Dreams"></a></div>
-			<br>
-			<hr>
-			<br>
-			<button class="top-media" onclick="topFunction()" id="topBtn" title="Go to top">Top</button>
-			<h2 class="center-text">Dreams</h2>
-			<br>
-			<hr>
-			<div class="image-list">
-				<img class="span-2-column" src="images/kitty-playing-wow.jpg">
+	<section id="site-main">
+		<div class="wrapper-main">
+			<main id="site-content" class="site-main" role="main">
+				<div class="site-content-wrapper">
+					<div id='Nature'><a name="Nature"></a></div>
+						<hr>
+						<br>
+						<button class="top-media" onclick="topFunction()" id="topBtn" title="Go to top">Top</button>
+						<h2 class="center-text">Nature</h2>
+						<br>
+						<hr>
+						<div class="image-list">
+							<img class="media-image" src="images/baby-breath.jpg">
+							<img class="media-image" src="images/coleus-red-vein.jpg">
+							<img class="media-image" src="images/dark-knight-close.jpg">
+							<img class="media-image" src="images/low-ground-shot.jpg">
+							<img class="media-image" src="images/praying-mantis-upsidedown.png">
+							<img class="media-image" src="images/purple-flowers.jpg">
+							<img class="media-image" src="images/sunflower-close.jpg">
+							<img class="media-image" src="images/colourful-bug.png">
+							<img class="media-image" src="images/white-daisy.jpg">
+						</div>
+					<div id='Food'><a name="Food"></a></div>
+						<br>
+						<hr>
+						<br>
+						<button class="top-media" onclick="topFunction()" id="topBtn" title="Go to top">Top</button>
+						<h2 class="center-text">Food</h2>
+						<br>
+						<hr>
+						<div class="image-list">
+							<p>Incoming</p>
+						</div>
+						<div id='Dreams'><a name="Dreams"></a></div>
+							<br>
+							<hr>
+							<br>
+							<button class="top-media" onclick="topFunction()" id="topBtn" title="Go to top">Top</button>
+							<h2 class="center-text">Dreams</h2>
+							<br>
+							<hr>
+							<div class="image-list">
+								<img class="media-image" src="images/kitty-playing-wow.jpg">
+						</div>
+				</div>
+			</main>
+			<aside id="site-aside" role="complementary">
+				<div class="site-aside-wrapper">
+				</div>
+			</aside>
 		</div>
 	</section>
-<section title="observe-footer" class="footer">
-	<div>
+<footer class="footer">
 		<p>This is a Hewett-Made Website.</p>
-	</div>
-	<footer class="footernav">
-		<nav class="navbar">
-			<a href="index.html"><button type="navigation">Home</button></a>
-			<a href="Nature.html"><button type="navigation">Nature</button></a>
-			<a href="Food.html"><button type="navigation"> Food </button></a>
-			<a href="Dreams.html"><button type="navigation">Dreams</button></a>
-			<a href="Media.html"><button type="navigation">Media</button></a>
-		</nav>
 	</footer>
-</section>
 <script>
 function topFunction() {
 	document.body.scrollTop= 0;

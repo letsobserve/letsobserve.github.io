@@ -7,7 +7,6 @@
 	<link rel="stylesheet" href="css/home.css">
 	<img class="banner" src="images/banner_nightscene2.png" alt="Observe Banner Image">
 		<h1 class="h1-food">Food</h1>
-		<p> This is the place where all things eaten, drunk and delicious reside.</p>
 	<nav class="navbar">
 		<a href="index.html"><button class="navbutton" type="navigation">Home</button></a>
 		<a href="Nature.html"><button class="navbutton" type="navigation">Nature</button></a>
@@ -19,54 +18,64 @@
 		 crossorigin="anonymous"></script>
 </head>
 <body>
-	<section title="Food Recipes">
-		<br>
-		<h2 class="center-text">Observe Recipes</h2>
-		<br>
-		<hr>
-		<br>
-		<div class="image-list">
-				<img class="list-image" src="images/purple-flowers.jpg">
-				<div class="center-text">
-					<h3>Recipe 1</h3><p>Sweet, Savoury</p>
+	<section id="site-main">
+		<div class="wrapper-main">
+			<main id="site-content" class="site-main" role="main">
+				<div class="site-content-wrapper">
+					<section id="Recipes">
+						<h2 class="center-text">Observe Recipes</h2>
+						<hr>
+						<div class="column-container">
+							<div class="column">
+								<img class="image-fit" src="images/purple-flowers.jpg">
+								<div class="center-text">
+									<h3>Recipe 1</h3><p>Sweet, Savoury</p>
+								</div>
+							</div>
+							<div class="column">
+								<img class="image-fit" src="images/purple-flowers.jpg">
+								<div class="center-text">
+									<h3>Recipe 2</h3><p>Salty, Spicy</p>
+								</div>
+							</div>
+							<div class="column">
+								<img class="image-fit" src="images/purple-flowers.jpg">
+								<div class="center-text">
+									<h3>Recipe 2</h3><p>Salty, Spicy</p>
+								</div>
+							</div>
+						</div>
+					</section>
+					<hr>
+					<section id="Food Blog">
+						<h2 class="center-text">Food Blog</h2>
+						<div class="column-container">
+							<div class="column">
+								<em><time datetime="2022-03-18">date</em>
+								<a><img src=""></a>
+								<a><h3>Food Post</h3></a>
+								<p>text</p>
+							</div>
+							<div class="column">
+								<em><time datetime="2022-03-18">date</em>
+								<a><img src=""></a>
+								<a><h3>Food Post</h3></a>
+								<p>text</p>
+							</div>
+						</div>
+					</section>
 				</div>
-				<img class="list-image" src="images/purple-flowers.jpg">
-				<div class="center-text">
-						<h3>Recipe 2</h3><p>Salty, Spicy</p>
+			</main>
+			<aside id="site-aside" role="complementary">
+				<div class="site-aside-wrapper">
+					<p>Aside<p>
 				</div>
+			</aside>
 		</div>
-		<br>
 	</section>
-	<hr>
-	<section title="Food Posts">
-		<br>
-		<h2 class="center-text">Food Blog</h2>
-		<br>
-		<hr>
-		<div class="blog-post-teaser">
-			<div class="column1">
-				<em><time datetime="2022-03-18">date</em>
-				<a><img src=""></a>
-				<a><h3>Food Post</h3></a>
-				<p>text</p>
-			</div>
-			<div class="column2">
-				<h3>Next Post.</h3>
-			</div>
-			<br>
-	</section>
-<section title="observe-footer" class="footer">
+<section class="footer">
 	<div>
 		<p>This is a Hewett-Made Website.</p>
-	</div>
-	<div class="footernav">
-		<nav class="navbar">
-			<a href="index.html"><button type="navigation">Home</button></a>
-			<a href="Nature.html"><button type="navigation">Nature</button></a>
-			<a href="Food.html"><button type="navigation"> Food </button></a>
-			<a href="Dreams.html"><button type="navigation">Dreams</button></a>
-			<a href="Media.html"><button type="navigation">Media</button></a>
-		</nav>
 	</div>
 </section>
 </body>
