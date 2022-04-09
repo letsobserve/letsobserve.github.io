@@ -6,7 +6,7 @@
 	<link rel="icon" type="image/x-icon" href="images/observeeyev2.png">
 	<link rel="stylesheet" href="css/home.css">
 	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1480924343854494"
-     crossorigin="anonymous"></script>
+	crossorigin="anonymous"></script>
 </head>
 <body>
 	<img class="banner" src="images/banner_nightscene2.png" alt="Observe Banner Image">
@@ -27,77 +27,52 @@
 					<div class="column-container">
 						<div class="column">
 							<em><time datetime="2022-03-18">Published 18 March 2022</em>
-							<a href="posts/when-plants-die.html"><img class="blog-image-teaser" src="images/praying-mantis-upsidedown.png" alt="Upside Down Praying Mantis on Dying Corn Plant"></a>
-							<a class="blog-link" href="posts/when-plants-die.html"><h3>When plants die.</h3></a>
-							<p>Sometimes plants die, it's just something a gardener needs to get used to.</p>
+								<a href="posts/when-plants-die.html"><img class="blog-image-teaser" src="images/praying-mantis-upsidedown.png" alt="Upside Down Praying Mantis on Dying Corn Plant"></a>
+								<a class="blog-link" href="posts/when-plants-die.html"><h3>When plants die.</h3></a>
+								<p>Sometimes plants die, it's just something a gardener needs to get used to.</p>
+							</div>
+							<div class="column">
+								<h3>Next Post.</h3>
+							</div>
+							<br>
 						</div>
-						<div class="column">
-							<h3>Next Post.</h3>
+						<hr>
+						<div class="slideshow">
+							<h3 class="slideshow-header">Observe The Latest Images</h3>
+							<div class="mySlides fade">
+								<div class="numbertext">1 / 3</div>
+								<img class="image-fit" src="images/coleus-red-vein.jpg" alt="Coleus Plant with Red Detail">
+							</div>
+							<div class="mySlides fade">
+								<div class="numbertext">2 / 3</div>
+								<img class="image-fit" src="images/dark-knight-close.jpg" alt="Black Knight Plant Close Up">
+							</div>
+							<div class="mySlides fade">
+								<div class="numbertext">3 / 3</div>
+								<img class="image-fit" src="images/low-ground-shot.jpg" alt="Low Angle Shot of Bok Choy">
+							</div>
+							<a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+							<a class="next" onclick="plusSlides(1)">&#10095;</a>
+							<div style="text-align:center">
+								<span class="dot" onclick="currentSlide(1)"></span>
+								<span class="dot" onclick="currentSlide(2)"></span>
+								<span class="dot" onclick="currentSlide(3)"></span>
+							</div>
 						</div>
-						<br>
+						<p>Want to see <a href="Media.html#Nature">more</a>?</p>
 					</div>
-					<hr>
-					<div class="slideshow">
-						<h3 class="slideshow-header">Observe The Latest Images</h3>
-						<div class="mySlides fade">
-							<div class="numbertext">1 / 3</div>
-							<img class="image-fit" src="images/coleus-red-vein.jpg" alt="Coleus Plant with Red Detail">
-						</div>
-						<div class="mySlides fade">
-							<div class="numbertext">2 / 3</div>
-							<img class="image-fit" src="images/dark-knight-close.jpg" alt="Black Knight Plant Close Up">
-						</div>
-						<div class="mySlides fade">
-							<div class="numbertext">3 / 3</div>
-							<img class="image-fit" src="images/low-ground-shot.jpg" alt="Low Angle Shot of Bok Choy">
-						</div>
-						<a class="prev" onclick="plusSlides(-1)">&#10094;</a>
-						<a class="next" onclick="plusSlides(1)">&#10095;</a>
-						<div style="text-align:center">
-							<span class="dot" onclick="currentSlide(1)"></span>
-							<span class="dot" onclick="currentSlide(2)"></span>
-							<span class="dot" onclick="currentSlide(3)"></span>
-						</div>
+				</main>
+				<aside id="site-aside">
+					<div class="site-aside-wrapper">
 					</div>
-				</div>
-			</main>
-			<aside id="site-aside">
-				<div class="site-aside-wrapper">
-				</div>
-			</aside>
+				</aside>
+			</div>
 		</div>
-	</div>
-	<hr>
-	<footer class="footer">
+		<hr>
+		<footer class="footer">
 			<p>This is a Hewett-Made Website.</p>
-	</footer>
-<script>
-	var slideIndex = 1;
-	showSlides(slideIndex);
-
-	function plusSlides(n) {
-	  showSlides(slideIndex += n);
-	}
-
-	function currentSlide(n) {
-	  showSlides(slideIndex = n);
-	}
-
-	function showSlides(n) {
-	  var i;
-	  var slides = document.getElementsByClassName("mySlides");
-	  var dots = document.getElementsByClassName("dot");
-	  if (n > slides.length) {slideIndex = 1}
-	  if (n < 1) {slideIndex = slides.length}
-	  for (i = 0; i < slides.length; i++) {
-	      slides[i].style.display = "none";
-	  }
-	  for (i = 0; i < dots.length; i++) {
-	      dots[i].className = dots[i].className.replace(" active", "");
-	  }
-	  slides[slideIndex-1].style.display = "block";
-	  dots[slideIndex-1].className += " active";
-	}
-</script>
-</body>
-</html>
+		</footer>
+		<script src="observescript.js">
+		</script>
+	</body>
+	</html>
