@@ -17,7 +17,7 @@ head {
 .banner {
 	margin: 0;
 	padding: 0;
-	max-height: 300px;
+	max-height: 200px;
 	width: 100%;
 	object-position: center;
 	z-index: 0;
@@ -35,60 +35,55 @@ head {
 	text-transform: uppercase;
 	text-shadow: 1px 1px 1px rgba(30, 30, 30, 0.2);
 	color: rgba(30,30,30,0.2);
-
 	background-image: url(../images/low-ground-shot.jpg);
 	background-size: 100%;
 	background-repeat: no-repeat;
 	background-position: top;
-
 	-webkit-background-clip: text;
 }
 .h1-nature {
 	margin: 0;
-	font-size: 22vw;
+	font-size: 15vw;
 	width: 100%;
+	max-height: 20%;
 	line-height: 100%;
 	text-align: center;
 	text-transform: uppercase;
 	text-shadow: 1px 1px 1px rgba(30, 30, 30, 0.2);
 	color: rgba(30,30,30,0.2);
-
 	background-image: url(../images/low-ground-shot.jpg);
 	background-size: 100%;
-	background-position: 50% 50%;
-
+	background-position: top;
 	-webkit-background-clip: text;
 }
 .h1-food {
 	margin: 0;
-	font-size: 22vw;
+	font-size: 15vw;
 	width: 100%;
+	max-height: 20%;
 	line-height: 100%;
 	text-align: center;
 	text-transform: uppercase;
 	text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.3);
 	color: rgba(30,30,30,0.2);
-
 	background-image: url(../images/sunflower-close.jpg);
 	background-size: 100%;
-	background-position: 20% 20%;
-
+	background-position: top;
 	-webkit-background-clip: text;
 }
 .h1-dreams {
 	margin: 0;
-	font-size: 22vw;
+	font-size: 15vw;
 	width: 100%;
+	max-height: 20%;
 	line-height: 100%;
 	text-align: center;
 	text-transform: uppercase;
 	text-shadow: 1px 1px 1px rgba(30, 30, 30, 0.2);
 	color: rgba(255,255,255,0.3);
-
 	background-image: url(../images/banner_nightscene1.png);
 	background-size: 100%;
-	background-position: 50% 50%;
-
+	background-position: top;
 	-webkit-background-clip: text;
 }
 /* */
@@ -109,6 +104,7 @@ head {
 	align-items: center;
 	z-index: 1;
 }
+
 .navbutton {
 	padding: 10px;
 	border: none;
@@ -218,19 +214,14 @@ ul.breadcrumbs li a:hover{
 .latest {
 	padding: 2vh;
 	background-image: radial-gradient(rgba(50,60,50,0.3),transparent);
+	border-bottom: 2px solid white;
 	text-align: right;
 	text-decoration: none;
+	font-family: sans-serif;
 	font-weight: bolder;
 	color: white;
 }
-.latest-blog-image {
-	display: block;
-	margin: 0 0;
-	padding: 0 0;
-	max-width: 100%;
-	height: auto;
-	object-fit: contain;
-}
+
 /* */
 
 hr {
@@ -473,6 +464,25 @@ p {
 }
 /* */
 
+.search-function {
+	width: 100%;
+}
+
+.search-bar {
+	padding: 6px;
+	margin-top: 8px;
+	font-size: 17px;
+	border: none;
+}
+
+.search-button {
+	float: right;
+	width: 31.98px;
+	height: 31.98px;
+	border: none;
+	cursor: pointer;
+}
+
 .footer {
 	margin: 0;
 	padding: 0;
@@ -491,7 +501,7 @@ p {
 	.site-aside-wrapper {
 		width: 100%;
 	}
-	.header-h1 {
+	.header-h1, .h1-nature, .h1-food, .h1-dreams {
 		font-size: 22vw;
 	}
 	.navbar {
