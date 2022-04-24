@@ -1,5 +1,5 @@
 html {
-	margin-top: 32px!important;
+	margin-top: 25px!important;
 	margin-left: auto;
 	margin-right: auto;
 	padding: 0 2vw;
@@ -14,10 +14,34 @@ head {
 	padding: 0;
 	width: 100%;
 }
+
+body {
+	margin: auto;
+	padding: 0 0;
+	background-image: linear-gradient(rgba(20,20,20,1),rgba(10,10,10,1));
+	color: white;
+	width: 100%;
+}
+
+p {
+	margin: 0;
+	padding-left: 2vw;
+	padding-right: 2vw;
+	padding-bottom: 2vw;
+}
+
+hr {
+	display: block;
+	border-style: solid;
+	border-width: 3px;
+	border-color: rgb(30,30,30);
+	clear: both;
+}
+
 .banner {
 	margin: 0;
 	padding: 0;
-	max-height: 200px;
+	max-height: 150px;
 	width: 100%;
 	object-position: center;
 	z-index: 0;
@@ -29,7 +53,7 @@ head {
 	margin: 0;
 	font-size: 15vw;
 	width: 100%;
-	max-height: 20%;
+	max-height: 10%;
 	line-height: 100%;
 	text-align: center;
 	text-transform: uppercase;
@@ -124,13 +148,6 @@ head {
 }
 /* */
 
-body {
-	margin: auto;
-	padding: 0 0;
-	background-image: linear-gradient(rgba(20,20,20,1),rgba(10,10,10,1));
-	color: white;
-	width: 100%;
-}
 /* Wrappers */
 .wrapper-main {
 	margin: 0 auto;
@@ -242,14 +259,6 @@ ul.breadcrumbs li a:hover{
 
 /* */
 
-hr {
-	display: block;
-	border-style: solid;
-	border-width: 3px;
-	border-color: rgb(30,30,30);
-	clear: both;
-}
-
 .center-text {
 	text-align: center;
 }
@@ -347,23 +356,38 @@ hr {
 }
 .link-icon:hover {
 	border-radius: 40%;
+	border: 8px solid darkgrey;
 }
 
-/* Slideshow container */
+/* Slideshow container specifics*/
 .slideshow {
 	box-sizing: border-box;
 	width: 100%;
-	padding: 5%;
-	position :relative;
+	max-height: 50%;
+	padding: 2%;
+	position : relative;
+	border: 15px solid rgba(30,30,30,0.5);
 	margin-left: auto;
 	margin-right: auto;
 }
 .slideshow-header {
-	text-align: center;
+	text-align: left;
 	font-size: 1.2rem;
+	margin-top: 5px;
+	margin-left: 15px;
+	margin-bottom: 5px;
 }
 .mySlides {
 	display: none;
+}
+.slideImageFit {
+	width: 100%;
+	max-height: 500px;
+	object-fit: cover;
+	margin-top: 0;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 2px;
 }
 /* Next & previous buttons */
 .prev, .next {
@@ -399,9 +423,10 @@ hr {
 	background-color: rgba(80,80,80,0.2);
 	border-radius: 0;
 	font-size: 1.5rem;
-	padding: 0.2rem;
+	padding: 1%;
 	position: absolute;
-	top: 0;
+	top: 5px;
+	right: 5px;
 }
 /* The dots/bullets/indicators */
 .dot {
@@ -435,11 +460,13 @@ hr {
 }
 /* */
 
-p {
-	margin: 0;
-	padding-left: 2vw;
-	padding-right: 2vw;
-	padding-bottom: 2vw;
+.blogFigure {
+	margin-top: 5px;
+	margin-left: 10%;
+	margin-right: 10%;
+	margin-bottom: 20px;
+	padding: 15px;
+	float: left;
 }
 
 /* Aside Dropdown menu
@@ -501,6 +528,16 @@ p {
 	cursor: pointer;
 }
 
+.aboutMeLink {
+	text-decoration: none;
+	color: white;
+}
+
+.aboutMeLink:hover {
+	text-decoration: underline;
+	color: grey;
+}
+
 .footer {
 	margin: 0;
 	padding: 0;
@@ -535,5 +572,8 @@ p {
 	}
 	.image-fit-blog {
 		width: 100%;
+	}
+	.slideshow {
+		border-width: 0;
 	}
 }
