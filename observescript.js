@@ -1,6 +1,26 @@
+var modal = document.getElementById("modalImg001");
+
+var img = document.getElementById("img001");
+
+var modalImg = document.getElementById("img001");
+
+var captionText = document.getElementById("caption");
+
+var span = document.getElementsByClassName("close")[0];
+
+function mediaModal() {
+	modal.style.display = "block";
+	modalImg.src = img.src;
+	captionText.innerHTML = img.alt;
+}
+
+function closeMediaModal() {
+	modal.style.display = "none";
+}
+
 function topFunction() {
-	document.body.scrollTop= 0;
-	document.documentElement.scrollTop= 0;
+	document.body.scrollTop = 0;
+	document.documentElement.scrollTop = 0;
 }
 
 var slideIndex = 1;
