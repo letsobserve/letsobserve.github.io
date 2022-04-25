@@ -348,26 +348,41 @@ ul.breadcrumbs li a:hover{
 /* */
 
 .link-icon {
+	display: flex;
 	width: 100%;
+	position: relative;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
 }
 .linkH2 {
-	display: inline;
 	margin-top: 5px;
 	margin-bottom: 10px;
+	flex-wrap: nowrap;
+	flex-grow: 2;
+	flex-basis: 50%;
+	text-align: center;
 }
 .link-icon-image {
 	margin-left: 5vw;
 	margin-right: auto;
 	margin-bottom: auto;
-	max-width: 250px;
-	max-height: 250px;
+	max-width: 200px;
+	max-height: 200px;
 	object-fit: contain;
-	float: left;
-	position: relative;
+	position: static;
+	flex: 1;
+	top: 0;
+	left: 0;
 }
 .link-icon-image:hover {
-	border-radius: 40%;
+	border-radius: 50%;
 	border: 5% solid darkgrey;
+}
+.linkIconText {
+	width: 100%;
+	text-align: center;
+	flex-basis: 100%;
 }
 
 /* Slideshow container specifics*/
