@@ -1,20 +1,16 @@
-var modal = document.getElementById("modalImg001");
+const tags = ["Observation", "Blog", "Media", "Nature", "Food", "Dreams"];
 
-var img = document.getElementById("img001");
-
-var modalImg = document.getElementById("img001");
-
-var captionText = document.getElementById("caption");
-
-var span = document.getElementsByClassName("close")[0];
-
-function mediaModal() {
-	modal.style.display = "block";
-	modalImg.src = img.src;
-	captionText.innerHTML = img.alt;
+function mediaModalFn(element) {
+	var modal = document.getElementById("mediaModal");
+	var modalImg = document.getElementById("mediaModalImg");
+	var alttext = document.getElementById("mediaModalP1");
+	modal.style.display = "flex";
+	modalImg.src = element.src;
+	alttext.innerHTML = element.alt;
 }
 
 function closeMediaModal() {
+	var modal = document.getElementById("mediaModal");
 	modal.style.display = "none";
 }
 

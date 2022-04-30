@@ -9,6 +9,11 @@
 	crossorigin="anonymous"></script>
 </head>
 <body>
+	<modal id="mediaModal" class="media-modal">
+		<span id="closeMediaModal" class="close-media-modal" onclick="closeMediaModal()">&times</span>
+		<img id="mediaModalImg" class="media-modal-img" src="" alt=""/>
+		<p id="mediaModalP1" class="media-modal-alt">alt text</p>
+	</modal>
 	<img class="banner" src="images/banner_nightscene2.png" alt="Observe Banner Image">
 	<h1 class="header-h1">Media</h1>
 	<nav class="navbar">
@@ -36,15 +41,15 @@
 					<br>
 					<hr>
 					<div class="image-list">
-						<img class="media-image" src="images/baby-breath.jpg" alt="Image of Small Delicate Flowers">
-						<img class="media-image" src="images/coleus-red-vein.jpg" alt="Coleus Plant with Red Detail">
-						<img class="media-image" src="images/dark-knight-close.jpg" alt="Black Knight Plant Close Up">
-						<img class="media-image" src="images/low-ground-shot.jpg" alt="Low Angle Shot of Bok Choy">
-						<img class="media-image" src="images/praying-mantis-upsidedown.png" alt="Upside Down Praying Mantis on Dying Corn Plant">
-						<img class="media-image" src="images/purple-flowers.jpg" alt="Close Up of Small Purple Flowers">
-						<img class="media-image" src="images/sunflower-close.jpg" alt="Close Up of a Sunflower">
-						<img class="media-image" src="images/colourful-bug.png" alt="Image of a Green, Purple and Red Bug">
-						<img class="media-image" src="images/white-daisy.jpg" alt="Close Up of a Fluffy White Daisy">
+						<img onclick="mediaModalFn(this)" class="media-image" src="images/baby-breath.jpg" alt="Image of Small Delicate Flowers" onclick="mediaModalFn(this.element)">
+						<img onclick="mediaModalFn(this)" class="media-image" src="images/coleus-red-vein.jpg" alt="Coleus Plant with Red Detail">
+						<img onclick="mediaModalFn(this)" class="media-image" src="images/dark-knight-close.jpg" alt="Black Knight Plant Close Up">
+						<img onclick="mediaModalFn(this)" class="media-image" src="images/low-ground-shot.jpg" alt="Low Angle Shot of Bok Choy">
+						<img onclick="mediaModalFn(this)" class="media-image" src="images/praying-mantis-upsidedown.png" alt="Upside Down Praying Mantis on Dying Corn Plant">
+						<img onclick="mediaModalFn(this)" class="media-image" src="images/purple-flowers.jpg" alt="Close Up of Small Purple Flowers">
+						<img onclick="mediaModalFn(this)" class="media-image" src="images/sunflower-close.jpg" alt="Close Up of a Sunflower">
+						<img onclick="mediaModalFn(this)" class="media-image" src="images/colourful-bug.png" alt="Image of a Green, Purple and Red Bug">
+						<img onclick="mediaModalFn(this)" class="media-image" src="images/white-daisy.jpg" alt="Close Up of a Fluffy White Daisy">
 					</div>
 					<div id='Food'><a name="Food"></a></div>
 					<br>
@@ -66,7 +71,7 @@
 					<br>
 					<hr>
 					<div class="image-list">
-						<img class="media-image" src="images/kitty-playing-wow.jpg">
+						<img onclick="mediaModalFn(this)" class="media-image" src="images/kitty-playing-wow.jpg" alt="Orange Tabby Cat Plays World of Warcraft">
 					</div>
 				</div>
 			</main>
