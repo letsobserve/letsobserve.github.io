@@ -638,6 +638,7 @@ ol.recipe > li::marker {
 	color: grey;
 }
 
+/* Footer section */
 .footer {
 	margin: 0;
 	padding: 0;
@@ -647,6 +648,19 @@ ol.recipe > li::marker {
 	background-image: linear-gradient(rgba(40,40,40,0.8),rgba(0,0,0,0.1));
 	text-align: center;
 	clear: both;
+}
+.footer-title {
+	margin-bottom: 10px;
+	font-size: 150%;
+	font-weight: bold;
+}
+.footer-text {
+	font-size: 80%;
+	float: left;
+}
+.footer-credit {
+	font-size: 80%;
+	text-align: right;
 }
 
 @media screen and (max-width: 700px) {
