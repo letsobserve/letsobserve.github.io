@@ -8,16 +8,21 @@
 	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1480924343854494"
 	crossorigin="anonymous"></script>
 </head>
-<body>
-	<img class="banner" role="banner" src="images/banner_nightscene2.png" alt="Observe Banner Image"/>
-	<h1 class="header-h1">OBSERVE</h1>
-	<nav class="navbar">
-		<a class="navbutton" href="index.html">Home</a>
-		<a class="navbutton" href="Nature.html">Nature</a>
-		<a class="navbutton" href="Food.html">Food</a>
-		<a class="navbutton" href="Dreams.html">Dreams</a>
-		<a class="navbutton" href="Media.html">Media</a>
-	</nav>
+<body id="bodyTag">
+	<header>
+		<img class="banner" role="banner" src="images/banner_nightscene2.png" alt="Observe Banner Image"/>
+		<h1 class="header-h1">OBSERVE</h1>
+		<nav class="navbar">
+			<a class="navbutton" href="index.html">Home</a>
+			<a class="navbutton" href="Nature.html">Nature</a>
+			<a class="navbutton" href="Food.html">Food</a>
+			<a class="navbutton" href="Dreams.html">Dreams</a>
+			<a class="navbutton" href="Media.html">Media</a>
+			<label for="themeFunction()">
+				<input id="themeCheckbox" type="checkbox" onclick="themeFunction()"></input>
+			</label>
+		</nav>
+	</header>
 	<div id="site-main">
 		<div class="wrapper-main">
 			<main id="site-content" class="site-main">
@@ -37,18 +42,18 @@
 							<h2 class="latest">Latest Blog Post</h2>
 							<p class="center-text">Here's the latest from the blog</p>
 							<br>
-							<!--<a href="posts/recipe-pork-adobo.html"><img class="blog-image-teaser" src="images/kitty-playing-wow.jpg" alt="Orange Tabby Cat Plays World of Warcraft"/></a>-->
+							<a href="posts/recipe-pork-adobo.html"><img class="blog-image-teaser" src="../images/adobo-closeup.jpg" alt="Close-Up Shot of Pork Adobo Dish"/></a>
 							<a class="latest-text" href="posts/recipe-pork-adobo.html">Recipe: Pork Adobo</a>
 							<br>
 							<p>A delicious, salty and sour filipino recipe.</p>
 						</div>
 					</div>
 					<hr>
-					<section class="link-icon">
-						<a href="https://www.youtube.com/channel/UCjeoi7YeUK-iyexnpiJVo4g" target="_blank" title="Observation Youtube Channel"><img class="link-icon-image" src="images/observeeyev2.png" alt="Observe Eye Logo"></a>
-						<h2 class="linkH2">There's more to OBSERVE!</h2>
-						<p class="linkIconText">Click the OBSERVE eye to check out the YouTube Channel.</p>
-						<p class="linkIconText">Interacting with these videos help support the channel and this website, allowing us to create more content like this.</p>
+					<section class="youtube-icon">
+						<a href="https://www.youtube.com/channel/UCjeoi7YeUK-iyexnpiJVo4g" target="_blank" title="Observation Youtube Channel"><img class="youtube-icon-image" src="images/observeeyev2.png" alt="Observe Eye Logo"></a>
+						<h2 class="youtubeH2">There's more to OBSERVE!</h2>
+						<p class="youtubeIconText">Click the OBSERVE eye to check out the YouTube Channel.</p>
+						<p class="youtubeIconText">Interacting with these videos help support the channel and this website, allowing us to create more content like this.</p>
 					</section>
 					<hr>
 				</div>
@@ -83,7 +88,6 @@
 	<p class="footer-credit">This is a Hewett-Made Website.</p>
 	<br>
 </footer>
-<script src="observescript.js">
-</script>
+<script src="js/observescript.js"></script>
 </body>
 </html>
