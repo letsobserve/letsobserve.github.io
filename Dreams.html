@@ -8,8 +8,8 @@
 	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1480924343854494"
 	crossorigin="anonymous"></script>
 </head>
-<body>
-	<img class="banner" src="images/banner_nightscene2.png" alt="Observe Banner Image">
+<body id="allBody" class="dark-mode">
+	<img class="banner" src="images/banner-night-scene.png" alt="Observe Banner Image">
 	<h1 class="h1-dreams">Dreams</h1>
 	<nav class="navbar">
 		<a class="navbutton" href="index.html">Home</a>
@@ -17,6 +17,14 @@
 		<a class="navbutton" href="Food.html">Food</a>
 		<a class="navbutton" href="Dreams.html">Dreams</a>
 		<a class="navbutton" href="Media.html">Media</a>
+		<label class="themeToggleContainer" title="Toggle Theme">
+			<input id="toggleTheme" type="checkbox" onclick="toggleTheme()"></input>
+			<div class="theme-slider">
+				<img id="themeImage" src="images/bg-slider.png"/>
+				<img id="themeImageMoon" src="images/moon-slider.png"/>
+				<img id="themeImageSun" src="images/sun-slider.png"/>
+			</div>
+		</label>
 	</nav>
 	<div id="site-main">
 		<div class="wrapper-main">
@@ -28,7 +36,7 @@
 						<div class="column-container">
 							<div class="column">
 								<em><time datetime="2022-03-22">Published 22 March 2022</em>
-									<a href="posts/kitty-plays-wow.html"><img class="blog-image-teaser" src="images/kitty-playing-wow.jpg" alt="Orange Tabby Cat Plays World of Warcraft"></a>
+									<a href="posts/kitty-plays-wow.html"><img class="blog-image-teaser" src="images/kitty-playing-wow.jpeg" alt="Orange Tabby Cat Plays World of Warcraft"></a>
 									<a class="blog-link" href="posts/kitty-plays-wow.html"><h3>Kitty Plays World of Warcraft</h3></a>
 									<p>A dream in which I see one of my cats playing my favourite MMORPG.</p>
 								</div>
@@ -54,11 +62,6 @@
 		<footer class="footer">
 			<h3 class="footer-title">Observe</h3>
 			<p class="footer-text">Since 2019.</p>
-			<!--<h4>Subsribe for updates!</h4>
-			<form>
-				<input placeholder="your email"></input>
-				<button>Subscribe</button>
-			</form> -->
 			<p class="footer-credit">This is a Hewett-Made Website.</p>
 			<br>
 		</footer>

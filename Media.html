@@ -2,19 +2,19 @@
 <html lang="en-AU">
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Observe Media</title>
+	<title>OBSERVE Media</title>
 	<link rel="icon" type="image/x-icon" href="images/observeeyev2.png">
 	<link rel="stylesheet" href="css/home.css">
 	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1480924343854494"
 	crossorigin="anonymous"></script>
 </head>
-<body>
+<body id="allBody" class="dark-mode">
 	<modal id="mediaModal" class="media-modal">
 		<span id="closeMediaModal" class="close-media-modal" onclick="closeMediaModal()">&times</span>
 		<img id="mediaModalImg" class="media-modal-img" src="" alt=""/>
 		<p id="mediaModalP1" class="media-modal-alt">alt text</p>
 	</modal>
-	<img class="banner" src="images/banner_nightscene2.png" alt="Observe Banner Image">
+	<img class="banner" src="images/banner-night-scene.png" alt="Observe Banner Image">
 	<h1 class="header-h1">Media</h1>
 	<nav class="navbar">
 		<a class="navbutton" href="index.html">Home</a>
@@ -22,70 +22,90 @@
 		<a class="navbutton" href="Food.html">Food</a>
 		<a class="navbutton" href="Dreams.html">Dreams</a>
 		<a class="navbutton" href="Media.html">Media</a>
-	</nav>
-	<nav class="center-text">
-		<h2>Show Me:</h2>
-		<a href="#Nature"><button class="quick-nav-media" type="navigation">Nature</button></a>
-		<a href="#Food"><button class="quick-nav-media" type="navigation">Food</button></a>
-		<a href="#Dreams"><button class="quick-nav-media" type="navigation">Dreams</button></a>
+		<label class="themeToggleContainer" title="Toggle Theme">
+			<input id="toggleTheme" type="checkbox" onclick="toggleTheme()"></input>
+			<div class="theme-slider">
+				<img id="themeImage" src="images/bg-slider.png"/>
+				<img id="themeImageMoon" src="images/moon-slider.png"/>
+				<img id="themeImageSun" src="images/sun-slider.png"/>
+			</div>
+		</label>
 	</nav>
 	<div id="site-main">
 		<div class="wrapper-main">
 			<main id="site-content" class="site-main" role="main">
 				<div class="site-content-wrapper">
-					<div id='Nature'><a name="Nature"></a></div>
-					<br>
-					<hr>
-					<br>
-					<section class="media-title">
-						<button class="top-media" onclick="topFunction()" id="topBtn" title="Go to top">Top</button>
-						<h2 class="center-text">Nature</h2>
-					</section>
-					<br>
-					<hr>
-					<div class="image-list">
-						<img onclick="mediaModalFn(this)" class="media-image" src="images/baby-breath.jpg" alt="Image of Small Delicate Flowers" onclick="mediaModalFn(this.element)">
-						<img onclick="mediaModalFn(this)" class="media-image" src="images/coleus-red-vein.jpg" alt="Coleus Plant with Red Detail">
-						<img onclick="mediaModalFn(this)" class="media-image" src="images/dark-knight-close.jpg" alt="Black Knight Plant Close Up">
-						<img onclick="mediaModalFn(this)" class="media-image" src="images/low-ground-shot.jpg" alt="Low Angle Shot of Bok Choy">
-						<img onclick="mediaModalFn(this)" class="media-image" src="images/praying-mantis-upsidedown.png" alt="Upside Down Praying Mantis on Dying Corn Plant">
-						<img onclick="mediaModalFn(this)" class="media-image" src="images/purple-flowers.jpg" alt="Close Up of Small Purple Flowers">
-						<img onclick="mediaModalFn(this)" class="media-image" src="images/sunflower-close.jpg" alt="Close Up of a Sunflower">
-						<img onclick="mediaModalFn(this)" class="media-image" src="images/colourful-bug.png" alt="Image of a Green, Purple and Red Bug">
-						<img onclick="mediaModalFn(this)" class="media-image" src="images/white-daisy.jpg" alt="Close Up of a Fluffy White Daisy">
-					</div>
-					<div id='Food'><a name="Food"></a></div>
-					<br>
-					<hr>
-					<br>
-					<section class="media-title">
-						<button class="top-media" onclick="topFunction()" id="topBtn" title="Go to top">Top</button>
-						<h2 class="center-text">Food</h2>
-					</section>
-					<br>
-					<hr>
-					<div class="image-list">
-						<img onclick="mediaModalFn(this)" class="media-image" src="images/adobo-closeup.jpg" alt="Close-Up Shot of Pork Adobo Dish">
-						<img onclick="mediaModalFn(this)" class="media-image" src="images/adobo-1.jpg" alt="Image of Pork Adobo Dish in a bowl on Kitchen Bench">
-						<img onclick="mediaModalFn(this)" class="media-image" src="images/adobo-and-rice.jpg" alt="Image of Pork Adobo and Rice on a Spoon">
-					</div>
-					<div id='Dreams'><a name="Dreams"></a></div>
-					<br>
-					<hr>
-					<br>
-					<section class="media-title">
-						<button class="top-media" onclick="topFunction()" id="topBtn" title="Go to top">Top</button>
-						<h2 class="center-text">Dreams</h2>
-					</section>
-					<br>
-					<hr>
-					<div class="image-list">
-						<img onclick="mediaModalFn(this)" class="media-image" src="images/kitty-playing-wow.jpg" alt="Orange Tabby Cat Plays World of Warcraft">
+					<div class="column-container">
+						<div class="column">
+							<nav class="center-text">
+								<h2>Show Me:</h2>
+								<a href="#Nature"><button class="quick-nav-media" type="navigation">Nature</button></a>
+								<a href="#Food"><button class="quick-nav-media" type="navigation">Food</button></a>
+								<a href="#Dreams"><button class="quick-nav-media" type="navigation">Dreams</button></a>
+							</nav>
+							<div id='Nature'><a name="Nature"></a></div>
+							<br>
+							<hr>
+							<br>
+							<div>
+								<button class="top-media" onclick="topFunction()" id="topBtn" title="Go to top">Top</button>
+								<h2 class="center-text">Nature</h2>
+							</div>
+							<br>
+							<hr>
+							<div class="image-list">
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/dandelion-seed-head.jpeg" alt="Image of Fluffy, Delicate Dandelion Seeds." onclick="mediaModalFn(this.element)">
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/low-angle-grass.jpeg" alt="Close Up Image of Grass." onclick="mediaModalFn(this.element)">
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/night-scene.png" alt="Image of the Moon at Sunset Behind Silhouettes of Flowers." onclick="mediaModalFn(this.element)">
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/redback-on-bonsai.jpg" alt="Image of a Redback Spider on the Underside of a Bonsai." onclick="mediaModalFn(this.element)">
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/hot-pink-flower-close.jpeg" alt="Close Up Image of A Bright Pink Flower with Yellow Pollen in the Center." onclick="mediaModalFn(this.element)">
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/baby-breath.jpeg" alt="Image of Small Delicate Flowers." onclick="mediaModalFn(this.element)">
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/coleus-red-vein.jpeg" alt="Coleus Plant with Red Detail">
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/dark-knight-close.jpeg" alt="Black Knight Plant Close Up.">
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/low-ground-shot.jpeg" alt="Low Angle Shot of Bok Choy.">
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/praying-mantis-upsidedown.png" alt="Upside Down Praying Mantis on Dying Corn Plant.">
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/purple-flowers.jpeg" alt="Close Up of Small Purple Flowers.">
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/sunflower-close.jpeg" alt="Close Up of a Sunflower.">
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/colourful-bug.png" alt="Image of a Green, Purple and Red Bug.">
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/white-daisy.jpeg" alt="Close Up of a Fluffy White Daisy.">
+							</div>
+							<div id='Food'><a name="Food"></a></div>
+							<br>
+							<hr>
+							<br>
+							<div>
+								<button class="top-media" onclick="topFunction()" id="topBtn" title="Go to top">Top</button>
+								<h2 class="center-text">Food</h2>
+							</div>
+							<br>
+							<hr>
+							<div class="image-list">
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/adobo-1.jpeg" alt="Image of Pork Adobo in a Bowl." onclick="mediaModalFn(this.element)">
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/adobo-and-rice.jpeg" alt="Image of Pork Adobo and Rice on a Spoon." onclick="mediaModalFn(this.element)">
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/adobo-closeup.jpeg" alt="Close Up Image of Pork Adobo." onclick="mediaModalFn(this.element)">
+							</div>
+							<div id='Dreams'><a name="Dreams"></a></div>
+							<br>
+							<hr>
+							<br>
+							<div>
+								<button class="top-media" onclick="topFunction()" id="topBtn" title="Go to top">Top</button>
+								<h2 class="center-text">Dreams</h2>
+							</div>
+							<br>
+							<hr>
+							<div class="image-list">
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/kitty-playing-wow.jpeg" alt="Orange Tabby Cat Plays World of Warcraft.">
+							</div>
+						</div>
 					</div>
 				</div>
 			</main>
 			<aside id="site-aside" role="complementary">
 				<div class="site-aside-wrapper">
+					<br>
+					<p></p>
+					<br>
 				</div>
 			</aside>
 		</div>
@@ -93,15 +113,10 @@
 	<footer class="footer">
 		<h3 class="footer-title">Observe</h3>
 		<p class="footer-text">Since 2019.</p>
-		<!--<h4>Subsribe for updates!</h4>
-		<form>
-		<input placeholder="your email"></input>
-		<button>Subscribe</button>
-	</form> -->
-	<p class="footer-credit">This is a Hewett-Made Website.</p>
-	<br>
-</footer>
-<script src="js/observescript.js">
-</script>
+		<p class="footer-credit">This is a Hewett-Made Website.</p>
+		<br>
+	</footer>
+	<script src="js/observescript.js">
+	</script>
 </body>
 </html>

@@ -8,14 +8,22 @@
 	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1480924343854494"
 	crossorigin="anonymous"></script>
 </head>
-<body>
-	<img class="banner" src="../images/banner_nightscene2.png" alt="Observe Banner Image">
+<body id="allBody" class="dark-mode">
+	<img class="banner" src="../images/banner-night-scene.png" alt="Observe Banner Image">
 	<nav class="navbar">
 		<a class="navbutton" href="../index.html">Home</a>
 		<a class="navbutton" href="../Nature.html">Nature</a>
 		<a class="navbutton" href="../Food.html">Food</a>
 		<a class="navbutton" href="../Dreams.html">Dreams</a>
 		<a class="navbutton" href="../Media.html">Media</a>
+		<label class="themeToggleContainer" title="Toggle Theme">
+			<input id="toggleTheme" type="checkbox" onclick="toggleTheme()"></input>
+			<div class="theme-slider">
+				<img id="themeImage" src="../images/bg-slider.png"/>
+				<img id="themeImageMoon" src="../images/moon-slider.png"/>
+				<img id="themeImageSun" src="../images/sun-slider.png"/>
+			</div>
+		</label>
 	</nav>
 	<div id="site-main">
 		<div class="wrapper-main">
@@ -30,7 +38,7 @@
 					<time datetime="2022-04-30">Published 30 April 2022</time>
 					<article class="column-container">
 						<div class="column">
-							<figure class="blogFigure"><img class="blogImage" src="../images/placeholder.jpg">
+							<figure class="blogFigure"><img class="blogImage" src="../images/placeholder.jpeg">
 								<figcaption>Figcaption</figcaption>
 							</figure>
 							<section class="introduction">
@@ -42,7 +50,6 @@
 							<section class="middle">
 							</section>
 							<section class="conclusion">
-
 								<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 							</section>
 						</div>
@@ -73,15 +80,10 @@
 	<footer class="footer">
 		<h3 class="footer-title">Observe</h3>
 		<p class="footer-text">Since 2019.</p>
-		<!--<h4>Subsribe for updates!</h4>
-		<form>
-			<input placeholder="your email"></input>
-			<button>Subscribe</button>
-		</form> -->
 		<p class="footer-credit">This is a Hewett-Made Website.</p>
 		<br>
 	</footer>
-	<script src="js/observescript.js">
+	<script src="../js/observescript.js">
 	</script>
 </body>
 </html>

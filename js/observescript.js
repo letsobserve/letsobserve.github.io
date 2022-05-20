@@ -1,5 +1,56 @@
 const tags = ["Observation", "Blog", "Media", "Nature", "Food", "Dreams"];
 
+function setThemeFromCookie() {
+	const themeState = document.getElementById("allBody");
+	themeState.className = isThemeSelected() ? "light-mode" : "dark-mode";
+}
+
+function setThemeSwitchState() {
+	document.getElementById("toggleTheme").checked = isThemeSelected();
+}
+
+function isThemeSelected() {
+	return document.cookie.match(/theme=dark/i) != null;
+}
+
+function toggleTheme() {
+	const themeState = document.getElementById("allBody");
+	const currentState = themeState.classList;
+	const newState = themeState.classList == "light-mode" ? "light-mode" : "dark-mode";
+	const column = document.getElementsByClassName("column");
+	var btn = document.getElementById("toggleTheme");
+	var sun = document.getElementById("themeImageSun");
+	var moon = document.getElementById("themeImageMoon");
+
+	themeState.className = newState;
+	document.cookie = "theme=" + (newState == "light-mode" ? "dark" : "light");
+
+	if (btn.checked) {
+		moon.style.opacity = "1";
+		sun.style.opacity = "0";
+		document.getElementById("allBody").classList.toggle("dark-mode");
+		document.getElementById("allBody").classList.toggle("light-mode");
+		for (i = 0; i < column.length; i++) {
+			column[i].style.borderColor = "var(--main-darkgrey)";
+		}
+	}
+	else {
+		sun.style.opacity = "1";
+		moon.style.opacity = "0";
+		document.getElementById("allBody").classList.toggle("light-mode");
+		document.getElementById("allBody").classList.toggle("dark-mode");
+		for (i = 0; i < column.length; i++) {
+			column[i].style.borderColor = "var(--alt-darkgrey)";
+		}
+	}
+}
+
+(function() {
+	setThemeFromCookie();
+	setThemeSwitchState();
+	document.getElementById("toggleTheme").onchange = toggleTheme();
+}) ();
+
 function mediaModalFn(element) {
 	var modal = document.getElementById("mediaModal");
 	var modalImg = document.getElementById("mediaModalImg");
@@ -17,38 +68,4 @@ function closeMediaModal() {
 function topFunction() {
 	document.body.scrollTop = 0;
 	document.documentElement.scrollTop = 0;
-}
-
-function themeFunction() {
-	const navButton = document.getElementsByClassName("navbutton");
-	const navbar = document.getElementsByClassName("navbar");
-	const footer = document.getElementsByClassName("footer");
-	const buttonHover = document.getElementsByClassName("navbutton:hover");
-	var button = document.getElementById("themeCheckbox");
-	var body = document.body;
-
-	if (button.checked) {
-		body.style.backgroundImage = "linear-gradient(var(--alt-lightgrey),var(--alt-darkgrey))";
-		body.style.color = "var(--alt-text)";
-		body.style.borderBottomColor = "var(--alt-text)";
-		navbar[0].style.backgroundColor = "var(--alt-darkgrey)";
-		footer[0].style.backgroundImage = "linear-gradient(var(--main-lightgrey),transparent)";
-		for (var i = 0; i < navButton.length; i++) {
-			navButton[i].style.color = "var(--alt-text)";
-			navButton[i].style.backgroundColor = "var(--alt-darkgrey)";
-			navButton[i].style.borderColor = "var(--alt-grey)";
-		}
-	}
-	else {
-		body.style.backgroundImage = "linear-gradient(var(--main-darkgrey),rgb(10,10,10))";
-		body.style.color = "white";
-		body.style.borderBottomColor = "var(--main-text)";
-		navbar[0].style.backgroundColor = "var(--main-darkgrey)";
-		footer[0].style.backgroundImage = "linear-gradient(var(--main-darkgrey),transparent)";
-		for (var i = 0; i < navButton.length; i++) {
-			navButton[i].style.color = "var(--main-text)";
-			navButton[i].style.backgroundColor = "var(--main-darkgrey)";
-			navButton[i].style.borderColor = "var(--main-grey)";
-		}
-	}
 }

@@ -2,27 +2,30 @@
 <html lang="en-AU">
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Observe Home</title>
+	<title>OBSERVE</title>
 	<link rel="icon" type="image/x-icon" href="images/observeeyev2.png">
 	<link rel="stylesheet" href="css/home.css">
 	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1480924343854494"
 	crossorigin="anonymous"></script>
 </head>
-<body id="bodyTag">
-	<header>
-		<img class="banner" role="banner" src="images/banner_nightscene2.png" alt="Observe Banner Image"/>
-		<h1 class="header-h1">OBSERVE</h1>
-		<nav class="navbar">
-			<a class="navbutton" href="index.html">Home</a>
-			<a class="navbutton" href="Nature.html">Nature</a>
-			<a class="navbutton" href="Food.html">Food</a>
-			<a class="navbutton" href="Dreams.html">Dreams</a>
-			<a class="navbutton" href="Media.html">Media</a>
-			<!--<label for="themeFunction()">
-				<input id="themeCheckbox" type="checkbox" onclick="themeFunction()"></input>
-			</label>-->
-		</nav>
-	</header>
+<body id="allBody" class="dark-mode">
+	<img class="banner" role="banner" src="images/banner-night-scene.png" alt="Observe Banner Image"/>
+	<h1 class="header-h1">OBSERVE</h1>
+	<nav class="navbar">
+		<a class="navbutton" href="index.html">Home</a>
+		<a class="navbutton" href="Nature.html">Nature</a>
+		<a class="navbutton" href="Food.html">Food</a>
+		<a class="navbutton" href="Dreams.html">Dreams</a>
+		<a class="navbutton" href="Media.html">Media</a>
+		<label class="themeToggleContainer" title="Toggle Theme">
+			<input id="toggleTheme" type="checkbox" onclick="toggleTheme()"></input>
+			<div class="theme-slider">
+				<img id="themeImage" src="images/bg-slider.png"/>
+				<img id="themeImageMoon" src="images/moon-slider.png"/>
+				<img id="themeImageSun" src="images/sun-slider.png"/>
+			</div>
+		</label>
+	</nav>
 	<div id="site-main">
 		<div class="wrapper-main">
 			<main id="site-content" class="site-main">
@@ -37,12 +40,14 @@
 								</iframe>
 							</section>
 							<a class="latest-text" href="https://youtu.be/ttO3co4-RYk" target="_blank">When Leaves are Not Green</a>
+							<br>
+							<p>A video that highlights the variety in leaf colour.</p>
 						</div>
 						<div class="column">
 							<h2 class="latest">Latest Blog Post</h2>
 							<p class="center-text">Here's the latest from the blog</p>
 							<br>
-							<a href="posts/recipe-pork-adobo.html"><img class="blog-image-teaser" src="../images/adobo-closeup.jpg" alt="Close-Up Shot of Pork Adobo Dish"/></a>
+							<a href="posts/recipe-pork-adobo.html"><img class="blog-image-teaser" src="images/adobo-closeup.jpeg" alt="Close Up Image of Pork Adobo"/></a>
 							<a class="latest-text" href="posts/recipe-pork-adobo.html">Recipe: Pork Adobo</a>
 							<br>
 							<p>A delicious, salty and sour filipino recipe.</p>
@@ -61,33 +66,20 @@
 			<aside id="site-aside">
 				<div class="site-aside-wrapper">
 					<div class="aside-info">
-						<!-- Search Function
-						<div class="search-function">
-						<form action="/observe.php">
-						<input class="search-bar" type="text" placeholder="Search Observe..."/>
-						<button type="submit"><img class="search-button" src="/images/search-icon.png"/></button>
-					</form>
+						<h3>More About Observe</h3>
+						<p>This is idea started back in 2019, leading to the creation of a YouTube Channel-<a class="aboutMeLink" href="https://www.youtube.com/channel/UCjeoi7YeUK-iyexnpiJVo4g" target="_blank" title="Observation Youtube Channel">Observation</a> where I could show off the beauty of the natural world. Fast-foward to today and the evolution of this idea into a website that can further explore natural phenomena, like nature, food and dreaming- which I feel most passionate towards.</p>
+					</div>
 				</div>
-				<hr>
-			-->
-			<h3>More About Observe</h3>
-			<p>This is idea started back in 2019, leading to the creation of a YouTube Channel-<a class="aboutMeLink" href="https://www.youtube.com/channel/UCjeoi7YeUK-iyexnpiJVo4g" target="_blank" title="Observation Youtube Channel">Observation</a> where I could show off the beauty of the natural world. Fast-foward to today and the evolution of this idea into a website that can further explore natural phenomena, like nature, food and dreaming- which I feel most passionate towards.</p>
+			</aside>
 		</div>
 	</div>
-</aside>
-</div>
-</div>
-<footer class="footer">
-	<h3 class="footer-title">Observe</h3>
-	<p class="footer-text">Since 2019.</p>
-	<!--<h4>Subsribe for updates!</h4>
-	<form>
-		<input placeholder="your email"></input>
-		<button>Subscribe</button>
-	</form> -->
-	<p class="footer-credit">This is a Hewett-Made Website.</p>
-	<br>
-</footer>
-<script src="js/observescript.js"></script>
+	<footer class="footer">
+		<h3 class="footer-title">Observe</h3>
+		<p class="footer-text">Since 2019.</p>
+		<p class="footer-credit">This is a Hewett-Made Website.</p>
+		<br>
+	</footer>
+	<script src="js/observescript.js">
+	</script>
 </body>
 </html>
