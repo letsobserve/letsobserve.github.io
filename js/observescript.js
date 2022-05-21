@@ -28,6 +28,8 @@ function toggleTheme() {
 	if (btn.checked) {
 		moon.style.opacity = "1";
 		sun.style.opacity = "0";
+		sun.style.left = "-35px";
+		moon.style.left = "0";
 		document.getElementById("allBody").classList.toggle("dark-mode");
 		document.getElementById("allBody").classList.toggle("light-mode");
 		for (i = 0; i < column.length; i++) {
@@ -37,6 +39,8 @@ function toggleTheme() {
 	else {
 		sun.style.opacity = "1";
 		moon.style.opacity = "0";
+		moon.style.left = "35px";
+		sun.style.left = "0";
 		document.getElementById("allBody").classList.toggle("light-mode");
 		document.getElementById("allBody").classList.toggle("dark-mode");
 		for (i = 0; i < column.length; i++) {
