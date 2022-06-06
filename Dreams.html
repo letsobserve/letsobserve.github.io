@@ -8,7 +8,7 @@
 	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1480924343854494"
 	crossorigin="anonymous"></script>
 </head>
-<body id="allBody" class="dark-mode">
+<body>
 	<img class="banner" src="images/banner-night-scene.png" alt="Observe Banner Image">
 	<h1 class="h1-dreams">Dreams</h1>
 	<nav class="navbar">
@@ -18,11 +18,11 @@
 		<a class="navbutton" href="Dreams.html">Dreams</a>
 		<a class="navbutton" href="Media.html">Media</a>
 		<label class="themeToggleContainer" title="Toggle Theme">
-			<input id="toggleTheme" type="checkbox" onclick="toggleTheme()"></input>
+			<input id="toggleTheme" type="checkbox"/>
 			<div class="theme-slider">
-				<img id="themeImage" src="images/bg-slider.png"/>
-				<img id="themeImageMoon" src="images/moon-slider.png"/>
-				<img id="themeImageSun" src="images/sun-slider.png"/>
+				<img id="themeImage" src="images/bg-slider.png" alt="A background for the website theme slider."/>
+				<img id="themeImageMoon" src="images/moon-slider.png" alt="An image of the moon for the website theme slider."/>
+				<img id="themeImageSun" src="images/sun-slider.png" alt="An image of the sun for the website theme slider."/>
 			</div>
 		</label>
 	</nav>
@@ -30,26 +30,30 @@
 		<div class="wrapper-main">
 			<main id="site-content" class="site-main">
 				<div class="site-content-wrapper">
-					<div id="Dream Blog">
+					<div id="dreamBlog">
 						<h2 class="center-text">Dreams Blog</h2>
 						<hr>
 						<div class="column-container">
 							<div class="column">
-								<em><time datetime="2022-03-22">Published 22 March 2022</em>
+								<em><time datetime="2022-03-22">Published 22 March 2022</time></em>
 									<a href="posts/kitty-plays-wow.html"><img class="blog-image-teaser" src="images/kitty-playing-wow.jpeg" alt="Orange Tabby Cat Plays World of Warcraft"></a>
 									<a class="blog-link" href="posts/kitty-plays-wow.html"><h3>Kitty Plays World of Warcraft</h3></a>
 									<p>A dream in which I see one of my cats playing my favourite MMORPG.</p>
 								</div>
 								<div class="column">
-									<h3>Next Post.</h3>
+									<h3 class="center-text">Coming Soon.</h3>
 								</div>
 							</div>
 						</div>
 						<hr>
-						<div class="dreams-resources">
+						<section class="dreams-resources">
 							<h3>Dreaming Resources</h3>
 							<p>Some of my favourite Dreaming resources and forums related to dreaming.</p>
-						</div>
+							<ul>
+								<li><a class="blog-link" href="https://www.headspace.com/">Headspace:</a> A great resource to learn the fundamentals of meditation. This is how I personally learnt how meditation can work wonders for not only dreaming but all aspects of mental health.</li>
+								<br>
+								<li><a class="blog-link" href="https://play.google.com/store/apps/details?id=ch.b3nz.lucidity&hl=en_AU&gl=US">Lucidity - Lucid Dream Journal:</a> A great resource for dream journalling. While it's not necessary to use this particular app (it's just the one I personally use), a dream journal- whether physical or digital, is a great way to recollect dreams and contemplate any dream signs or significance from your dreams.</li>
+						</section>
 					</div>
 				</main>
 				<aside id="site-aside">
@@ -65,7 +69,7 @@
 			<p class="footer-credit">This is a Hewett-Made Website.</p>
 			<br>
 		</footer>
-		<script src="js/observescript.js">
+		<script src="js/script.js">
 		</script>
 	</body>
 	</html>

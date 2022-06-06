@@ -8,9 +8,9 @@
 	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1480924343854494"
 	crossorigin="anonymous"></script>
 </head>
-<body id="allBody" class="dark-mode">
+<body>
 	<modal id="mediaModal" class="media-modal">
-		<span id="closeMediaModal" class="close-media-modal" onclick="closeMediaModal()">&times</span>
+		<span id="closeMediaModal" class="close-media-modal" onclick="closeMediaModal()">&times;</span>
 		<img id="mediaModalImg" class="media-modal-img" src="" alt=""/>
 		<p id="mediaModalP1" class="media-modal-alt">alt text</p>
 	</modal>
@@ -23,25 +23,25 @@
 		<a class="navbutton" href="Dreams.html">Dreams</a>
 		<a class="navbutton" href="Media.html">Media</a>
 		<label class="themeToggleContainer" title="Toggle Theme">
-			<input id="toggleTheme" type="checkbox" onclick="toggleTheme()"></input>
+			<input id="toggleTheme" type="checkbox"/>
 			<div class="theme-slider">
-				<img id="themeImage" src="images/bg-slider.png"/>
-				<img id="themeImageMoon" src="images/moon-slider.png"/>
-				<img id="themeImageSun" src="images/sun-slider.png"/>
+				<img id="themeImage" src="images/bg-slider.png" alt="A background for the website theme slider."/>
+				<img id="themeImageMoon" src="images/moon-slider.png" alt="An image of the moon for the website theme slider."/>
+				<img id="themeImageSun" src="images/sun-slider.png" alt="An image of the sun for the website theme slider."/>
 			</div>
 		</label>
 	</nav>
 	<div id="site-main">
 		<div class="wrapper-main">
-			<main id="site-content" class="site-main" role="main">
+			<main id="site-content" class="site-main">
 				<div class="site-content-wrapper">
 					<div class="column-container">
 						<div class="column">
 							<nav class="center-text">
 								<h2>Show Me:</h2>
-								<a href="#Nature"><button class="quick-nav-media" type="navigation">Nature</button></a>
-								<a href="#Food"><button class="quick-nav-media" type="navigation">Food</button></a>
-								<a href="#Dreams"><button class="quick-nav-media" type="navigation">Dreams</button></a>
+								<a class="quick-nav-media" href="#Nature">Nature</a>
+								<a class="quick-nav-media" href="#Food">Food</a>
+								<a class="quick-nav-media" href="#Dreams">Dreams</a>
 							</nav>
 							<div id='Nature'><a name="Nature"></a></div>
 							<br>
@@ -57,7 +57,7 @@
 								<img onclick="mediaModalFn(this)" class="media-image" src="images/dandelion-seed-head.jpeg" alt="Image of Fluffy, Delicate Dandelion Seeds." onclick="mediaModalFn(this.element)">
 								<img onclick="mediaModalFn(this)" class="media-image" src="images/low-angle-grass.jpeg" alt="Close Up Image of Grass." onclick="mediaModalFn(this.element)">
 								<img onclick="mediaModalFn(this)" class="media-image" src="images/night-scene.png" alt="Image of the Moon at Sunset Behind Silhouettes of Flowers." onclick="mediaModalFn(this.element)">
-								<img onclick="mediaModalFn(this)" class="media-image" src="images/redback-on-bonsai.JPG" alt="Image of a Redback Spider on the Underside of a Bonsai." onclick="mediaModalFn(this.element)">
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/redback-on-bonsai.jpg" alt="Image of a Redback Spider on the Underside of a Bonsai." onclick="mediaModalFn(this.element)">
 								<img onclick="mediaModalFn(this)" class="media-image" src="images/hot-pink-flower-close.jpeg" alt="Close Up Image of A Bright Pink Flower with Yellow Pollen in the Center." onclick="mediaModalFn(this.element)">
 								<img onclick="mediaModalFn(this)" class="media-image" src="images/baby-breath.jpeg" alt="Image of Small Delicate Flowers." onclick="mediaModalFn(this.element)">
 								<img onclick="mediaModalFn(this)" class="media-image" src="images/coleus-red-vein.jpeg" alt="Coleus Plant with Red Detail">
@@ -116,7 +116,7 @@
 		<p class="footer-credit">This is a Hewett-Made Website.</p>
 		<br>
 	</footer>
-	<script src="js/observescript.js">
+	<script src="js/script.js">
 	</script>
 </body>
 </html>
