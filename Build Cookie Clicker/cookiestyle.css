@@ -3,9 +3,24 @@
   padding: 0;
   touch-action: manipulation;
 }
-#gameCanvas {
+#gameStatic {
   margin: 0;
   padding: 0;
+  position: absolute;
+  display: block;
+  box-sizing: border-box;
+}
+#gameDynamic {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  display: block;
+  box-sizing: border-box;
+}
+#gameMenu {
+  margin: 0;
+  padding: 0;
+  position: absolute;
   display: block;
   box-sizing: border-box;
 }
