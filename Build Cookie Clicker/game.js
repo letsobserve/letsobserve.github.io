@@ -42,12 +42,50 @@ class Game {
     this.height = dimension[1];
     this.frameW = 120;
     this.frameH = 120;
+    // state the game is
+    // 0 = Start menu, 1 = Cookie screen, 2 = Shop, 3 = Prestige, 4 = add 3rd screen
+    this.states = [0, 1, 2, 3, 4];
+    this.state = 0;
     if (this.width > this.height) {
       this.textSize = this.frameW / 2;
     } else {
       this.textSize = this.frameW;
     };
     this.time = new Date();
+  };
+  draw0() {
+    ctxS.fillStyle = "hsl(195, 50%, 70%)";
+    ctxS.fillRect(0, 0, this.width, this.height);
+    ctxS.imageSmoothingEnabled = true;
+    ctxS.imageSmoothingQuality = "high";
+    ctxS.drawImage(
+      texture, // the texture sheet
+      0 * game.frameW, // starting x
+      0 * game.frameH, // starting y
+      game.frameW, // width
+      game.frameH, // height
+      (game.width / 2) - cookie.r, // destination x
+      (game.height / 4) - cookie.r, // destination y
+      (2 * cookie.r), // drawn width
+      (2 * cookie.r) // drawn height
+    );
+    ctxS.fillStyle = "black";
+    ctxS.textAlign = "center";
+    ctxS.textBaseline = "middle";
+    ctxS.font = "small-caps bolder " + 2 * this.textSize + "px calibri";
+    ctxS.fillText("Cookie", game.width / 2, 3 * game.textSize);
+    ctxS.fillText("Frenzy", game.width / 2, 5 * game.textSize);
+    ctxS.fillStyle = "white";
+    ctxS.fillRect(2 * game.frameW, game.height / 2, 4 * game.frameW, 1.5 * game.frameH);
+    ctxS.fillRect(2 * game.frameW, game.height / 1.5, 4 * game.frameW, 1.5 * game.frameH);
+    ctxS.fillStyle = "black";
+    ctxS.textAlign = "left";
+    ctxS.textBaseline = "top";
+    ctxS.font = this.textSize + "px calibri";
+    ctxS.fillText("Play", 2 * game.frameW + game.textSize, game.height / 2 + (game.textSize / 4));
+    ctxS.fillText("Exit", 2 * game.frameW + game.textSize, game.height / 1.5 + (game.textSize / 4));
+  };
+  draw1() {
     // background
     ctxS.fillStyle = "hsl(195, 50%, 70%)";
     ctxS.fillRect(0, 0, this.width, this.height);
@@ -55,15 +93,19 @@ class Game {
     ctxS.fillStyle = "white";
     ctxS.strokeStyle = "black";
     ctxS.lineWidth = 10;
-    ctxS.fillRect(0, 0, this.width, this.textSize);
-    ctxS.strokeRect(0, 0, this.width, this.textSize);
+    ctxS.fillRect(0, 0, this.width, 2 * this.textSize);
+    ctxS.strokeRect(0, 0, this.width, 2 * this.textSize);
     ctxS.fillStyle = "black";
-    ctxS.textAlign = "right";
+    ctxS.textAlign = "center";
     ctxS.textBaseline = "top";
-    ctxS.font = this.textSize + "px calibri";
-    ctxS.fillText("Shop \u21D3", this.width - 10, 5);
-  };
-  draw() {
+    ctxS.font = this.textSize / 1.5 + "px calibri";
+    ctxS.globalAlpha = 0.5;
+    ctxS.fillText("Shop", this.width / 2, game.textSize + 10);
+    ctxS.textAlign = "right";
+    ctxS.fillText("Prestige", this.width - 10, game.textSize + 10);
+    ctxS.textAlign = "left";
+    ctxS.fillText("Third", 10, game.textSize + 10);
+    ctxS.globalAlpha = 1;
     if (utility.level[9] > 0) {
       if (container.full) {
         ctxD.fillStyle = "green";
@@ -71,6 +113,16 @@ class Game {
         ctxD.fillStyle = "white";
       }
       ctxD.fillRect(game.width - (3 * game.textSize), game.height - (2 * game.textSize) - 10, this.width, this.height);
+    };
+    // draw the cookie
+    cookie.draw(cookie.x, cookie.xV, cookie.y, cookie.yV, cookie.r, cookie.pulseCount, cookie.color(), 0);
+    // draw the rest of the cookie screen
+    if (utility.level[9] > 0) container.draw();
+    utility.drawD();
+    // draw golden cookie
+    if (goldCookie.gold && !utility.upgrading) {
+      goldCookie.draw(goldCookie.rX, 0, goldCookie.rY, 0, goldCookie.rR, 0, 3, 0);
+      goldCookie.goldCount--;
     };
   };
   update() {
@@ -90,9 +142,8 @@ class Game {
   loop(now) {
     utility.time = new Date().getTime();
     // clear canvas
+    ctxS.clearRect(0, 0, game.width, game.height);
     ctxD.clearRect(0, 0, game.width, game.height);
-    // draw the game
-    game.draw();
     // update the game parameter
     game.update();
     cookie.update();
@@ -104,18 +155,19 @@ class Game {
       lastTime = now;
       utility.update();
     };
-    // draw the menu
-    utility.drawM();
-    if (!utility.upgrading) {
-      cookie.draw(cookie.x, cookie.xV, cookie.y, cookie.yV, cookie.r, cookie.pulseCount, cookie.color(), 0);
-      if (utility.level[9] > 0) container.draw();
+    if (game.state == 0) { // draw the start menu
+      game.draw0();
+    } else if (game.state == 1) { // draw the cookie screen
+      game.draw1();
       utility.drawD();
+    } else if (game.state == 2) { // draw the shop screen
+      // draw the menu
+      utility.drawM();
+    } else if (game.state == 3) { // draw the prestige screen
+
+    } else { // draw the third menu screen
+
     }
-    // draw golden cookie
-    if (goldCookie.gold && !utility.upgrading) {
-      goldCookie.draw(goldCookie.rX, 0, goldCookie.rY, 0, goldCookie.rR, 0, 3, 0);
-      goldCookie.goldCount--;
-    };
     // loop
     requestAnimationFrame(game.loop);
   };
@@ -127,106 +179,132 @@ class InputHandler {
     this.dX = 0;
     this.lastClick = 0;
     document.addEventListener("click", (e) => {
-      // check if in the cookie
-      if ((Math.pow(e.x - cookie.x, 2) + Math.pow(e.y - cookie.y, 2)) < Math.pow(cookie.r + cookie.pulseCount, 2)) {
-        // note the time
-        this.lastClick = utility.time;
-        // check if click count should increase
-        if (utility.rolling && utility.clickCount < utility.maxClickCount) utility.clickCount++;
-        // if cookie should expand
-        if (cookie.r + cookie.pulseCount < cookie.r * 3) {
-          cookie.expand();
-          container.fill();
-        } else {
-          cookie.reset();
-          container.fill();
+      if (game.state == 0) {
+        if (e.x > 2 * game.frameW && e.x < (2 * game.frameW) + (4 * game.frameW) && e.y > game.height / 2 && e.y < (game.height / 2) + (1.5 * game.frameW)) {
+          game.state = 1;
+        } else if (e.x > 2 * game.frameW && e.x < (2 * game.frameW) + (4 * game.frameW) && e.y > game.height / 1.5 && e.y < (game.height / 1.5) + (1.5 * game.frameW)) {
+          window.history.go(-1);
+          console.log("test");
         };
-      };
-      // check if inside golden cookie
-      if ( goldCookie.gold && (Math.pow(e.x - goldCookie.rX, 2) + Math.pow(e.y - goldCookie.rY, 2)) < Math.pow(goldCookie.rR, 2) ) {
-        goldCookie.goldReset();
-      };
-      // check if money was clicked
-      if (!utility.upgrading) {
-        if (e.x < game.width && e.y < game.textSize)
-        utility.upgrading = true;
-      } else {
-        if (e.x < game.width && e.y < game.textSize) {
+      } else if (game.state == 1) {
+        // check if in the cookie
+        if ((Math.pow(e.x - cookie.x, 2) + Math.pow(e.y - cookie.y, 2)) < Math.pow(cookie.r + cookie.pulseCount, 2)) {
+          // note the time
+          this.lastClick = utility.time;
+          // check if click count should increase
+          if (utility.rolling && utility.clickCount < utility.maxClickCount) utility.clickCount++;
+          // if cookie should expand
+          if (cookie.r + cookie.pulseCount < cookie.r * 3) {
+            cookie.expand();
+            container.fill();
+          } else {
+            cookie.reset();
+            container.fill();
+          };
+        };
+        // check if inside golden cookie
+        if (goldCookie.gold && (Math.pow(e.x - goldCookie.rX, 2) + Math.pow(e.y - goldCookie.rY, 2)) < Math.pow(goldCookie.rR, 2)) {
+          goldCookie.goldReset();
+        };
+        // check if money was clicked
+          if (e.x > game.width / 3 && e.x < game.width - (game.width / 3) && e.y < 2 * game.textSize) {
+            game.state = 2;
+          };
+          if (e.x > game.width - (game.width / 3) && e.y < 2 * game.textSize) {
+            //game.state = 3;
+            console.log("prestige");
+          };
+          if (e.x < game.textSize && e.y < 2 * game.textSize) {
+            //game.state = 4;
+            console.log("third");
+          };
+        //check if jar is tapped
+        if (utility.level[9] > 0 && yDown > game.height - (3 * game.textSize) && xDown > game.width - (3 * game.textSize)) {
+          container.sell();
+        };
+      } else if (game.state == 2) {
+        if (e.x < game.width && e.y < 2 * game.textSize) {
           console.log("testing");
           utility.level = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         };
-        if (e.x < game.width && e.y > game.height - game.textSize)
-        utility.upgrading = false;
-      };
-      //check if jar is tapped
-      if (utility.level[9] > 0 && !utility.upgrading && yDown > game.height - (3 * game.textSize) && xDown > game.width - (3 * game.textSize)) {
-        container.sell();
-      };
-      // check if in upgrade button area
-      if (utility.upgrading && e.x > btn1.x && e.x < (btn1.x + btn1.size)) {
-        // check each button
-        // max level && can afford? && position
-        if (utility.level[0] < 500 && utility.cost[0] <= utility.money && e.y > btn1.y - input.dY && e.y < btn1.y + game.frameH - input.dY) {
-          console.log("1");
-          utility.upgrade(utility.cost[0], 0, "extraMoney");
-        };
-        if (utility.level[1] == 0 && utility.cost[1] <= utility.money && e.y > btn2.y - input.dY && e.y < btn2.y + game.frameH - input.dY) {
-          console.log("2");
-          utility.upgrade(utility.cost[1], 1, "explodable");
-        };
-        if (utility.level[2] < 100 && utility.cost[2] <= utility.money && e.y > btn3.y - input.dY && e.y < btn3.y + game.frameH - input.dY) {
-          console.log("3");
-          utility.upgrade(utility.cost[2], 2, "explodeBonus");
-        };
-        if (utility.level[3] == 0 && utility.cost[3] <= utility.money && e.y > btn4.y - input.dY && e.y < btn4.y + game.frameH - input.dY) {
-          console.log("4");
-          utility.upgrade(utility.cost[3], 3, "explodeMore");
-        };
-        if (utility.level[4] < 500 && utility.cost[4] <= utility.money && e.y > btn5.y - input.dY && e.y < btn5.y + game.frameH - input.dY) {
-          console.log("5");
-          utility.upgrade(utility.cost[4], 4, "rolling");
-        };
-        if (utility.level[5] < 500 && utility.cost[5] <= utility.money && e.y > btn6.y - input.dY && e.y < btn6.y + game.frameH - input.dY) {
-          console.log("6");
-          utility.upgrade(utility.cost[5], 5, "rollingDur");
-        };
-        if (utility.level[6] < 200 && utility.cost[6] <= utility.money && e.y > btn7.y - input.dY && e.y < btn7.y + game.frameH - input.dY) {
-          console.log("7");
-          utility.upgrade(utility.cost[6], 6, "rollingMax");
-        };
-        if (utility.level[7] < 99 && utility.cost[7] <= utility.money && e.y > btn8.y - input.dY && e.y < btn8.y + game.frameH - input.dY) {
-          console.log("8");
-          utility.upgrade(utility.cost[7], 7, "multiplier");
-        };
-        if (utility.level[8] == 0 && utility.cost[8] <= utility.money && e.y > btn9.y - input.dY && e.y < btn9.y + game.frameH - input.dY) {
-          console.log("9");
-          utility.upgrade(utility.cost[8], 8, "autoClick");
-        };
-        if (utility.level[9] < 5 && utility.cost[9] <= utility.money && e.y > btn10.y - input.dY && e.y < btn10.y + game.frameH - input.dY) {
-          console.log("10");
-          utility.upgrade(utility.cost[9], 9, "golden");
-        };
-        if (utility.level[9] > 0 && utility.level[10] < 50 && utility.cost[10] <= utility.money && e.y > btn11.y - input.dY && e.y < btn11.y + game.frameH - input.dY) {
-          console.log("11");
-          utility.upgrade(utility.cost[10], 10, "containerLvl");
-        };
-        if (utility.level[9] > 0 && utility.level[11] < 100 && utility.cost[11] <= utility.money && e.y > btn12.y - input.dY && e.y < btn12.y + game.frameH - input.dY) {
-          console.log("12");
-          utility.upgrade(utility.cost[11], 11, "containerCap");
-        };
-        if (utility.level[9] > 0 && utility.level[12] == 0 && utility.cost[12] <= utility.money && e.y > btn13.y - input.dY && e.y < btn13.y + game.frameH - input.dY) {
-          console.log("13");
-          utility.upgrade(utility.cost[12], 12, "containerWorth");
-        };
-        if (utility.level[9] > 0 && utility.level[13] == 0 && utility.cost[13] <= utility.money && e.y > btn14.y - input.dY && e.y < btn14.y + game.frameH - input.dY) {
-          console.log("14");
-          utility.upgrade(utility.cost[13], 13, "containerFill");
-        };
-        if (utility.level[9] > 0 && utility.level[14] == 0 && utility.cost[13] <= utility.money && e.y > btn15.y - input.dY && e.y < btn15.y + game.frameH - input.dY) {
-          console.log("15");
-          utility.upgrade(utility.cost[14], 14, "containerSell");
-        };
-      };
+          if (e.x < game.width && e.y > game.height - game.textSize) {
+            game.state = 1;
+          }
+          // check if in upgrade button area
+          if (e.x > btn1.x && e.x < (btn1.x + btn1.size)) {
+            // check each button
+            // max level && can afford? && position
+            if (utility.level[0] < 500 && utility.cost[0] <= utility.money && e.y > btn1.y - input.dY && e.y < btn1.y + game.frameH - input.dY) {
+              console.log("1");
+              utility.upgrade(utility.cost[0], 0, "extraMoney");
+            };
+            if (utility.level[1] == 0 && utility.cost[1] <= utility.money && e.y > btn2.y - input.dY && e.y < btn2.y + game.frameH - input.dY) {
+              console.log("2");
+              utility.upgrade(utility.cost[1], 1, "explodable");
+            };
+            if (utility.level[2] < 100 && utility.cost[2] <= utility.money && e.y > btn3.y - input.dY && e.y < btn3.y + game.frameH - input.dY) {
+              console.log("3");
+              utility.upgrade(utility.cost[2], 2, "explodeBonus");
+            };
+            if (utility.level[3] < 100 && utility.cost[3] <= utility.money && e.y > btn4.y - input.dY && e.y < btn4.y + game.frameH - input.dY) {
+              console.log("4");
+              utility.upgrade(utility.cost[3], 3, "explodeMore");
+            };
+            if (utility.level[4] == 0 && utility.cost[4] <= utility.money && e.y > btn5.y - input.dY && e.y < btn5.y + game.frameH - input.dY) {
+              console.log("5");
+              utility.upgrade(utility.cost[4], 4, "rolling");
+            };
+            if (utility.level[5] < 50 && utility.cost[5] <= utility.money && e.y > btn6.y - input.dY && e.y < btn6.y + game.frameH - input.dY) {
+              console.log("6");
+              utility.upgrade(utility.cost[5], 5, "rollingDur");
+            };
+            if (utility.level[6] < 200 && utility.cost[6] <= utility.money && e.y > btn7.y - input.dY && e.y < btn7.y + game.frameH - input.dY) {
+              console.log("7");
+              utility.upgrade(utility.cost[6], 6, "rollingMax");
+            };
+            if (utility.level[7] < 99 && utility.cost[7] <= utility.money && e.y > btn8.y - input.dY && e.y < btn8.y + game.frameH - input.dY) {
+              console.log("8");
+              utility.upgrade(utility.cost[7], 7, "multiplier");
+            };
+            if (utility.level[8] < 40 && utility.cost[8] <= utility.money && e.y > btn9.y - input.dY && e.y < btn9.y + game.frameH - input.dY) {
+              console.log("9");
+              console.log(utility.tapRate);
+              utility.upgrade(utility.cost[8], 8, "autoClick");
+            };
+            if (utility.level[9] == 0 && utility.cost[9] <= utility.money && e.y > btn10.y - input.dY && e.y < btn10.y + game.frameH - input.dY) {
+              console.log("10");
+              utility.upgrade(utility.cost[9], 9, "golden");
+            };
+            if (utility.level[10] < 5 && utility.cost[10] <= utility.money && e.y > btn11.y - input.dY && e.y < btn11.y + game.frameH - input.dY) {
+              console.log("11");
+              utility.upgrade(utility.cost[10], 10, "containerLvl");
+            };
+            if (utility.level[10] > 0 && utility.level[11] < 100 && utility.cost[11] <= utility.money && e.y > btn12.y - input.dY && e.y < btn12.y + game.frameH - input.dY) {
+              console.log("12");
+              utility.upgrade(utility.cost[11], 11, "containerCap");
+            };
+            if (utility.level[10] > 0 && utility.level[12] == 0 && utility.cost[12] <= utility.money && e.y > btn13.y - input.dY && e.y < btn13.y + game.frameH - input.dY) {
+              console.log("13");
+              utility.upgrade(utility.cost[12], 12, "containerWorth");
+            };
+            if (utility.level[10] > 0 && utility.level[13] == 0 && utility.cost[13] <= utility.money && e.y > btn14.y - input.dY && e.y < btn14.y + game.frameH - input.dY) {
+              console.log("14");
+              utility.upgrade(utility.cost[13], 13, "containerFill");
+            };
+            if (utility.level[10] > 0 && utility.level[14] == 0 && utility.cost[14] <= utility.money && e.y > btn15.y - input.dY && e.y < btn15.y + game.frameH - input.dY) {
+              console.log("15");
+              utility.upgrade(utility.cost[14], 14, "containerSell");
+            };
+            if (utility.level[15] == 0 && utility.cost[15] <= utility.money && e.y > btn16.y - input.dY && e.y < btn16.y + game.frameH - input.dY) {
+              console.log("16");
+              utility.upgrade(utility.cost[15], 15, "explodeFrenzy");
+            };
+          };
+      } else if (game.state == 3) {
+
+      } else {
+
+      }
     });
     document.addEventListener("touchstart", (e) => {
       const firstTouch = e.touches[0];
@@ -281,7 +359,6 @@ class Player {
     this.getMoney = parseInt(localStorage.getItem("playerMoney"));
     this.money = utility.money;
   };
-
   update() {
     // set up a save function
     localStorage.setItem("playerMoney", utility.money);
@@ -307,25 +384,21 @@ class Utility {
     }
     // get the stored upgrade values
     this.level = [];
-    this.getLevel = localStorage.getItem("playerUpgrades");
-    console.log(this.getLevel);
-    if (!Array.isArray(this.getLevel)) {
-      this.level = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    } else {
-      this.getLevel.split(",");
+    try {
+      this.getLevel = localStorage.getItem("playerUpgrades").split(",");
       console.log(this.getLevel);
       for (let i = 0; i < this.getLevel.length; i++) {
         this.level.push(parseInt(this.getLevel[i]));
       };
-    }
-
+    } catch {
+      this.level = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    };
     // set the price according to levels
-    this.costFactor = [1.5, 0, 2.35, ]
-    this.cost = [20, 500, 1000, 7500, 1000, 7500, 50000, 1000, 10000, 500, 1500, 5000, 10000, 100000];
+    this.costFactor = [1.5, 0, 2.35, 5, 0, 1.37, 10, 2.37, 3.33, 0, 15, 4, 5, 0, 0, 0];
+    this.cost = [20, 500, 1000, 7500, 1000, 7500, 50000, 1000, 10000, 500, 1500, 5000, 10000, 100000, 5000, 1000000];
 
     // testing purposes
-    this.cost = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
-    this.upgrading = false;
+    //this.cost = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 
     // 0 = increase money per click, 1 = cookie explodable
     // 2 = increase bonus money, 3 = less clicks to explode
@@ -334,7 +407,7 @@ class Utility {
     // 8 = auto click, 9 = unlock golden cookies
     // 10 = level up container, 11 = less cookies to fill container
     // 12 = increase container worth, 13 = auto clicks pack containers
-    // 14 = auto sell containers
+    // 14 = auto sell containers, 15 = unlock cookie explode frenzy
 
     this.event = null;
     this.occuring = 0;
@@ -348,7 +421,6 @@ class Utility {
     } else {
       this.explodable = false;
     };
-
     if (this.level[4] > 0) {
       this.rolling = true;
     } else {
@@ -356,9 +428,13 @@ class Utility {
     };
 
     this.rollTime = 1000;
-    this.goldable = false;
-    this.multiplier = 1;
-    if (this.level[7] > 0) {
+    if (this.level[9] > 0) {
+      this.goldable = true;
+    } else {
+      this.goldable = false;
+    };
+    this.multiplier = this.level[7];
+    if (this.level[8] > 0) {
       this.autoTap = true;
     } else {
       this.autoTap = false;
@@ -373,12 +449,12 @@ class Utility {
           ctxD.fillStyle = "green";
           ctxD.textAlign = "center";
           ctxD.font = (game.textSize / 2) + "px calibri";
-          ctxD.fillText("$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y + clickEffect[i].time + game.textSize);
+          ctxD.fillText("$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y + clickEffect[i].time);
         } else {
           ctxD.fillStyle = "red";
           ctxD.textAlign = "center";
           ctxD.font = game.textSize + "px calibri";
-          ctxD.fillText("-$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y + clickEffect[i].time + game.textSize);
+          ctxD.fillText("-$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y + clickEffect[i].time);
         }
         clickEffect[i].time -= clickEffect.length;
       } else {
@@ -387,10 +463,11 @@ class Utility {
     };
     // draw the money
     ctxD.fillStyle = "black";
-    ctxD.textAlign = "left";
+    ctxD.textAlign = "center";
     ctxD.textBaseline = "top";
     ctxD.font = game.textSize + "px calibri";
-    ctxD.fillText("$" + player.money, 10, 5);
+    ctxD.fillText("$" + player.money, game.width / 2, 5);
+    // draw the rolling multiplier
     if (this.rolling) {
       var txt = game.textSize;
       // bounding ellipse
@@ -399,9 +476,9 @@ class Utility {
       ctxD.beginPath();
       ctxD.ellipse(
         game.width - 100, // x
-        txt + 50, // y
-        txt / 2, // radius x
-        txt / 4, // radius y
+        2 * txt + 50, // y
+        txt / 1.5, // radius x
+        txt / 3, // radius y
         0, // rotation
         0, // start angle
         2 * Math.PI // end angle
@@ -416,9 +493,9 @@ class Utility {
         ctxD.beginPath();
         ctxD.ellipse(
           game.width - 100, // x
-          txt + 50, // y
-          ((this.time - input.lastClick) / this.rollTime) * (txt / 2) % (txt / 2), // radius x
-          txt / 4, // radius y
+          2 * txt + 50, // y
+          ((this.time - input.lastClick) / this.rollTime) * (txt / 1.5) % (txt / 1.5), // radius x
+          txt / 3, // radius y
           0, // rotation
           0, // start angle
           2 * Math.PI // end angle
@@ -432,16 +509,15 @@ class Utility {
       ctxD.strokeStyle = "darkgrey";
       ctxD.textAlign = "right";
       ctxD.textBaseline = "middle";
-      ctxD.font = (txt * 0.4) + "px calibri";
+      ctxD.font = (txt * 0.35) + "px calibri";
       ctxD.lineWidth = 10;
-      ctxD.strokeText("x" + this.clickCount, game.width - 100 + (txt / 4), txt + 51);
+      ctxD.strokeText("x" + this.clickCount, game.width - 100 + (txt / 4), 2 * txt + 51);
       ctxD.lineWidth = 5;
-      ctxD.fillText("x" + this.clickCount, game.width - 100 + (txt / 4), txt + 51);
+      ctxD.fillText("x" + this.clickCount, game.width - 100 + (txt / 4), 2 * txt + 51);
     };
   };
   drawM() {
     // draw the upgrade screen
-    if (utility.upgrading) {
       // background
       ctxD.fillStyle = "white";
       ctxD.strokeStyle = "black";
@@ -472,15 +548,15 @@ class Utility {
         btn4.drawText(utility.level[3], utility.convert(utility.cost[3]), 4, 4, "Decrease clicks to explode");
       } else {
         btn3.drawText(utility.level[2], utility.convert(utility.cost[2]), 3, 3, "Requires Exploding cookie");
-        btn4.drawText(utility.level[3], utility.convert(utility.cost[3]), 4, 4, "Requires Explodung cookie");
+        btn4.drawText(utility.level[3], utility.convert(utility.cost[3]), 4, 4, "Requires Exploding cookie");
       };
       btn5.drawText(utility.level[4], utility.convert(utility.cost[4]), 5, 5, "Rolling clicks bonus");
       if (utility.level[4] > 0) {
-        btn6.drawText(utility.level[4], utility.convert(utility.cost[4]), 6, 6, "Increase rolling click duration");
-        btn7.drawText(utility.level[5], utility.convert(utility.cost[5]), 7, 7, "Increase max rolling bonus");
+        btn6.drawText(utility.level[5], utility.convert(utility.cost[5]), 6, 6, "Increase rolling click duration");
+        btn7.drawText(utility.level[6], utility.convert(utility.cost[6]), 7, 7, "Increase max rolling bonus");
       } else {
-        btn6.drawText(utility.level[4], utility.convert(utility.cost[4]), 6, 6, "Requires Rolling clicks bonus");
-        btn7.drawText(utility.level[5], utility.convert(utility.cost[5]), 6, 6, "Requires Rolling clicks bonus");
+        btn6.drawText(utility.level[5], utility.convert(utility.cost[5]), 6, 6, "Requires Rolling clicks bonus");
+        btn7.drawText(utility.level[6], utility.convert(utility.cost[6]), 7, 7, "Requires Rolling clicks bonus");
       };
       btn8.drawText(utility.level[7], utility.convert(utility.cost[7]), 8, 8, "Overall multiplier");
       btn9.drawText(utility.level[8], utility.convert(utility.cost[8]), 9, 9, "Auto clicking cookie");
@@ -499,21 +575,33 @@ class Utility {
         btn15.drawText(utility.level[14], utility.convert(utility.cost[14]), 15, 15, "Requires Unlock containers");
       };
       btn16.drawText(utility.level[15], utility.convert(utility.cost[15]), 16, 16, "Unlock Explode Frenzy");
-      // money
+      // money area
       ctxD.fillStyle = "lightgrey";
-      ctxD.fillRect(0, 0, game.width, game.textSize);
+      ctxD.fillRect(0, 0, game.width, 2 * game.textSize);
+      ctxD.fillStyle = "black";
+      ctxD.textAlign = "center";
+      ctxD.textBaseline = "top";
+      ctxD.font = game.textSize / 1.5 + "px calibri";
+      ctxD.globalAlpha = 1;
+      ctxD.fillText("Shop", game.width / 2, game.textSize + 10);
+      ctxD.textAlign = "right";
+      ctxD.globalAlpha = 0.5;
+      ctxD.fillText("Prestige", game.width - 10, game.textSize + 10);
+      ctxD.textAlign = "left";
+      ctxD.fillText("Third", 10, game.textSize + 10);
+      ctxD.globalAlpha = 1;
+      // money
       ctxD.fillStyle = "black";
       ctxD.textAlign = "center";
       ctxD.textBaseline = "top";
       ctxD.font = game.textSize + "px calibri";
-      ctxD.fillText("$" + player.money, game.width / 2, 10);
-      ctxD.textAlign = "right";
+      ctxD.fillText("$" + player.money, game.width / 2, 5);
+      ctxD.textAlign = "center";
       ctxD.fillStyle = "lightgrey";
       ctxD.fillRect(0, game.height - game.textSize, game.width, game.textSize);
       ctxD.fillStyle = "black";
-      ctxD.fillText("Shop " + this.upArrow, game.width - 10, game.height - game.textSize);
+      ctxD.fillText("Close Shop", game.width / 2, game.height - game.textSize);
       ctxD.strokeRect(0, game.height - game.textSize, game.width, game.height);
-    };
   };
   explode() {
     cookie.exploding = true;
@@ -534,7 +622,7 @@ class Utility {
     if (cookie.r + cookie.pulseCount < cookie.r * 5) {
       cookie.pulseCount += cookie.pulse;
     } else {
-      console.log("click me please!");
+      // console.log("click me please!");
     }
   };
   upgrade(cost, reference, specific) {
@@ -570,7 +658,7 @@ class Utility {
       break;
       case "autoClick":
       this.autoTap = true;
-      if (utility.tapRate < 999) utility.tapRate += 50;
+      if (utility.tapRate < 1949) utility.tapRate += 50;
       break;
       case "golden":
       this.goldable = true;
@@ -591,6 +679,9 @@ class Utility {
       break;
       case "containerSell":
       container.selling = true;
+      break;
+      case "explodeFrenzy":
+      utility.frenzy = true;
       break;
     }
   };
@@ -659,30 +750,30 @@ class Utility {
       break;
       case "rollingDur":
       // more duration before expiry
-      clickEffect.push(new Effects(utility.convert(utility.cost[4]), game.width / 2, clickEffect.length, false));
-      utility.cost[4] = Math.floor(utility.cost[4] * 4);
+      clickEffect.push(new Effects(utility.convert(utility.cost[5]), game.width / 2, clickEffect.length, false));
+      utility.cost[5] = Math.floor(utility.cost[5] * 4);
       utility.event = null;
       break;
       case "rollingMax":
       // higher rolling count before stopping
-      clickEffect.push(new Effects(utility.convert(utility.cost[5]), game.width / 2, clickEffect.length, false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[6]), game.width / 2, clickEffect.length, false));
       utility.maxClickCount += 5;
-      utility.cost[5] = Math.floor(utility.cost[5] * 2.85);
+      utility.cost[6] = Math.floor(utility.cost[6] * 2.85);
       utility.event = null;
       break;
       case "multiplier":
-      clickEffect.push(new Effects(utility.convert(utility.cost[6]), game.width / 2, clickEffect.length, false));
-      utility.cost[6] = Math.floor(utility.cost[6] * 10);
+      clickEffect.push(new Effects(utility.convert(utility.cost[7]), game.width / 2, clickEffect.length, false));
+      utility.cost[7] = Math.floor(utility.cost[7] * 10);
       utility.event = null;
       break;
       case "autoClick":
-      clickEffect.push(new Effects(utility.convert(utility.cost[7]), game.width / 2, clickEffect.length, false));
-      utility.cost[7] = Math.floor(utility.cost[7] * 1.65);
+      clickEffect.push(new Effects(utility.convert(utility.cost[8]), game.width / 2, clickEffect.length, false));
+      utility.cost[8] = Math.floor(utility.cost[8] * 1.65);
       utility.event = null;
       break;
       case "golden":
-      clickEffect.push(new Effects(utility.convert(utility.cost[8]), game.width / 2, clickEffect.length, false));
-      utility.cost[8] = utility.checkMark;
+      clickEffect.push(new Effects(utility.convert(utility.cost[9]), game.width / 2, clickEffect.length, false));
+      utility.cost[9] = utility.checkMark;
       utility.event = null;
       break;
       case "goldCookie":
@@ -692,30 +783,36 @@ class Utility {
       case "sell":
       clickEffect.push(new Effects(utility.convert(container.worth), game.width / 2, clickEffect.length, true));
       utility.event = null;
+      console.log("test");
       break;
       case "containerLvl":
-      clickEffect.push(new Effects(utility.convert(utility.cost[9]), game.width / 2, clickEffect.length, false));
-      utility.cost[9] = Math.floor(utility.cost[9] * 10);
+      clickEffect.push(new Effects(utility.convert(utility.cost[10]), game.width / 2, clickEffect.length, false));
+      utility.cost[10] = Math.floor(utility.cost[10] * 10);
       utility.event = null;
       break;
       case "containerCap":
-      clickEffect.push(new Effects(utility.convert(utility.cost[10]), game.width / 2, clickEffect.length, false));
-      utility.cost[10] = Math.floor(utility.cost[10] * 6);
+      clickEffect.push(new Effects(utility.convert(utility.cost[11]), game.width / 2, clickEffect.length, false));
+      utility.cost[11] = Math.floor(utility.cost[11] * 6);
       utility.event = null;
       break;
       case "containerWorth":
-      clickEffect.push(new Effects(utility.convert(utility.cost[11]), game.width / 2, clickEffect.length, false));
-      utility.cost[11] = Math.floor(utility.cost[11] * 2.27);
+      clickEffect.push(new Effects(utility.convert(utility.cost[12]), game.width / 2, clickEffect.length, false));
+      utility.cost[12] = Math.floor(utility.cost[12] * 2.27);
       utility.event = null;
       break;
       case "containerFill":
-      clickEffect.push(new Effects(utility.convert(utility.cost[12]), game.width / 2, clickEffect.length, false));
-      utility.cost[12] = utility.checkMark;
+      clickEffect.push(new Effects(utility.convert(utility.cost[13]), game.width / 2, clickEffect.length, false));
+      utility.cost[13] = utility.checkMark;
       utility.event = null;
       break;
       case "containerSell":
-      clickEffect.push(new Effects(utility.convert(utility.cost[13]), game.width / 2, clickEffect.length, false));
-      utility.cost[13] = utility.checkMark;
+      clickEffect.push(new Effects(utility.convert(utility.cost[14]), game.width / 2, clickEffect.length, false));
+      utility.cost[14] = utility.checkMark;
+      utility.event = null;
+      break;
+      case "explodeFrenzy":
+      clickEffect.push(new Effects(utility.convert(utility.cost[15]), game.width / 2, clickEffect.length, false));
+      utility.cost[15] = utility.checkMark;
       utility.event = null;
       break;
     }
@@ -930,7 +1027,7 @@ class Effects {
   constructor(text, x, y, type) {
     this.text = text;
     this.x = x;
-    this.y = y;
+    this.y = y + (2 * game.textSize);
     this.type = type;
     this.time = game.height / 2;
   };
@@ -944,7 +1041,7 @@ class Button {
     this.column = column;
     this.row = row;
     this.x = game.frameW;
-    this.y = (1.2 * game.textSize * column) + (1.5 * game.textSize);
+    this.y = (1.2 * game.textSize * column) + (2.5 * game.textSize);
     this.xText = 10;
     this.yText = (1.2 * game.textSize * column) + (1.5 * game.textSize);
     this.xPrice = 2 * game.frameW;
@@ -986,16 +1083,16 @@ class Button {
     ctxD.textAlign = "left";
     ctxD.textBaseline = "top";
     ctxD.font = (game.textSize * 0.5) + "px calibri";
-    ctxD.fillText(level, this.xText, this.yText + (game.frameH / 6) - input.dY);
+    ctxD.fillText(level, this.xText, this.yText + (game.frameH / 6) - input.dY  + game.textSize);
     // the button price
     ctxD.fillStyle = "black";
     ctxD.textAlign = "left";
     ctxD.textBaseline = "top";
     ctxD.font = (game.textSize * 0.4) + "px calibri";
-    ctxD.fillText("$" + price, this.xPrice, this.yText - input.dY);
+    ctxD.fillText("$" + price, this.xPrice, this.yText - input.dY + game.textSize);
     // the button description
     ctxD.font = (game.textSize * 0.4) + "px calibri";
-    ctxD.fillText(description, this.xPrice, this.yText + (game.frameH / 2) - input.dY);
+    ctxD.fillText(description, this.xPrice, this.yText + (game.frameH / 2) - input.dY + game.textSize);
   };
   update() {
     if (btn1.y - input.dY > btn1.y) {
@@ -1041,6 +1138,6 @@ let btn16 = new Button(15, 2);
 let cookie = new Cookie;
 let goldCookie = new Cookie;
 let player = new Player;
-let container = new Container(0, 3, 0);
+let container = new Container(0, 3, utility.level[10]);
 
 game.loop();
