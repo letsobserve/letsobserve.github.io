@@ -499,11 +499,8 @@ class Utility {
       this.level = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
       console.log("didnt work");
     };
-    console.log(this.level);
-
     // testing purposes
     // this.cost = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
-
     this.event = null;
     this.occuring = 0;
     this.switch = false;
@@ -518,7 +515,6 @@ class Utility {
     } else {
       this.rolling = false;
     };
-
     this.rollTime = 1000;
     if (this.level[9] > 0) {
       this.goldable = true;
@@ -532,7 +528,7 @@ class Utility {
       this.autoTap = false;
     };
     this.tapRate = 0;
-    this.prestigeFor = Math.floor(Math.log10(this.money) - 1);
+    this.prestigeFor = Math.floor(Math.log(this.money) - 1);
   };
   drawD() {
     // draw the earned money
@@ -541,7 +537,7 @@ class Utility {
         if (clickEffect[i].type) {
           ctxD.fillStyle = "green";
           ctxD.textAlign = "center";
-          ctxD.font = game.textSize / 1.5 + "px calibri";
+          ctxD.font = (i * game.textSize / 5.5) + "px calibri";
           ctxD.fillText("$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y + clickEffect[i].time);
         } else {
           ctxD.fillStyle = "red";
@@ -697,6 +693,7 @@ class Utility {
       ctxD.strokeRect(0, game.height - game.textSize, game.width, game.height);
   };
   drawP() {
+
     ctxD.fillStyle = "black";
     ctxD.textAlign = "center";
     ctxD.textBaseline = "top";
@@ -952,6 +949,7 @@ class Utility {
     if (this.autoTap) this.autoClick();
     latestTime = Date.now();
     console.log(game.time.getTime() - lastPlayed);
+    console.log(this.prestigeFor);
   };
 };
 
@@ -1159,7 +1157,7 @@ class Effects {
     this.x = x;
     this.y = y + (2 * game.textSize);
     this.type = type;
-    this.time = game.height - (2 * game.textSize);
+    this.time = game.height - (4 * game.textSize);
   };
 
 };
