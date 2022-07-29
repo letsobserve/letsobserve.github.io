@@ -236,7 +236,7 @@ class InputHandler {
           container.sell();
         }; // player cookie screen
       } else if (game.state == 2) { // shop screen
-        if (e.x < game.width && e.y < 2 * game.textSize) {utility.level =[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];utility.money = 0}; // reset levels and money
+        //if (e.x < game.width && e.y < 2 * game.textSize) {utility.level =[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];utility.money = 0}; // reset levels and money
         // close the shop
           if (e.x < game.width && e.y > game.height - game.textSize) {
             game.state = 1;
