@@ -387,6 +387,7 @@ class InputHandler {
       };
     });
     document.addEventListener("touchmove", (e) => {
+      e.preventDefault();
       // set up touch variables
       if (!xDown || !yDown) {
         return;
