@@ -4,7 +4,7 @@
   touch-action: manipulation;
   position: absolute;
   box-sizing: border-box;
-  overscroll-behavior: none;
+  overscroll-behavior: contain;
 }
 #textureSheet {
   display: none;

@@ -13,7 +13,7 @@ let lastTime = 0;
 let now = new Date();
 let time = now.getTime();
 let expireTime = time + (365 * 24 * 60 * 60);
-let latestTime;
+let latestTime, then, elapsed;
 let clickEffect = [];
 let xDown = null;
 let yDown = null;
@@ -26,6 +26,7 @@ class Game {
     this.height = dimension[1];
     this.frameW = 120;
     this.frameH = 120;
+    this.FPS = 60;
     // state the game is
     // 0 = Start menu, 1 = Cookie screen, 2 = Shop, 3 = Prestige, 4 = add 3rd screen
     this.states = [0, 1, 2, 3, 4];
@@ -155,47 +156,57 @@ class Game {
     };
     if (utility.frenzyLeft > 0) {
       utility.frenzyLeft--;
-      console.log(utility.frenzyLeft);
     } else {
       utility.inFrenzy = false;
+    };
+    if (!utility.canFrenzy && utility.frenzyReset <= utility.frenzyResetMax) {
+      utility.frenzyReset++;
+    } else {
+      utility.canFrenzy = true;
+      utility.frenzyReset = 0;
     };
   };
   loop(now) {
     utility.time = new Date().getTime();
-    // clear canvas
-    ctxS.clearRect(0, 0, game.width, game.height);
-    ctxD.clearRect(0, 0, game.width, game.height);
-    // update the game parameter
-    game.update();
-    cookie.update();
-    container.update();
-    btn1.update();
-    player.update();
-    // auto click occasionally
-    if (!lastTime || now - lastTime >= (2000 - utility.tapRate)) {
-      lastTime = now;
-      utility.update();
-    };
-    if (game.state == 0) { // draw the start menu
-      game.draw0();
-    } else if (game.state == 1) { // draw the cookie screen
-      game.draw1();
-      // draw the cookie
-      cookie.draw(cookie.x, cookie.xV, cookie.y, cookie.yV, cookie.r, cookie.pulseCount, cookie.color(), 0);
-    } else if (game.state == 2) { // draw the shop screen
-      utility.drawD();
-      // draw the menu
-      utility.drawM();
-    } else if (game.state == 3) { // draw the prestige screen
-      utility.drawD();
-      game.draw2();
-      utility.drawP();
-    } else { // draw the third menu screen
-      utility.drawD();
-      game.draw3();
-      utility.drawT();
-    };
     // loop
+    now = Date.now();
+    elapsed = now - then;
+    if (elapsed > 1000 / game.FPS) {
+      then = now - (elapsed % (1000 / game.FPS));
+      // clear canvas
+      ctxS.clearRect(0, 0, game.width, game.height);
+      ctxD.clearRect(0, 0, game.width, game.height);
+      // update the game parameter
+      game.update();
+      cookie.update();
+      container.update();
+      btn1.update();
+      player.update();
+      // auto click occasionally
+      if (!lastTime || now - lastTime >= (2000 - utility.tapRate)) {
+        lastTime = now;
+        utility.update();
+      };
+      if (game.state == 0) { // draw the start menu
+        game.draw0();
+      } else if (game.state == 1) { // draw the cookie screen
+        game.draw1();
+        // draw the cookie
+        cookie.draw(cookie.x, cookie.xV, cookie.y, cookie.yV, cookie.r, cookie.pulseCount, cookie.color(), 0);
+      } else if (game.state == 2) { // draw the shop screen
+        utility.drawD();
+        // draw the menu
+        utility.drawM();
+      } else if (game.state == 3) { // draw the prestige screen
+        utility.drawD();
+        game.draw2();
+        utility.drawP();
+      } else { // draw the third menu screen
+        utility.drawD();
+        game.draw3();
+        utility.drawT();
+      };
+    };
     requestAnimationFrame(game.loop);
   };
 };
@@ -236,6 +247,7 @@ class InputHandler {
             //utility.canFrenzy = false;
             utility.frenzyLeft = utility.frenzyMax;
             utility.inFrenzy = true;
+            utility.canFrenzy = false;
           } else {
             return;
           }
@@ -533,6 +545,8 @@ class Utility {
     this.inFrenzy = false;
     this.frenzyMax = 120; // frenzy time in frame per second
     this.frenzyLeft = 0;
+    this.frenzyReset = 0;
+    this.frenzyResetMax = 10 * 60; // frenzy reset time in milliseconds
     this.prestigeFor = Math.floor(Math.log(this.money) - 1);
   };
   drawD() {
@@ -612,13 +626,21 @@ class Utility {
     };
     if (this.frenzy) { // draw the frenzy bar
       ctxD.fillStyle = "white";
-      ctxD.fillRect(10, 2 * game.textSize + 10, game.width - 2 * game.frameW, game.frameH); // base frenzy bar
+      if (this.canFrenzy) ctxD.fillStyle = "green";
+      ctxD.fillRect(10, 2 * game.textSize + 10, game.width - 2 * game.textSize, game.textSize); // base frenzy bar
       if (utility.inFrenzy) { // time left bar if in frenzy
         ctxD.fillStyle = "red";
-        ctxD.fillRect(10, 2 * game.textSize + 10, (utility.frenzyLeft / utility.frenzyMax) * (game.width - 2 * game.frameW), game.frameH);
+        ctxD.fillRect(10, 2 * game.textSize + 10, (utility.frenzyLeft / utility.frenzyMax) * (game.width - 2 * game.textSize), game.textSize);
+      } else {
+        ctxD.fillStyle = "red";
+        ctxD.globalAlpha = 0.5;
+        ctxD.fillRect(10, 2 * game.textSize + 10, (utility.frenzyReset / utility.frenzyResetMax) * (game.width - 2 * game.textSize), game.textSize);
+        ctxD.globalAlpha = 1;
       };
       ctxD.fillStyle = "black";
       ctxD.textBaseline = "top";
+      ctxD.textAlign = "center";
+      ctxD.font = game.textSize + "px calibri";
       ctxD.fillText("Frenzy", (game.width - 2 * game.frameW) / 2, 2 * game.textSize + 10);
     }
   };
@@ -976,7 +998,7 @@ class Cookie {
     this.expCookie = [];
     this.exploding = false;
     this.explode = 0;
-    this.explodeFor = 60;
+    this.explodeFor = 120;
     this.xV = 0;
     this.yV = 0;
     this.dX = Math.sin((Math.random() * (2 * Math.PI)));
@@ -1017,9 +1039,10 @@ class Cookie {
       utility.occuring = 100;
       cookie.pulseCount = cookie.pulse;
       utility.money += cookie.bonusWorth;
+      if (utility.inFrenzy) cookie.frenzy();
       utility.explode();
     } else {
-      utility.money += this.worth + 1;
+      utility.money += this.worth;
       utility.event = "click";
       utility.occuring = 100;
     };
@@ -1029,8 +1052,8 @@ class Cookie {
     this.expCookie.forEach(function(c) {
       which.draw(c.x + (c.r / 3), c.xV, c.y + (c.r / 3), c.yV, c.r / 2, c.pulseCount, color, 0);
       // move cookies in random direction
-      c.xV += c.dX * 20;
-      c.yV += c.dY * 20;
+      c.xV += c.dX * 30;
+      c.yV += c.dY * 30;
     });
     // turn off the explode
     if (this.explode > 0) {
@@ -1040,6 +1063,10 @@ class Cookie {
       this.exploding = false;
       this.expCookie = [];
     }
+  };
+  frenzy() {
+    utility.money += cookie.bonusWorth;
+    utility.explode();
   };
   goldReset() {
     cookie.reset();
@@ -1076,7 +1103,12 @@ class Cookie {
     this.bonusWorth = ((2 * this.worth) * (utility.level[2] + 2)) * utility.multiplier;
     this.goldWorth = Math.floor(((this.worth + 1) * 500) * utility.multiplier);
     // deflate the cookie
-    if (cookie.pulseCount > 0) cookie.pulseCount--;
+    if (cookie.pulseCount > 0) {
+      cookie.pulseCount--;
+      if (latestTime > input.lastClick + (1500)) {
+        cookie.pulseCount -= 2; // cookie deflates faster after 1.5 seconds
+      }
+    };
     // explode cookie
     if (cookie.exploding) {
       cookie.boom(cookie, 2);
@@ -1293,4 +1325,5 @@ let goldCookie = new Cookie;
 let player = new Player;
 let container = new Container(utility.level[10], 3, utility.level[10]);
 
+then = Date.now();
 game.loop();
