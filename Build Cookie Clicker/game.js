@@ -54,14 +54,14 @@ class Game {
       (2 * cookie.r), // drawn width
       (2 * cookie.r) // drawn height
     );
-    ctxS.fillStyle = "black"; // game volor title
+    ctxS.fillStyle = "black"; // game title color
     ctxS.textAlign = "center"; // game title alignment
     ctxS.textBaseline = "middle"; // game title alignment
     ctxS.font = "small-caps bolder " + 2 * this.textSize + "px calibri"; // game title
     ctxS.fillText("Cookie", game.width / 2 , 3 * game.textSize); // game title
     ctxS.fillText("Frenzy", game.width / 2, 5 * game.textSize); // game title
     ctxS.fillStyle = "white"; // play button color
-    ctxS.fillRect(2 * game.frameW, game.height / 2, game.width / 2, game.width / 1.5); // start play button
+    ctxS.fillRect((game.width / 2) - (game.width / 4), game.height / 2, game.width / 2, game.height / 4); // start play button
     //ctxS.fillRect(2 * game.frameW, game.height / 1.5, game.width / 2, 1.5 * game.frameH); // exit play button
     ctxS.fillStyle = "black";
     ctxS.textAlign = "middle";
@@ -260,7 +260,7 @@ class InputHandler {
           }
           // shop screen
           if (e.x > game.width / 3 && e.x < game.width - (game.width / 3) && e.y < 2 * game.textSize) {
-            game.state = 2;
+            game.state = 1;
           };
           // prestige screen
           if (e.x > game.width - (game.width / 3) && e.y < 2 * game.textSize) {
@@ -308,6 +308,8 @@ class InputHandler {
               utility.upgrade(utility.cost[10], 10, "containerLvl");
             };
             if (utility.level[10] > 0 && utility.level[11] < 100 && utility.cost[11] <= utility.money && e.y > btn12.y - input.dY && e.y < btn12.y + game.frameH - input.dY) {
+              console.log("checking");
+              if ((container.capacity - (utility.level[11] + 1)) > 5)
               utility.upgrade(utility.cost[11], 11, "containerCap");
             };
             if (utility.level[10] > 0 && utility.level[12] == 0 && utility.cost[12] <= utility.money && e.y > btn13.y - input.dY && e.y < btn13.y + game.frameH - input.dY) {
@@ -334,7 +336,7 @@ class InputHandler {
         };
         // prestige screen
         if (e.x > game.width - (game.width / 3) && e.y < 2 * game.textSize) {
-          game.state = 3;
+          game.state = 1;
         };
         // third screen
         if (e.x < game.textSize && e.y < 2 * game.textSize) {
@@ -355,7 +357,7 @@ class InputHandler {
         };
         // third screen
         if (e.x < game.textSize && e.y < 2 * game.textSize) {
-          game.state = 4;
+          game.state = 1;
         };
       }; // third screen
     });
@@ -483,7 +485,7 @@ class Utility {
     this.costFactor = [1.5, 1, 1.35, 1.5, 1, 1.37, 1.8, 1.7, 1.9, 1, 2, 1.3, 1.6, 1, 1, 1];
     // get the stored upgrade values
     this.level = [];
-    this.cost = [20, 500, 600, 900, 5000, 5500, 6200, 15000, 5000, 50000, 1500, 5000, 10000, 100000, 5000, 1];
+    this.cost = [20, 500, 600, 900, 5000, 5500, 6200, 15000, 5000, 50000, 1500, 5000, 10000, 100000, 5000, 100000];
     try { // get the player details
       this.getLevel = localStorage.getItem("playerUpgrades").split(",");
       this.getCosts = localStorage.getItem("upgradeCosts").split(",");
@@ -520,7 +522,7 @@ class Utility {
     } else {
       this.rolling = false;
     };
-    this.rollTime = 1000; // cookie rolling duration
+    this.rollTime = 1000 + (500 * this.level[5]); // cookie rolling duration
     if (this.level[9] > 0) { // gold cookie
       this.goldable = true;
     } else {
@@ -528,14 +530,14 @@ class Utility {
     };
 
     this.clickCount = 0; // current click count
-    this.maxClickCount = 25 + (this.level[6]); // max rolling click count
+    this.maxClickCount = 25 + (this.level[6] * 10); // max rolling click count
     this.multiplier = 1 + this.level[7];
     if (this.level[8] > 0) {
       this.autoTap = true;
     } else {
       this.autoTap = false;
     };
-    this.tapRate = 0;
+    this.tapRate = (50 * this.level[8]);
     if (this.level[15] > 0) { // cookie frenzy
       this.frenzy = true;
     } else {
@@ -547,7 +549,7 @@ class Utility {
     this.frenzyLeft = 0;
     this.frenzyReset = 0;
     this.frenzyResetMax = 10 * 60; // frenzy reset time in milliseconds
-    this.prestigeFor = Math.floor(Math.log(this.money) - 1);
+    this.prestigeFor = Math.floor((Math.log(this.money) - 1) / this.money);
   };
   drawD() {
 
@@ -725,13 +727,17 @@ class Utility {
       ctxD.font = game.textSize + "px calibri";
       ctxD.fillText("$" + player.money, game.width / 2, 5);
       ctxD.textAlign = "center";
-      ctxD.fillStyle = "lightgrey";
+      ctxD.fillStyle = "white";
       ctxD.fillRect(0, game.height - game.textSize, game.width, game.textSize);
+      ctxD.globalAlpha = 0.45;
+      ctxD.fillStyle = "red";
+      ctxD.fillRect(0, game.height - game.textSize, game.width, game.textSize);
+      ctxD.globalAlpha = 1;
       ctxD.fillStyle = "black";
       ctxD.fillText("Close Shop", game.width / 2, game.height - game.textSize);
       ctxD.strokeRect(0, game.height - game.textSize, game.width, game.height);
   };
-  drawP() {
+  drawP() { // draw the dynamic prestige screen
 
     ctxD.fillStyle = "black";
     ctxD.textAlign = "center";
@@ -740,8 +746,12 @@ class Utility {
     ctxD.fillText("$" + player.money, game.width / 2, 5); // money
     ctxD.lineWidth = 10;
     ctxD.textAlign = "center";
-    ctxD.fillStyle = "lightgrey";
-    ctxD.fillRect(0, game.height - game.textSize, game.width, game.textSize); // close bar
+    ctxD.fillStyle = "white";
+    ctxD.fillRect(0, game.height - game.textSize, game.width, game.textSize);
+    ctxD.globalAlpha = 0.45;
+    ctxD.fillStyle = "red";
+    ctxD.fillRect(0, game.height - game.textSize, game.width, game.textSize);
+    ctxD.globalAlpha = 1; // close bar
     ctxD.fillStyle = "black";
     ctxD.fillText("Close Prestige", game.width / 2, game.height - game.textSize); // close prestige text
     ctxD.strokeRect(0, game.height - game.textSize, game.width, game.height);
@@ -751,7 +761,7 @@ class Utility {
     ctxD.textBaseline = "middle";
     ctxD.font  = game.textSize / 2 + "px calibri";
     ctxD.fillText("Prestige for :", game.width / 2, (game.height / 2) - game.textSize); // prestige button text
-    ctxD.fillText("prestigers", game.width / 2, (game.height / 2) + game.textSize); // prestige units
+    ctxD.fillText("currency", game.width / 2, (game.height / 2) + game.textSize); // prestige units
     ctxD.font = game.textSize + "px calibri";
     ctxD.fillText(utility.prestigeFor, game.width / 2, game.height / 2); // prestige amount
   };
@@ -764,8 +774,12 @@ class Utility {
     ctxD.fillText("$" + player.money, game.width / 2, 5);
     ctxD.lineWidth = 10;
     ctxD.textAlign = "center";
-    ctxD.fillStyle = "lightgrey";
+    ctxD.fillStyle = "white";
     ctxD.fillRect(0, game.height - game.textSize, game.width, game.textSize);
+    ctxD.globalAlpha = 0.45;
+    ctxD.fillStyle = "red";
+    ctxD.fillRect(0, game.height - game.textSize, game.width, game.textSize);
+    ctxD.globalAlpha = 1;
     ctxD.fillStyle = "black";
     ctxD.fillText("Close Third", game.width / 2, game.height - game.textSize);
     ctxD.strokeRect(0, game.height - game.textSize, game.width, game.height);
@@ -828,9 +842,7 @@ class Utility {
       container.level++;
       break;
       case "containerCap":
-      if (container.capacity[container.level] > container.level) {
-        container.capacity[container.level] -= container.level;
-      };
+      container.sell();
       break;
       case "containerWorth":
       container.bonus += 5;
@@ -982,6 +994,8 @@ class Utility {
     // tap if auto click is on
     if (this.autoTap) this.autoClick();
     latestTime = Date.now();
+    this.prestigeFor = Math.floor((Math.log(this.money) - 1) / this.money); // update the value;
+    console.log(this.prestigeFor);
   };
 };
 
@@ -1135,9 +1149,10 @@ class Container {
     this.x = 20; // x position of container area
     this.y = game.height - game.frameH - 10; // y position of container area
     this.type = ["None", "Jar", "Box", "Basket", "Sack", "Pallet", "Container"];
-    this.capacity = [0, 18, 45, 80, 270, 4860, 97200];
-    this.bonus = 0;
-    this.worth = (2 * (this.capacity[this.level] + this.bonus)) * utility.multiplier;
+    this.reduceCap = utility.level[11];
+    this.capacity = (utility.level[10] * 15) - this.reduceCap;
+    this.bonus = (utility.level[12] * 5);
+    this.worth = (cookie.worth * (this.capacity + this.bonus)) * utility.multiplier;
     this.filled = 0;
     this.full = false;
     this.increasing = false;
@@ -1150,7 +1165,7 @@ class Container {
       ctxD.fillRect(this.x, this.y, game.width - 40, game.frameH);
       if (this.filled > 0) {
         ctxD.fillStyle = "green";
-        ctxD.fillRect(this.x, this.y,(this.filled / this.capacity[this.level]) * game.width - 40 , game.frameH);
+        ctxD.fillRect(this.x, this.y, (this.filled / this.capacity) * game.width - 40 , game.frameH);
       }
     };
     ctxD.drawImage( // the container image
@@ -1175,11 +1190,11 @@ class Container {
     ctxD.fillText(this.type[this.level], this.x + 10, this.y + (game.frameH / 2));
     // draw the capacity of the container
     ctxD.textAlign = "right";
-    ctxD.strokeText(this.filled + "/" + this.capacity[this.level], game.width - 30, this.y + (game.frameH / 2));
-    ctxD.fillText(this.filled + "/" + this.capacity[this.level], game.width - 30, this.y + (game.frameH / 2));
+    ctxD.strokeText(this.filled + "/" + this.capacity, game.width - 30, this.y + (game.frameH / 2));
+    ctxD.fillText(this.filled + "/" + this.capacity, game.width - 30, this.y + (game.frameH / 2));
   };
   fill() {
-    if (this.filled < this.capacity[this.level]) {
+    if (this.filled < this.capacity) {
       this.filled++;
     }
   };
@@ -1190,16 +1205,16 @@ class Container {
       utility.money += this.worth;
       this.filled = 0;
       this.full = false;
-    } else {
-      if (this.filled > 0) this.filled--;
-    }
+    };
   };
   update() {
     this.level = utility.level[10];
-    this.worth = this.capacity[this.level] * utility.multiplier;
-    if (this.filled < this.capacity[this.level]) {
-
-    } else {
+    this.column = this.level;
+    this.reduceCap = utility.level[11];
+    this.capacity = (utility.level[10] * 15) - this.reduceCap;
+    this.bonus = (utility.level[12] * 5);
+    this.worth = (cookie.worth * (this.capacity + this.bonus)) * utility.multiplier;
+    if (this.filled == this.capacity) {
       this.full = true;
     };
     if (utility.level[14] > 0) {
