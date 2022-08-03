@@ -30,7 +30,7 @@ class Game {
     // state the game is
     // 0 = Start menu, 1 = Cookie screen, 2 = Shop, 3 = Prestige, 4 = add 3rd screen
     this.states = [0, 1, 2, 3, 4];
-    this.state = 0;
+    this.state = 1;
     if (this.width > this.height) {
       this.textSize = this.frameW / 2;
     } else {
@@ -61,14 +61,14 @@ class Game {
     ctxS.fillText("Cookie", game.width / 2 , 3 * game.textSize); // game title
     ctxS.fillText("Frenzy", game.width / 2, 5 * game.textSize); // game title
     ctxS.fillStyle = "white"; // play button color
-    ctxS.fillRect((game.width / 2) - (game.width / 4), game.height / 2, game.width / 2, game.height / 4); // start play button
+    ctxS.fillRect((game.width / 2) - (game.width / 4), game.height / 2, game.width / 2, 4 * game.textSize); // start play button
     //ctxS.fillRect(2 * game.frameW, game.height / 1.5, game.width / 2, 1.5 * game.frameH); // exit play button
     ctxS.fillStyle = "black";
     ctxS.textAlign = "middle";
     ctxS.textBaseline = "top";
     ctxS.font = this.textSize + "px calibri";
     ctxS.fillText("Play", game.width / 2, game.height / 1.95);
-    ctxS.fillText("Exit", game.width / 2, game.height / 1.46);
+    ctxS.fillText("Exit", game.width / 2, (game.height / 1.95) + 2 * game.textSize);
   };
   draw1() { // player cookie screen
     // background
@@ -104,7 +104,7 @@ class Game {
     ctxS.fillStyle = "hsl(195, 50%, 70%)";
     ctxS.fillRect(0, 0, this.width, this.height);
     // money area
-    ctxS.fillStyle = "white";
+    ctxS.fillStyle = "lightgrey";
     ctxS.strokeStyle = "black";
     ctxS.lineWidth = 10;
     ctxS.fillRect(0, 0, this.width, 2 * this.textSize);
@@ -114,18 +114,18 @@ class Game {
     ctxS.font = this.textSize / 1.5 + "px calibri";
     ctxS.globalAlpha = 0.5;
     ctxS.fillText("Shop", this.width / 2, game.textSize + 10);
-    ctxS.textAlign = "right";
-    ctxS.fillText("Prestige", this.width - 10, game.textSize + 10);
     ctxS.textAlign = "left";
     ctxS.fillText("Third", 10, game.textSize + 10);
     ctxS.globalAlpha = 1;
+    ctxS.textAlign = "right";
+    ctxS.fillText("Prestige", this.width - 10, game.textSize + 10);
   };
   draw3() { // third screen
     // background
     ctxS.fillStyle = "hsl(195, 50%, 70%)";
     ctxS.fillRect(0, 0, this.width, this.height);
     // money area
-    ctxS.fillStyle = "white";
+    ctxS.fillStyle = "lightgrey";
     ctxS.strokeStyle = "black";
     ctxS.lineWidth = 10;
     ctxS.fillRect(0, 0, this.width, 2 * this.textSize);
@@ -137,10 +137,10 @@ class Game {
     ctxS.fillText("Shop", this.width / 2, game.textSize + 10);
     ctxS.textAlign = "right";
     ctxS.fillText("Prestige", this.width - 10, game.textSize + 10);
+    ctxS.globalAlpha = 1;
     ctxS.textAlign = "left";
     ctxS.fillText("Third", 10, game.textSize + 10);
-    ctxS.globalAlpha = 1;
-  }
+  };
   update() {
     // count time between clicks
     if ((utility.time - input.lastClick) > utility.rollTime) {
@@ -180,7 +180,6 @@ class Game {
       game.update();
       cookie.update();
       container.update();
-      btn1.update();
       player.update();
       // auto click occasionally
       if (!lastTime || now - lastTime >= (2000 - utility.tapRate)) {
@@ -194,6 +193,7 @@ class Game {
         // draw the cookie
         cookie.draw(cookie.x, cookie.xV, cookie.y, cookie.yV, cookie.r, cookie.pulseCount, cookie.color(), 0);
       } else if (game.state == 2) { // draw the shop screen
+        btn1.update();
         utility.drawD();
         // draw the menu
         utility.drawM();
@@ -244,7 +244,6 @@ class InputHandler {
         (10, 2 * game.textSize + 10, game.width - 2 * game.frameW, game.frameH)
         if (utility.level[15] > 0 && yDown > 2 * game.textSize + 10 && yDown < 2 * game.textSize + 10 + game.frameH && xDown > 10 && xDown < game.width - 2 * game.frameW) {
           if (utility.canFrenzy) {
-            //utility.canFrenzy = false;
             utility.frenzyLeft = utility.frenzyMax;
             utility.inFrenzy = true;
             utility.canFrenzy = false;
@@ -253,7 +252,7 @@ class InputHandler {
           }
         };
       } else if (game.state == 2) { // shop screen
-        //if (e.x < game.width && e.y < 2 * game.textSize) {utility.level =[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];utility.money = 0}; // reset levels and money
+          //if (e.x < game.width && e.y < 2 * game.textSize) {utility.level =[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];utility.money = 0;utility.earned=0}; // reset levels and money
         // close the shop
           if (e.x < game.width && e.y > game.height - game.textSize) {
             game.state = 1;
@@ -283,7 +282,7 @@ class InputHandler {
             if (utility.level[2] < 100 && utility.cost[2] <= utility.money && e.y > btn3.y - input.dY && e.y < btn3.y + game.frameH - input.dY) {
               utility.upgrade(utility.cost[2], 2, "explodeBonus");
             };
-            if (utility.level[3] < 100 && utility.cost[3] <= utility.money && e.y > btn4.y - input.dY && e.y < btn4.y + game.frameH - input.dY) {
+            if (utility.level[3] < 20 && utility.cost[3] <= utility.money && e.y > btn4.y - input.dY && e.y < btn4.y + game.frameH - input.dY) {
               utility.upgrade(utility.cost[3], 3, "explodeMore");
             };
             if (utility.level[4] == 0 && utility.cost[4] <= utility.money && e.y > btn5.y - input.dY && e.y < btn5.y + game.frameH - input.dY) {
@@ -308,11 +307,10 @@ class InputHandler {
               utility.upgrade(utility.cost[10], 10, "containerLvl");
             };
             if (utility.level[10] > 0 && utility.level[11] < 100 && utility.cost[11] <= utility.money && e.y > btn12.y - input.dY && e.y < btn12.y + game.frameH - input.dY) {
-              console.log("checking");
               if ((container.capacity - (utility.level[11] + 1)) > 5)
               utility.upgrade(utility.cost[11], 11, "containerCap");
             };
-            if (utility.level[10] > 0 && utility.level[12] == 0 && utility.cost[12] <= utility.money && e.y > btn13.y - input.dY && e.y < btn13.y + game.frameH - input.dY) {
+            if (utility.level[10] > 0 && utility.level[12] < 100 && utility.cost[12] <= utility.money && e.y > btn13.y - input.dY && e.y < btn13.y + game.frameH - input.dY) {
               utility.upgrade(utility.cost[12], 12, "containerWorth");
             };
             if (utility.level[10] > 0 && utility.level[13] == 0 && utility.cost[13] <= utility.money && e.y > btn14.y - input.dY && e.y < btn14.y + game.frameH - input.dY) {
@@ -341,7 +339,10 @@ class InputHandler {
         // third screen
         if (e.x < game.textSize && e.y < 2 * game.textSize) {
           game.state = 4;
-        }; // prestige screen
+        };
+        if (e.x > game.width / 4 && e.x < ((3 * game.width) / 4) && e.y > game.height / 2 - (3 * game.frameH / 2) && e.y < game.height / 2 + (3 * game.frameH / 2)) { // click on prestige button
+          utility.prestigeConfirm = true;
+        }
       } else { // third screen
         // close the third screen
           if (e.x < game.width && e.y > game.height - game.textSize) {
@@ -359,7 +360,7 @@ class InputHandler {
         if (e.x < game.textSize && e.y < 2 * game.textSize) {
           game.state = 1;
         };
-      }; // third screen
+      };
     });
     document.addEventListener("touchstart", (e) => {
       e.preventDefault();
@@ -379,7 +380,7 @@ class InputHandler {
             // check if frenzy time should increase
             if (utility.inFrenzy) {
               if (utility.frenzyLeft < utility.frenzyMax - 5) {
-                utility.frenzyLeft += 4;
+                utility.frenzyLeft += 10;
               } else if (utility.frenzyLeft < utility.frenzyMax) {
                 utility.frenzyLeft++;
               };
@@ -449,6 +450,7 @@ class Player {
   update() {
     // set up a save function
     localStorage.setItem("playerMoney", utility.money);
+    localStorage.setItem("playerMoneyEarned", utility.earned);
     localStorage.setItem("playerUpgrades", utility.level);
     localStorage.setItem("upgradeCosts", utility.cost);
     localStorage.setItem("playerLatestTime", latestTime);
@@ -480,12 +482,16 @@ class Utility {
     this.money = parseInt(localStorage.getItem("playerMoney"));
     if (!Number.isInteger(this.money)) {
       this.money = 0;
-    }
+    };
+    this.earned = parseInt(localStorage.getItem("playerMoneyEarned"));
+    if (!Number.isInteger(this.earned)) {
+      this.earned = 0;
+    };
     // set the price according to levels
-    this.costFactor = [1.5, 1, 1.35, 1.5, 1, 1.37, 1.8, 1.7, 1.9, 1, 2, 1.3, 1.6, 1, 1, 1];
+    this.costFactor = [1.5, 1, 1.35, 1.5, 1, 1.37, 5, 1.7, 1.9, 1, 2, 1.3, 1.6, 1, 1, 1];
     // get the stored upgrade values
     this.level = [];
-    this.cost = [20, 500, 600, 900, 5000, 5500, 6200, 15000, 5000, 50000, 1500, 5000, 10000, 100000, 5000, 100000];
+    this.cost = [20, 250, 600, 900, 5000, 5500, 6200, 15000, 5000, 50000, 1500, 5000, 10000, 100000, 5000, 100000];
     try { // get the player details
       this.getLevel = localStorage.getItem("playerUpgrades").split(",");
       this.getCosts = localStorage.getItem("upgradeCosts").split(",");
@@ -530,7 +536,7 @@ class Utility {
     };
 
     this.clickCount = 0; // current click count
-    this.maxClickCount = 25 + (this.level[6] * 10); // max rolling click count
+    this.maxClickCount = 5 + (this.level[6] * 5); // max rolling click count
     this.multiplier = 1 + this.level[7];
     if (this.level[8] > 0) {
       this.autoTap = true;
@@ -549,9 +555,9 @@ class Utility {
     this.frenzyLeft = 0;
     this.frenzyReset = 0;
     this.frenzyResetMax = 10 * 60; // frenzy reset time in milliseconds
-    this.prestigeFor = Math.floor((Math.log(this.money) - 1) / this.money);
+    this.prestigeFor = Math.floor((this.earned % 1000000000000000) / (this.earned + 1));
   };
-  drawD() {
+  drawD() { // draw the dynamic cookie screen
 
     // draw the earned money
     for (let i = 0; i < clickEffect.length; i++) {
@@ -646,8 +652,8 @@ class Utility {
       ctxD.fillText("Frenzy", (game.width - 2 * game.frameW) / 2, 2 * game.textSize + 10);
     }
   };
-  drawM() {
-    // draw the upgrade screen
+  drawM() { // draw the dynamic upgrade screen
+
       // background
       ctxD.fillStyle = "white";
       ctxD.strokeStyle = "black";
@@ -738,13 +744,17 @@ class Utility {
       ctxD.strokeRect(0, game.height - game.textSize, game.width, game.height);
   };
   drawP() { // draw the dynamic prestige screen
-
+    // background
+    ctxD.fillStyle = "hsl(195, 50%, 70%)";
+    ctxD.fillRect(0, 2 * game.textSize, game.width, game.height);
     ctxD.fillStyle = "black";
     ctxD.textAlign = "center";
     ctxD.textBaseline = "top";
     ctxD.font = game.textSize + "px calibri";
     ctxD.fillText("$" + player.money, game.width / 2, 5); // money
     ctxD.lineWidth = 10;
+    ctxD.fillText("Total Earnings", game.width / 2, 2.5 * game.textSize);
+    ctxD.fillText("$" + utility.convert(utility.earned), game.width / 2, 4 * game.textSize);
     ctxD.textAlign = "center";
     ctxD.fillStyle = "white";
     ctxD.fillRect(0, game.height - game.textSize, game.width, game.textSize);
@@ -753,6 +763,7 @@ class Utility {
     ctxD.fillRect(0, game.height - game.textSize, game.width, game.textSize);
     ctxD.globalAlpha = 1; // close bar
     ctxD.fillStyle = "black";
+    ctxD.strokeStyle = "black";
     ctxD.fillText("Close Prestige", game.width / 2, game.height - game.textSize); // close prestige text
     ctxD.strokeRect(0, game.height - game.textSize, game.width, game.height);
     ctxD.fillStyle = "white";
@@ -765,7 +776,10 @@ class Utility {
     ctxD.font = game.textSize + "px calibri";
     ctxD.fillText(utility.prestigeFor, game.width / 2, game.height / 2); // prestige amount
   };
-  drawT() {
+  drawT() { // draw the dynamic third screen
+    // background
+    ctxD.fillStyle = "hsl(195, 50%, 70%)";
+    ctxD.fillRect(0, 2 * game.textSize, game.width, game.height);
     // money
     ctxD.fillStyle = "black";
     ctxD.textAlign = "center";
@@ -781,6 +795,7 @@ class Utility {
     ctxD.fillRect(0, game.height - game.textSize, game.width, game.textSize);
     ctxD.globalAlpha = 1;
     ctxD.fillStyle = "black";
+    ctxD.strokeStyle = "black";
     ctxD.fillText("Close Third", game.width / 2, game.height - game.textSize);
     ctxD.strokeRect(0, game.height - game.textSize, game.width, game.height);
   };
@@ -889,7 +904,6 @@ class Utility {
   events() {
     switch (utility.event) {
       case "click":
-
       clickEffect.push(new Effects(utility.convert(cookie.worth), this.alternate(), clickEffect.length, true));
       utility.event = null;
       break;
@@ -988,13 +1002,17 @@ class Utility {
       utility.cost[15] = utility.checkMark;
       utility.event = null;
       break;
+      case "frenzy":
+      clickEffect.push(new Effects(utility.convert(5 * cookie.bonusWorth), game.width / 2, clickEffect.length, true));
+      utility.event = null;
+      break;
     }
   };
   update() {
     // tap if auto click is on
     if (this.autoTap) this.autoClick();
     latestTime = Date.now();
-    this.prestigeFor = Math.floor((Math.log(this.money) - 1) / this.money); // update the value;
+    this.prestigeFor = Math.floor((this.earned % 1000000000000000) / (this.earned + 1)); // update the value;
     console.log(this.prestigeFor);
   };
 };
@@ -1044,6 +1062,7 @@ class Cookie {
   expand() {
     cookie.pulseCount += cookie.pulse;
     utility.money += cookie.worth;
+    utility.earned += cookie.worth;
     utility.event = "click";
     utility.occuring = 100;
   };
@@ -1053,10 +1072,14 @@ class Cookie {
       utility.occuring = 100;
       cookie.pulseCount = cookie.pulse;
       utility.money += cookie.bonusWorth;
-      if (utility.inFrenzy) cookie.frenzy();
+      utility.earned += cookie.bonusWorth;
       utility.explode();
+      if (utility.inFrenzy) {
+        cookie.frenzy();
+      };
     } else {
-      utility.money += this.worth;
+      utility.money += cookie.worth;
+      utility.earned += cookie.worth;
       utility.event = "click";
       utility.occuring = 100;
     };
@@ -1079,12 +1102,15 @@ class Cookie {
     }
   };
   frenzy() {
-    utility.money += cookie.bonusWorth;
-    utility.explode();
+    utility.event = "frenzy";
+    utility.occuring = 100;
+    utility.money += 5 * cookie.bonusWorth;
+    utility.earned += 5 * cookie.bonusWorth;
   };
   goldReset() {
     cookie.reset();
     utility.money += this.goldWorth;
+    utility.earned += this.goldWorth;
     utility.event = "goldCookie";
     utility.occuring = 100;
     goldCookie.gold = false;
@@ -1202,7 +1228,8 @@ class Container {
     if (this.full) {
       utility.event = "sell";
       utility.occuring = 100;
-      utility.money += this.worth;
+      utility.money += this.worth + this.bonus;
+      utility.earned += this.worth + this.bonus;
       this.filled = 0;
       this.full = false;
     };
@@ -1319,22 +1346,22 @@ class Button {
 let game = new Game;
 let input = new InputHandler;
 let utility = new Utility;
-let btn1 = new Button(0, 2);
-let btn2 = new Button(1, 2);
-let btn3 = new Button(2, 2);
-let btn4 = new Button(3, 2);
-let btn5 = new Button(4, 2);
-let btn6 = new Button(5, 2);
-let btn7 = new Button(6, 2);
-let btn8 = new Button(7, 2);
-let btn9 = new Button(8, 2);
-let btn10 = new Button(9, 2);
-let btn11 = new Button(10, 2);
-let btn12 = new Button(11, 2);
-let btn13 = new Button(12, 2);
-let btn14 = new Button(13, 2);
-let btn15 = new Button(14, 2);
-let btn16 = new Button(15, 2);
+let btn1 = new Button(0, 2); // cookie money
+let btn2 = new Button(1, 2); // explode cookie
+let btn3 = new Button(2, 2); // explode bonus
+let btn4 = new Button(3, 2); // clicks to explode
+let btn5 = new Button(4, 2); // rolling bonus
+let btn6 = new Button(5, 2); // increase rolling time
+let btn7 = new Button(6, 2); // increase max rolling bonus
+let btn8 = new Button(7, 2); // earnings multiplier
+let btn9 = new Button(8, 2); // auto click
+let btn10 = new Button(9, 2); // golden cookie
+let btn11 = new Button(10, 2); // container level
+let btn12 = new Button(11, 2); // smaller containers
+let btn13 = new Button(12, 2); // increase container worth
+let btn14 = new Button(13, 2); // auto click container
+let btn15 = new Button(14, 2); // auto sell container
+let btn16 = new Button(15, 2); // explode frenzy
 let cookie = new Cookie;
 let goldCookie = new Cookie;
 let player = new Player;
