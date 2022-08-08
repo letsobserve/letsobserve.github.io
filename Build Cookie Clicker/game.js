@@ -29,12 +29,17 @@ class Game {
     this.FPS = 60;
     // state the game is
     // 0 = Start menu, 1 = Cookie screen, 2 = Shop, 3 = Prestige, 4 = add 3rd screen
-    this.states = [0, 1, 2, 3, 4];
-    this.state = 1;
-    if (this.width > this.height) {
-      this.textSize = this.frameW / 2;
-    } else {
-      this.textSize = this.frameW;
+    this.states = [0, 1, 2, 3, 4]; // states the game can be in
+    this.state = 1;console.log("skip start screen");
+    if (this.width > this.height) { // width is greater
+      this.textSize = this.frameW / 3;
+    } else { // height is greater
+      if (this.height > 600) { // height more than 600
+        this.textSize = this.frameW;
+      } else { // height less than 600
+        this.textSize = this.frameW / 2;
+      }
+
     };
     this.time = new Date();
   };
@@ -270,7 +275,7 @@ class InputHandler {
             game.state = 4;
           };
           // check if in upgrade button area
-          if (e.x > btn1.x && e.x < (btn1.x + btn1.size)) {
+          if (e.x > btn1.x && e.x < game.width - (2 * game.frameW)) {
             // check each button
             // max level && can afford? && position
             if (utility.level[0] < 500 && utility.cost[0] <= utility.money && e.y > btn1.y - input.dY && e.y < btn1.y + game.frameH - input.dY) {
@@ -458,7 +463,7 @@ class Player {
     // convert money to 6 sig. fig.
     this.money = utility.money;
     if (this.money > 1000000) {
-      this.money = this.money.toExponential(3);
+      this.money = utility.convert(utility.money);
     };
   };
 };
@@ -565,13 +570,13 @@ class Utility {
         if (clickEffect[i].type) {
           ctxD.fillStyle = "green";
           ctxD.textAlign = "center";
-          ctxD.font = ((i * game.textSize) / 10) + "px calibri";
-          ctxD.fillText("$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y + clickEffect[i].time);
+          ctxD.font = i * (game.textSize / 10) + "px calibri";
+          ctxD.fillText("$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y - clickEffect[i].time);
         } else {
           ctxD.fillStyle = "red";
           ctxD.textAlign = "center";
           ctxD.font = game.textSize + "px calibri";
-          ctxD.fillText("-$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y + clickEffect[i].time);
+          ctxD.fillText("-$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y - clickEffect[i].time);
         }
         clickEffect[i].time -= clickEffect.length;
       } else {
@@ -700,9 +705,9 @@ class Utility {
       if (utility.level[10] > 0) {
         btn11.drawText(utility.level[10], utility.convert(utility.cost[10]), 11, 11, "Increase container level");
         btn12.drawText(utility.level[11], utility.convert(utility.cost[11]), 12, 12, "Decrease size of container");
-        btn13.drawText(utility.level[12], utility.convert(utility.cost[12]), 13, 13, "Increase the sell price of containers");
-        btn14.drawText(utility.level[13], utility.convert(utility.cost[13]), 14, 14, "Auto clicks now fill up containers");
-        btn15.drawText(utility.level[14], utility.convert(utility.cost[14]), 15, 15, "Auto sells your full containers");
+        btn13.drawText(utility.level[12], utility.convert(utility.cost[12]), 13, 13, "Increase container sell price");
+        btn14.drawText(utility.level[13], utility.convert(utility.cost[13]), 14, 14, "Auto clicks fill up containers");
+        btn15.drawText(utility.level[14], utility.convert(utility.cost[14]), 15, 15, "Auto sells full containers");
       } else {
         btn11.drawText(utility.level[10], utility.convert(utility.cost[10]), 11, 11, "Unlock containers");
         btn12.drawText(utility.level[11], utility.convert(utility.cost[11]), 12, 12, "Requires Unlock containers");
@@ -877,20 +882,67 @@ class Utility {
   alternate() {
     var choice = [];
     if (this.switch) {
-      choice.push(game.width - (game.textSize));
+      choice.push(game.width - (1.5 * game.textSize));
     } else {
-      choice.push(game.textSize);
+      choice.push(1.5 * game.textSize);
     }
     this.switch = !this.switch;
     return choice;
   };
-  // number converter
-  convert(number) {
-    if (number > 100000) {
-      return number.toExponential(3);
+  units() {
+    return [
+      "Million",
+      "Billion",
+      "Trillion",
+      "Quadrillion",
+      "Quintillion",
+      "Sextillion",
+      "Septillion",
+      "Octillion",
+      "Nonillion",
+      "Decillion",
+      "Undecillion",
+      "Duodecillion",
+      "Tredecillion",
+      "Quattuordecillion",
+      "Quindecillion",
+      "Sexdecillion",
+      "Septdecillion",
+      "Octodecillion",
+      "Novemdecillion",
+      "Vigintillion",
+      "Unvigintillion",
+      "Duovigintillion",
+      "Trevigintillion",
+      "Quattuorvigintillion",
+      "Quinvigintillion",
+      "Sexvigintillion",
+      "Septvigintillion",
+      "Octovigintillion",
+      "Novemvigintillion",
+      "Trigintillion"
+    ];
+  };
+  convert(number) { // number converter
+    if (number > 10000000) {
+      var arr = [];
+      var str = number.toString();
+      var splitString = str.split("");
+      var unit = Math.ceil(splitString.length / 3) - 3;
+      for (var i = 0; i < Math.floor(splitString.length / 3) - 2; i++) {
+        arr.push(splitString[i]);
+      };
+      arr.push(".");
+      var intermediate = arr.length - 1;
+      for (var x = intermediate; x < (intermediate + 3); x++) {
+        arr.push(splitString[x]);
+      };
+      var result = arr.join("");
+      var final = result + " " + utility.units()[unit];
+      return final;
     } else {
       return number;
-    }
+    };
   };
   // get the integer
   parse(parameter) {
@@ -1013,7 +1065,7 @@ class Utility {
     if (this.autoTap) this.autoClick();
     latestTime = Date.now();
     this.prestigeFor = Math.floor((this.earned % 1000000000000000) / (this.earned + 1)); // update the value;
-    console.log(this.prestigeFor);
+    //console.log(this.prestigeFor);
   };
 };
 
@@ -1023,7 +1075,7 @@ class Cookie {
     this.y = (game.height / 2);
     this.r = (this.radius());
     this.pulseCount = 0;
-    this.pulse = 20 + (utility.level[3] * 5);
+    this.pulse = 25 + (utility.level[3] * 5);
     this.worth = 1 + (utility.level[0] * (utility.clickCount + 1)) * utility.multiplier;
     this.bonusWorth = (2 * this.worth) * (utility.level[2] + 2) * utility.multiplier;
     this.goldWorth = Math.floor(((this.worth + 1) * 500) * utility.multiplier);
@@ -1178,7 +1230,7 @@ class Container {
     this.reduceCap = utility.level[11];
     this.capacity = (utility.level[10] * 15) - this.reduceCap;
     this.bonus = (utility.level[12] * 5);
-    this.worth = (cookie.worth * (this.capacity + this.bonus)) * utility.multiplier;
+    this.worth = (cookie.worth * ((utility.level[10] * 15) + this.bonus)) * utility.multiplier;
     this.filled = 0;
     this.full = false;
     this.increasing = false;
@@ -1240,7 +1292,7 @@ class Container {
     this.reduceCap = utility.level[11];
     this.capacity = (utility.level[10] * 15) - this.reduceCap;
     this.bonus = (utility.level[12] * 5);
-    this.worth = (cookie.worth * (this.capacity + this.bonus)) * utility.multiplier;
+    this.worth = (cookie.worth * ((utility.level[10] * 15) + this.bonus)) * utility.multiplier;
     if (this.filled == this.capacity) {
       this.full = true;
     };
@@ -1254,9 +1306,9 @@ class Effects {
   constructor(text, x, y, type) {
     this.text = text;
     this.x = x;
-    this.y = y + (2 * game.textSize);
+    this.y = y + game.height + (2 * game.textSize);
     this.type = type;
-    this.time = game.height - (4 * game.textSize);
+    this.time = game.height;
   };
 
 };
@@ -1279,6 +1331,9 @@ class Button {
     ctxD.imageSmoothingEnabled = true;
     ctxD.imageSmoothingQuality = "high";
     if (utility.cost[this.column] <= utility.money) {
+      // the button background
+      ctxD.fillStyle = "hsl(105, 100%, 50%)";
+      ctxD.fillRect(this.x, this.y - input.dY, game.width - (2 * game.frameW), this.size);
       ctxD.drawImage(
         texture, // the texture sheet
         this.column * game.frameW, // starting x
@@ -1291,6 +1346,9 @@ class Button {
         this.size // drawn height
       );
     } else {
+      // the button background
+      ctxD.fillStyle = "lightgrey";
+      ctxD.fillRect(this.x, this.y - input.dY, game.width - (2 * game.frameW), this.size);
       ctxD.drawImage(
         texture, // the texture sheet
         this.column * game.frameW, // starting x
