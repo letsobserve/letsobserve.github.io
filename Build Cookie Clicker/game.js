@@ -30,7 +30,7 @@ class Game {
     // state the game is
     // 0 = Start menu, 1 = Cookie screen, 2 = Shop, 3 = Prestige, 4 = add 3rd screen
     this.states = [0, 1, 2, 3, 4]; // states the game can be in
-    this.state = 1;console.log("skip start screen");
+    this.state = 0;
     if (this.width > this.height) { // width is greater
       this.textSize = this.frameW / 3;
     } else { // height is greater
@@ -312,7 +312,7 @@ class InputHandler {
             input.dY = 0;
           };
           // check if in upgrade button area
-          if (e.x > btn1.x && e.x < game.width - (2 * game.frameW)) {
+          if (e.x > btn1.x && e.x < game.width - (2 * game.frameW) && e.y > 2 * game.textSize && e.y < game.height - game.textSize) {
             // check each button
             // max level && can afford? && position
             if (utility.level[0] < 500 && utility.cost[0] <= utility.money && e.y > btn1.y - input.dY && e.y < btn1.y + game.frameH - input.dY) {
@@ -367,28 +367,39 @@ class InputHandler {
           };
       } else if (game.state == 3) { // prestige screen
         // close the prestige screen
-          if (e.x < game.width && e.y > game.height - game.textSize) {
+          if (!utility.prestigeConfirm && e.x < game.width && e.y > game.height - game.textSize) {
             game.state = 1;
             input.dY = this.lastdY;
           }
         // shop screen
-        if (e.x > game.width / 3 && e.x < game.width - (game.width / 3) && e.y < 2 * game.textSize) {
+        if (!utility.prestigeConfirm && e.x > game.width / 3 && e.x < game.width - (game.width / 3) && e.y < 2 * game.textSize) {
           game.state = 2;
           input.dY = this.lastdY;
         };
         // prestige screen
-        if (e.x > game.width - (game.width / 3) && e.y < 2 * game.textSize) {
+        if (!utility.prestigeConfirm && e.x > game.width - (game.width / 3) && e.y < 2 * game.textSize) {
           game.state = 1;
           input.dY = this.lastdY;
         };
         // third screen
-        if (e.x < game.textSize && e.y < 2 * game.textSize) {
+        if (!utility.prestigeConfirm && e.x < game.textSize && e.y < 2 * game.textSize) {
           game.state = 4;
           input.dY = this.lastdY;
         };
-        if (e.x > game.width / 4 && e.x < ((3 * game.width) / 4) && e.y > game.height / 2 - (3 * game.frameH / 2) && e.y < game.height / 2 + (3 * game.frameH / 2)) { // click on prestige button
+        if (!utility.prestigeConfirm && e.x > game.width / 4 && e.x < ((3 * game.width) / 4) && e.y > game.height / 2 - (3 * game.frameH / 2) && e.y < game.height / 2 + (3 * game.frameH / 2)) { // click on prestige button
           utility.prestigeConfirm = true;
-        }
+        };
+        if (utility.prestigeConfirm && e.y < game.height / 2.5 || e.y > (game.height / 2) + (1.5 * game.textSize) || e.x < game.width / 5 || e.x > game.width - (game.width / 5)) { // click off the prestige button
+          utility.prestigeConfirm = false;
+        };
+        if (utility.prestigeConfirm && e.y > game.height / 2 && e.y < game.height / 1.75) { // prestige confirm buttons
+          if (e.x > game.width / 2 - (2 * game.textSize) && e.x < game.width / 2 - (game.textSize)) { // confirm
+            utility.setPrestige();
+          };
+          if (e.x > (game.width / 2) + (game.textSize) && e.x < (game.width / 2) + (2 * game.textSize)) {
+            utility.prestigeConfirm = false;
+          };
+        };
       } else { // third screen
         // close the third screen
           if (e.x < game.width && e.y > game.height - game.textSize) {
@@ -526,8 +537,6 @@ class Player {
 
 class Utility {
   constructor() {
-    this.upArrow = "\u21D1";
-    this.downArrow = "\u21D3";
     this.checkMark = "\uD83D\uDDF9";
     this.time = 0;
     // get the stored money value
@@ -611,7 +620,9 @@ class Utility {
     if (!Number.isInteger(this.prestige)) {
       this.prestige = 0;
     };
-    this.prestigeFor = Math.floor((this.earned % 1000000000000) / (this.earned + 1));
+    this.prestigeBonus = 1 + (this.prestige * 0.1);
+    this.prestigeUpgrade = 0;
+    this.prestigeFor = Math.floor(Math.pow((1 + this.prestigeUpgrade) * (this.money / 1000000000), 0.15));
   };
   drawD() { // draw the dynamic cookie screen
 
@@ -814,6 +825,7 @@ class Utility {
     ctxD.fillText("$" + player.money, game.width / 2, 5); // money
     ctxD.lineWidth = 10;
     ctxD.fillText("Total Earnings", game.width / 2, 2.25 * game.textSize);
+    ctxD.font = game.textSize / 1.25 + "px calibri";
     ctxD.fillText("$" + utility.convert(utility.earned), game.width / 2, 3.25 * game.textSize); // display how much the player has earned in this run
     ctxD.font = game.textSize / 2 + "px calibri";
     ctxD.textAlign = "left";
@@ -822,8 +834,7 @@ class Utility {
     ctxD.fillText(player.prestige + "  currency", game.width - game.frameW, 4.75 * game.textSize); // how much prestige the player currently has
     ctxD.textAlign = "center";
     ctxD.fillText("increasing your earnings by:", game.width / 2, 5.33 * game.textSize);
-    ctxD.fillText(player.prestige * 1000 + " x", game.width / 2, 6 * game.textSize); // calculate how much the prestige amplifies profits
-    console.log("change to prestige bonus");
+    ctxD.fillText(utility.prestigeBonus + " x", game.width / 2, 6 * game.textSize); // calculate how much the prestige amplifies profits
     ctxD.textAlign = "center";
     ctxD.fillStyle = "white";
     ctxD.fillRect(0, game.height - game.textSize, game.width, game.textSize);
@@ -843,14 +854,27 @@ class Utility {
     ctxD.font  = game.textSize / 2 + "px calibri";
     ctxD.fillText("Prestige for :", game.width / 2, (game.height / 2) - game.textSize); // prestige button text
     ctxD.fillText("currency", game.width / 2, (game.height / 2) + game.textSize); // prestige units
-    ctxD.font = game.textSize + "px calibri";
+    ctxD.font = game.textSize / 1.5 + "px calibri";
     ctxD.fillText(utility.prestigeFor, game.width / 2, game.height / 2); // prestige amount
     ctxD.font = game.textSize / 2 + "px calibri";
     ctxD.textAlign = "center";
     ctxD.fillText("Prestiging gives you additional profits,", game.width / 2, game.height - (5 * game.textSize));
     ctxD.fillText("however your progress is reset.", game.width / 2, game.height - (4.5 * game.textSize));
-    ctxD.fillText("(It's always worth it to prestige!)", game.width / 2, game.height - (4 * game.textSize));
-     // prestige information text
+    ctxD.fillText("(It's always worth it to prestige!)", game.width / 2, game.height - (4 * game.textSize)); // prestige information text
+    if (utility.prestigeConfirm) { // prestige confirm screen
+      ctxD.fillStyle = "black";
+      ctxD.globalAlpha = "0.5";
+      ctxD.fillRect(0, 0, game.width, game.height);
+      ctxD.globalAlpha = "1";
+      ctxD.fillStyle = "white";
+      ctxD.fillRect(game.width / 2 - (game.width / 3), game.height / 2 - (3 * game.textSize / 2), game.width / 1.5, 3 * game.textSize);
+      ctxD.fillStyle = "black";
+      ctxD.fillText("Are you sure?", game.width / 2, game.height / 2.2);
+      ctxD.fillStyle = "green";
+      ctxD.fillRect(game.width / 2 - (2 * game.textSize), game.height / 2, game.textSize, game.textSize);
+      ctxD.fillStyle = "red";
+      ctxD.fillRect(game.width / 2 + (game.textSize), game.height / 2, game.textSize, game.textSize);
+    };
   };
   drawT() { // draw the dynamic third screen
     // background
@@ -960,38 +984,38 @@ class Utility {
     this.switch = !this.switch;
     return choice;
   };
-  units() {
+  units() { // currency units
     return [
-      "Million",
-      "Billion",
-      "Trillion",
-      "Quadrillion",
-      "Quintillion",
-      "Sextillion",
-      "Septillion",
-      "Octillion",
-      "Nonillion",
-      "Decillion",
-      "Undecillion",
-      "Duodecillion",
-      "Tredecillion",
-      "Quattuordecillion",
-      "Quindecillion",
-      "Sexdecillion",
-      "Septdecillion",
-      "Octodecillion",
-      "Novemdecillion",
-      "Vigintillion",
-      "Unvigintillion",
-      "Duovigintillion",
-      "Trevigintillion",
-      "Quattuorvigintillion",
-      "Quinvigintillion",
-      "Sexvigintillion",
-      "Septvigintillion",
-      "Octovigintillion",
-      "Novemvigintillion",
-      "Trigintillion"
+      "M",//"Million",
+      "B",//"Billion",
+      "T",//"Trillion",
+      "q",//"Quadrillion",
+      "Q",//"Quintillion",
+      "s",//"Sextillion",
+      "S",//"Septillion",
+      "o",//"Octillion",
+      "N",//"Nonillion",
+      "d",//"Decillion",
+      "U",//"Undecillion",
+      "D",//"Duodecillion",
+      "Td",//"Tredecillion",
+      "qd",//"Quattuordecillion",
+      "Qd",//"Quindecillion",
+      "sd",//"Sexdecillion",
+      "Sd",//"Septdecillion",
+      "Od",//"Octodecillion",
+      "Nd",//"Novemdecillion",
+      "V",//"Vigintillion",
+      "uV",//"Unvigintillion",
+      "dV",//"Duovigintillion",
+      "tV",//"Trevigintillion",
+      "qV",//"Quattuorvigintillion",
+      "QV",//"Quinvigintillion",
+      "sV",//"Sexvigintillion",
+      "SV",//"Septvigintillion",
+      "OV",//"Octovigintillion",
+      "NV",//"Novemvigintillion",
+      "TG",//"Trigintillion"
     ];
   };
   convert(number) { // number converter
@@ -1020,12 +1044,10 @@ class Utility {
       return number;
     };
   };
-  // get the integer
-  parse(parameter) {
+  parse(parameter) { // get the integer
     return parseInt(parameter);
   };
-  // handle new upgrade costs
-  newPrice(price, factor) {
+  newPrice(price, factor) { // handle new upgrade costs
     return Math.floor(price * factor);
   };
   // change numbers
@@ -1136,11 +1158,21 @@ class Utility {
       break;
     }
   };
+  setPrestige() { // prestige sequence
+    this.prestige += this.prestigeFor;
+    this.money = 0;
+    this.level = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    this.cost = [20, 250, 600, 900, 5000, 5500, 6200, 15000, 5000, 50000, 1500, 5000, 10000, 100000, 5000, 100000];
+    this.earned = 0;
+    player.update();
+    utility = new Utility;
+    game.state = 1;
+  };
   update() {
     // tap if auto click is on
     if (this.autoTap) this.autoClick();
     latestTime = Date.now();
-    this.prestigeFor = Math.floor((this.earned % 1000000000000000) / (this.earned + 1)); // update the value;
+    this.prestigeFor = Math.floor(Math.pow((1 + this.prestigeBonus) * (this.money / 1000000000), 0.15));
   };
 };
 
@@ -1151,9 +1183,9 @@ class Cookie {
     this.r = (this.radius());
     this.pulseCount = 0;
     this.pulse = 25 + (utility.level[3] * 5);
-    this.worth = 1 + (utility.level[0] * (utility.clickCount + 1)) * utility.multiplier;
-    this.bonusWorth = (2 * this.worth) * (utility.level[2] + 2) * utility.multiplier;
-    this.goldWorth = Math.ceil(((this.worth) * 500) * utility.multiplier);
+    this.worth = Math.floor(((1 + utility.level[0] + utility.clickCount) * utility.multiplier) * utility.prestigeBonus);
+    this.bonusWorth = Math.floor(((2 * this.worth) * (utility.level[2] + 2) * utility.multiplier) * utility.prestigeBonus);
+    this.goldWorth = Math.ceil(((this.worth * 500) * utility.multiplier) * utility.prestigeBonus);
     this.expCookie = [];
     this.exploding = false;
     this.explode = 0;
@@ -1266,9 +1298,9 @@ class Cookie {
   update() {
 
     // update cookie worth
-    this.worth = 1 + (utility.level[0] * (utility.clickCount + 1)) * utility.multiplier;
-    this.bonusWorth = ((2 * this.worth) * (utility.level[2] + 2)) * utility.multiplier;
-    this.goldWorth = Math.ceil(((this.worth) * 500) * utility.multiplier);
+    this.worth = Math.floor(((1 + utility.level[0] + utility.clickCount) * utility.multiplier) * utility.prestigeBonus);
+    this.bonusWorth = Math.floor(((2 * this.worth) * (utility.level[2] + 2) * utility.multiplier) * utility.prestigeBonus);
+    this.goldWorth = Math.ceil(((this.worth * 500) * utility.multiplier) * utility.prestigeBonus);
     // deflate the cookie
     if (cookie.pulseCount > 0) {
       cookie.pulseCount--;
@@ -1394,10 +1426,14 @@ class Button {
     this.height = game.frameH;
     this.column = column;
     this.row = row;
-    this.x = game.frameW;
-    this.size = 100;
+    this.x = game.textSize;
+    if (game.textSize < 100) {
+      this.size = 50;
+    } else {
+      this.size = 100;
+    };
     this.xText = 10;
-    this.xPrice = 2 * game.frameW;
+    this.xPrice = 2 * game.textSize;
   };
   draw(y) {
     // the button box
@@ -1407,7 +1443,7 @@ class Button {
     if (utility.cost[this.column] <= utility.money) {
       // the button background
       ctxD.fillStyle = "hsl(105, 100%, 50%)";
-      ctxD.fillRect(this.x, this.y - input.dY, game.width - (2 * game.frameW), this.size);
+      ctxD.fillRect(this.x, this.y - input.dY, game.width - (2 * game.textSize), this.size);
       ctxD.drawImage(
         texture, // the texture sheet
         this.column * game.frameW, // starting x
@@ -1422,7 +1458,7 @@ class Button {
     } else {
       // the button background
       ctxD.fillStyle = "lightgrey";
-      ctxD.fillRect(this.x, this.y - input.dY, game.width - (2 * game.frameW), this.size);
+      ctxD.fillRect(this.x, this.y - input.dY, game.width - (2 * game.textSize), this.size);
       ctxD.drawImage(
         texture, // the texture sheet
         this.column * game.frameW, // starting x
@@ -1443,7 +1479,7 @@ class Button {
     ctxD.textAlign = "left";
     ctxD.textBaseline = "top";
     ctxD.font = (game.textSize * 0.5) + "px calibri";
-    ctxD.fillText(level, this.xText, this.yText + (game.frameH / 6) - input.dY);
+    ctxD.fillText(level, this.xText, this.yText + (game.textSize / 6) - input.dY);
     // the button price
     ctxD.fillStyle = "black";
     ctxD.textAlign = "left";
@@ -1452,7 +1488,7 @@ class Button {
     ctxD.fillText("$" + price, this.xPrice, this.yText - input.dY);
     // the button description
     ctxD.font = (game.textSize * 0.4) + "px calibri";
-    ctxD.fillText(description, this.xPrice, this.yText + (game.frameH / 2) - input.dY);
+    ctxD.fillText(description, this.xPrice, this.yText + (game.textSize / 2) - input.dY);
   };
   update() {
     if (btn1.y - input.dY > btn1.y) {
