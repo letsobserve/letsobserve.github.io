@@ -221,6 +221,8 @@ class InputHandler {
     this.dY = 0;
     this.dX = 0;
     this.lastClick = 0;
+    this.lastdY = 0;
+    this.tap = false;
     document.addEventListener("click", (e) => {
       if (game.state == 0) { // game start screen
         if (e.x > 2 * game.frameW && e.x < (2 * game.frameW) + (4 * game.frameW) && e.y > game.height / 2 && e.y < (game.height / 2) + (1.5 * game.frameW)) {
@@ -229,20 +231,46 @@ class InputHandler {
           window.history.go(-1);
         }; // game start screen
       } else if (game.state == 1) { // player cookie screen
-
+        if (!this.tap) { // if player didnt tapped the screeen
+          // check if in the cookie
+          if ((Math.pow(e.x - cookie.x, 2) + Math.pow(e.y - cookie.y, 2)) < Math.pow(cookie.r + cookie.pulseCount, 2)) {
+            // note the time
+            this.lastClick = utility.time;
+            // check if click count should increase
+            if (utility.rolling && utility.clickCount < utility.maxClickCount) utility.clickCount++;
+            // check if frenzy time should increase
+            if (utility.inFrenzy) {
+              if (utility.frenzyLeft < utility.frenzyMax - 5) {
+                utility.frenzyLeft += 10;
+              } else if (utility.frenzyLeft < utility.frenzyMax) {
+                utility.frenzyLeft++;
+              };
+            };
+            // if cookie should expand
+            if (cookie.r + cookie.pulseCount < cookie.r * 3) {
+              cookie.expand();
+              container.fill();
+            } else {
+              cookie.reset();
+              container.fill();
+            };
+          };
+        };
         // check if inside golden cookie
         if (goldCookie.gold && (Math.pow(e.x - goldCookie.rX, 2) + Math.pow(e.y - goldCookie.rY, 2)) < Math.pow(goldCookie.rR, 2)) {
           goldCookie.goldReset();
         };
           if (e.x > game.width / 3 && e.x < game.width - (game.width / 3) && e.y < 2 * game.textSize) { // check if shop button clicked
             game.state = 2;
-            input.dY = 0;
+            input.dY = this.lastdY;
           };
           if (e.x > game.width - (game.width / 3) && e.y < 2 * game.textSize) { // check if prestige button clicked
             game.state = 3;
+            input.dY = this.lastdY;
           };
           if (e.x < game.textSize && e.y < 2 * game.textSize) { //check if third button clicked
             game.state = 4;
+            input.dY = this.lastdY;
           };
         if (utility.level[10] > 0 && yDown > container.y && xDown > container.x) { //check if jar is tapped
           container.sell();
@@ -262,18 +290,26 @@ class InputHandler {
         // close the shop
           if (e.x < game.width && e.y > game.height - game.textSize) {
             game.state = 1;
+            this.lastdY = input.dY;
+            input.dY = 0;
           }
           // shop screen
           if (e.x > game.width / 3 && e.x < game.width - (game.width / 3) && e.y < 2 * game.textSize) {
             game.state = 1;
+            this.lastdY = input.dY;
+            input.dY = 0;
           };
           // prestige screen
           if (e.x > game.width - (game.width / 3) && e.y < 2 * game.textSize) {
             game.state = 3;
+            this.lastdY = input.dY;
+            input.dY = 0;
           };
           // third screen
           if (e.x < game.textSize && e.y < 2 * game.textSize) {
             game.state = 4;
+            this.lastdY = input.dY;
+            input.dY = 0;
           };
           // check if in upgrade button area
           if (e.x > btn1.x && e.x < game.width - (2 * game.frameW)) {
@@ -333,18 +369,22 @@ class InputHandler {
         // close the prestige screen
           if (e.x < game.width && e.y > game.height - game.textSize) {
             game.state = 1;
+            input.dY = this.lastdY;
           }
         // shop screen
         if (e.x > game.width / 3 && e.x < game.width - (game.width / 3) && e.y < 2 * game.textSize) {
           game.state = 2;
+          input.dY = this.lastdY;
         };
         // prestige screen
         if (e.x > game.width - (game.width / 3) && e.y < 2 * game.textSize) {
           game.state = 1;
+          input.dY = this.lastdY;
         };
         // third screen
         if (e.x < game.textSize && e.y < 2 * game.textSize) {
           game.state = 4;
+          input.dY = this.lastdY;
         };
         if (e.x > game.width / 4 && e.x < ((3 * game.width) / 4) && e.y > game.height / 2 - (3 * game.frameH / 2) && e.y < game.height / 2 + (3 * game.frameH / 2)) { // click on prestige button
           utility.prestigeConfirm = true;
@@ -353,18 +393,22 @@ class InputHandler {
         // close the third screen
           if (e.x < game.width && e.y > game.height - game.textSize) {
             game.state = 1;
+            input.dY = this.lastdY;
           };
         // shop screen
         if (e.x > game.width / 3 && e.x < game.width - (game.width / 3) && e.y < 2 * game.textSize) {
           game.state = 2;
+          input.dY = this.lastdY;
         };
         // prestige screen
         if (e.x > game.width - (game.width / 3) && e.y < 2 * game.textSize) {
           game.state = 3;
+          input.dY = this.lastdY;
         };
         // third screen
         if (e.x < game.textSize && e.y < 2 * game.textSize) {
           game.state = 1;
+          input.dY = this.lastdY;
         };
       };
     });
@@ -372,6 +416,7 @@ class InputHandler {
       e.preventDefault();
       const firstTouch = e.touches[0];
       const ongoingTouches = [];
+      this.tap = true;
       xDown = firstTouch.clientX;
       yDown = firstTouch.clientY;
       if (game.state == 1) {
@@ -463,6 +508,7 @@ class Player {
     localStorage.setItem("playerPrestige", utility.prestige);
     // convert money to 6 sig. fig.
     this.money = utility.money;
+    this.prestige = utility.prestige;
     if (this.money > 1000000) {
       this.money = utility.convert(utility.money);
     };
@@ -561,7 +607,11 @@ class Utility {
     this.frenzyLeft = 0;
     this.frenzyReset = 0;
     this.frenzyResetMax = 10 * 60; // frenzy reset time in milliseconds
-    this.prestigeFor = Math.floor((this.earned % 1000000000000000) / (this.earned + 1));
+    this.prestige = parseInt(localStorage.getItem("playerPrestige"));
+    if (!Number.isInteger(this.prestige)) {
+      this.prestige = 0;
+    };
+    this.prestigeFor = Math.floor((this.earned % 1000000000000) / (this.earned + 1));
   };
   drawD() { // draw the dynamic cookie screen
 
@@ -571,7 +621,11 @@ class Utility {
         if (clickEffect[i].type) {
           ctxD.fillStyle = "green";
           ctxD.textAlign = "center";
-          ctxD.font = i * (game.textSize / 10) + "px calibri";
+          if (clickEffect.length > 35) {
+            ctxD.font = i * (game.textSize / 50) + "px calibri";
+          } else {
+            ctxD.font = i * (game.textSize / 10) + "px calibri";
+          };
           ctxD.fillText("$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y - clickEffect[i].time);
         } else {
           ctxD.fillStyle = "red";
@@ -759,8 +813,17 @@ class Utility {
     ctxD.font = game.textSize + "px calibri";
     ctxD.fillText("$" + player.money, game.width / 2, 5); // money
     ctxD.lineWidth = 10;
-    ctxD.fillText("Total Earnings", game.width / 2, 2.5 * game.textSize);
-    ctxD.fillText("$" + utility.convert(utility.earned), game.width / 2, 4 * game.textSize);
+    ctxD.fillText("Total Earnings", game.width / 2, 2.25 * game.textSize);
+    ctxD.fillText("$" + utility.convert(utility.earned), game.width / 2, 3.25 * game.textSize); // display how much the player has earned in this run
+    ctxD.font = game.textSize / 2 + "px calibri";
+    ctxD.textAlign = "left";
+    ctxD.fillText("You have:", game.frameW, 4.75 * game.textSize);
+    ctxD.textAlign = "right";
+    ctxD.fillText(player.prestige + "  currency", game.width - game.frameW, 4.75 * game.textSize); // how much prestige the player currently has
+    ctxD.textAlign = "center";
+    ctxD.fillText("increasing your earnings by:", game.width / 2, 5.33 * game.textSize);
+    ctxD.fillText(player.prestige * 1000 + " x", game.width / 2, 6 * game.textSize); // calculate how much the prestige amplifies profits
+    console.log("change to prestige bonus");
     ctxD.textAlign = "center";
     ctxD.fillStyle = "white";
     ctxD.fillRect(0, game.height - game.textSize, game.width, game.textSize);
@@ -770,10 +833,11 @@ class Utility {
     ctxD.globalAlpha = 1; // close bar
     ctxD.fillStyle = "black";
     ctxD.strokeStyle = "black";
+    ctxD.font = game.textSize + "px calibri";
     ctxD.fillText("Close Prestige", game.width / 2, game.height - game.textSize); // close prestige text
     ctxD.strokeRect(0, game.height - game.textSize, game.width, game.height);
     ctxD.fillStyle = "white";
-    ctxD.fillRect(game.width / 2 - (game.width / 4), game.height / 2 - (3 * game.frameH / 2), game.width / 2, 3 * game.frameH); // the prestige button
+    ctxD.fillRect(game.width / 2 - (game.width / 4), game.height / 2 - (3 * game.textSize / 2), game.width / 2, 3 * game.textSize); // the prestige button
     ctxD.fillStyle = "black";
     ctxD.textBaseline = "middle";
     ctxD.font  = game.textSize / 2 + "px calibri";
@@ -781,6 +845,12 @@ class Utility {
     ctxD.fillText("currency", game.width / 2, (game.height / 2) + game.textSize); // prestige units
     ctxD.font = game.textSize + "px calibri";
     ctxD.fillText(utility.prestigeFor, game.width / 2, game.height / 2); // prestige amount
+    ctxD.font = game.textSize / 2 + "px calibri";
+    ctxD.textAlign = "center";
+    ctxD.fillText("Prestiging gives you additional profits,", game.width / 2, game.height - (5 * game.textSize));
+    ctxD.fillText("however your progress is reset.", game.width / 2, game.height - (4.5 * game.textSize));
+    ctxD.fillText("(It's always worth it to prestige!)", game.width / 2, game.height - (4 * game.textSize));
+     // prestige information text
   };
   drawT() { // draw the dynamic third screen
     // background
@@ -1117,7 +1187,7 @@ class Cookie {
     }
   };
   expand() {
-    cookie.pulseCount += cookie.pulse;
+    if (cookie.r + cookie.pulseCount < cookie.r * 3) cookie.pulseCount += cookie.pulse;
     utility.money += cookie.worth;
     utility.earned += cookie.worth;
     utility.event = "click";
@@ -1230,7 +1300,7 @@ class Container {
     this.row = row;
     this.level = level;
     this.x = 20; // x position of container area
-    this.y = game.height - game.frameH - 10; // y position of container area
+    this.y = game.height - game.textSize - 10; // y position of container area
     this.type = ["None", "Jar", "Box", "Basket", "Sack", "Pallet", "Container"];
     this.reduceCap = utility.level[11];
     this.capacity = (utility.level[10] * 15) - this.reduceCap;
@@ -1245,10 +1315,10 @@ class Container {
     // the background
     if (utility.level[10] > 0) {
       ctxD.fillStyle = "white";
-      ctxD.fillRect(this.x, this.y, game.width - 40, game.frameH);
+      ctxD.fillRect(this.x, this.y, game.width - 40, game.textSize);
       if (this.filled > 0) {
         ctxD.fillStyle = "green";
-        ctxD.fillRect(this.x, this.y, (this.filled / this.capacity) * game.width - 40 , game.frameH);
+        ctxD.fillRect(this.x, this.y, (this.filled / this.capacity) * game.width - 40 , game.textSize);
       }
     };
     ctxD.drawImage( // the container image
@@ -1258,7 +1328,7 @@ class Container {
       game.frameW, // width
       game.frameH, // height
       (game.width / 2) - (game.frameW / 2), // destination x
-      this.y, // destination y
+      this.y - 5, // destination y
       game.frameW, // drawn width
       game.frameH // drawn height
     );
@@ -1266,15 +1336,15 @@ class Container {
     ctxD.fillStyle = "black";
     ctxD.strokeStyle = "white";
     ctxD.textAlign = "left";
-    ctxD.textBaseline = "middle";
+    ctxD.textBaseline = "top";
     ctxD.font = game.textSize + "px calibri";
     // draw the name of the container
-    ctxD.strokeText(this.type[this.level], this.x + 10, this.y + (game.frameH / 2));
-    ctxD.fillText(this.type[this.level], this.x + 10, this.y + (game.frameH / 2));
+    ctxD.strokeText(this.type[this.level], this.x + 10, this.y);
+    ctxD.fillText(this.type[this.level], this.x + 10, this.y);
     // draw the capacity of the container
     ctxD.textAlign = "right";
-    ctxD.strokeText(this.filled + "/" + this.capacity, game.width - 30, this.y + (game.frameH / 2));
-    ctxD.fillText(this.filled + "/" + this.capacity, game.width - 30, this.y + (game.frameH / 2));
+    ctxD.strokeText(this.filled + "/" + this.capacity, game.width - 30, this.y);
+    ctxD.fillText(this.filled + "/" + this.capacity, game.width - 30, this.y);
   };
   fill() {
     if (this.filled < this.capacity) {
