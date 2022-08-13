@@ -17,8 +17,6 @@ let latestTime, then, elapsed;
 let clickEffect = [];
 let xDown = null;
 let yDown = null;
-let lastPlayed = new Date();
-lastPlayed.setTime(localStorage.getItem("playerLatestTime"));
 
 class Game {
   constructor() {
@@ -79,6 +77,7 @@ class Game {
     // background
     ctxS.fillStyle = "hsl(195, 50%, 70%)";
     ctxS.fillRect(0, 0, this.width, this.height);
+    utility.drawD();
     // money area
     ctxS.fillStyle = "white";
     ctxS.strokeStyle = "black";
@@ -97,12 +96,6 @@ class Game {
     ctxS.globalAlpha = 1;
     // draw the rest of the cookie screen
     if (utility.level[10] > 0) container.draw();
-    utility.drawD();
-    // draw golden cookie
-    if (goldCookie.gold && !utility.upgrading) {
-      goldCookie.draw(goldCookie.rX, 0, goldCookie.rY, 0, goldCookie.rR, 0, 3, 0);
-      goldCookie.goldCount--;
-    };
   };
   draw2() { // prestige screen
     // background
@@ -176,7 +169,7 @@ class Game {
     // loop
     now = Date.now();
     elapsed = now - then;
-    if (elapsed > 1000 / game.FPS) {
+    if (elapsed > 1000 / game.FPS) { // throttle based on FPS
       then = now - (elapsed % (1000 / game.FPS));
       // clear canvas
       ctxS.clearRect(0, 0, game.width, game.height);
@@ -184,10 +177,10 @@ class Game {
       // update the game parameter
       game.update();
       cookie.update();
-      container.update();
+      if (utility.level[10] > 0) container.update();
       player.update();
       // auto click occasionally
-      if (!lastTime || now - lastTime >= (2000 - utility.tapRate)) {
+      if (!lastTime || now - lastTime >= (1000 - utility.tapRate)) {
         lastTime = now;
         utility.update();
       };
@@ -197,6 +190,24 @@ class Game {
         game.draw1();
         // draw the cookie
         cookie.draw(cookie.x, cookie.xV, cookie.y, cookie.yV, cookie.r, cookie.pulseCount, cookie.color(), 0);
+        if (goldCookie.gold && !utility.upgrading) { // draw golden cookie
+          goldCookie.draw(goldCookie.rX, 0, goldCookie.rY, 0, goldCookie.rR, 0, 3, 0);
+          goldCookie.goldCount--;
+        };
+        if (player.returning) { // display when player returns
+          ctxD.fillStyle = "black";
+          ctxD.globalAlpha = "0.8";
+          ctxD.fillRect(0, 0, game.width, game.height);
+          ctxD.fillStyle = "white";
+          ctxD.globalAlpha = "1";
+          ctxD.fillRect((game.width / 2) - (game.width / 4), (game.height / 2) - (game.height / 4), game.width / 2, game.height / 2);
+          ctxD.fillStyle = "black";
+          ctxD.fillText("It's been", (game.width / 2), (game.height / 4));
+          ctxD.fillText(Math.floor(player.lastPlaySeconds / 60), game.width / 2, (game.height / 4) + game.textSize);
+          ctxD.fillText("minutes", game.width / 2, (game.height / 4) + (2 * game.textSize));
+          ctxD.fillText("You earned", game.width / 2, (game.height / 4) + (4 * game.textSize));
+          ctxD.fillText(player.EPS, game.width / 2, (game.height / 4) + (5 * game.textSize));
+        };
       } else if (game.state == 2) { // draw the shop screen
         btn1.update();
         utility.drawD();
@@ -231,15 +242,12 @@ class InputHandler {
           window.history.go(-1);
         }; // game start screen
       } else if (game.state == 1) { // player cookie screen
+        if (player.returning) player.returning = false;
         if (!this.tap) { // if player didnt tapped the screeen
-          // check if in the cookie
-          if ((Math.pow(e.x - cookie.x, 2) + Math.pow(e.y - cookie.y, 2)) < Math.pow(cookie.r + cookie.pulseCount, 2)) {
-            // note the time
-            this.lastClick = utility.time;
-            // check if click count should increase
-            if (utility.rolling && utility.clickCount < utility.maxClickCount) utility.clickCount++;
-            // check if frenzy time should increase
-            if (utility.inFrenzy) {
+          if ((Math.pow(e.x - cookie.x, 2) + Math.pow(e.y - cookie.y, 2)) < Math.pow(cookie.r + cookie.pulseCount, 2)) { // check if in the cookie
+            this.lastClick = utility.time; // note the time
+            if (utility.rolling && utility.clickCount < utility.maxClickCount) utility.clickCount++; // check if click count should increase
+            if (utility.inFrenzy) { // check if frenzy time should increase
               if (utility.frenzyLeft < utility.frenzyMax - 5) {
                 utility.frenzyLeft += 10;
               } else if (utility.frenzyLeft < utility.frenzyMax) {
@@ -259,6 +267,15 @@ class InputHandler {
         // check if inside golden cookie
         if (goldCookie.gold && (Math.pow(e.x - goldCookie.rX, 2) + Math.pow(e.y - goldCookie.rY, 2)) < Math.pow(goldCookie.rR, 2)) {
           goldCookie.goldReset();
+          this.lastClick = utility.time; // note the time
+          if (utility.rolling && utility.clickCount < utility.maxClickCount) utility.clickCount++; // check if click count should increase
+          if (utility.inFrenzy) { // check if frenzy time should increase
+            if (utility.frenzyLeft < utility.frenzyMax - 5) {
+              utility.frenzyLeft += 10;
+            } else if (utility.frenzyLeft < utility.frenzyMax) {
+              utility.frenzyLeft++;
+            };
+          };
         };
           if (e.x > game.width / 3 && e.x < game.width - (game.width / 3) && e.y < 2 * game.textSize) { // check if shop button clicked
             game.state = 2;
@@ -283,10 +300,10 @@ class InputHandler {
             utility.canFrenzy = false;
           } else {
             return;
-          }
+          };
         };
       } else if (game.state == 2) { // shop screen
-          //if (e.x < game.width && e.y < 2 * game.textSize) {utility.level =[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];utility.money = 0;utility.earned=0}; // reset levels and money
+          //if (e.x < game.width && e.y < 2 * game.textSize) {utility.level =[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];utility.money = 0;utility.earned=0;utility.prestige=0}; // reset levels and money
         // close the shop
           if (e.x < game.width && e.y > game.height - game.textSize) {
             game.state = 1;
@@ -330,10 +347,10 @@ class InputHandler {
             if (utility.level[4] == 0 && utility.cost[4] <= utility.money && e.y > btn5.y - input.dY && e.y < btn5.y + game.frameH - input.dY) {
               utility.upgrade(utility.cost[4], 4, "rolling");
             };
-            if (utility.level[5] < 50 && utility.cost[5] <= utility.money && e.y > btn6.y - input.dY && e.y < btn6.y + game.frameH - input.dY) {
+            if (utility.level[4] == 1 && utility.level[5] < 50 && utility.cost[5] <= utility.money && e.y > btn6.y - input.dY && e.y < btn6.y + game.frameH - input.dY) {
               utility.upgrade(utility.cost[5], 5, "rollingDur");
             };
-            if (utility.level[6] < 200 && utility.cost[6] <= utility.money && e.y > btn7.y - input.dY && e.y < btn7.y + game.frameH - input.dY) {
+            if (utility.level[4] == 1 && utility.level[6] < 200 && utility.cost[6] <= utility.money && e.y > btn7.y - input.dY && e.y < btn7.y + game.frameH - input.dY) {
               utility.upgrade(utility.cost[6], 6, "rollingMax");
             };
             if (utility.level[7] < 99 && utility.cost[7] <= utility.money && e.y > btn8.y - input.dY && e.y < btn8.y + game.frameH - input.dY) {
@@ -508,6 +525,19 @@ class Player {
     this.getMoney = parseInt(localStorage.getItem("playerMoney"));
     this.money = utility.money;
     this.prestige = utility.prestige;
+    this.lastPlay = parseInt(localStorage.getItem("playerLatestTime"));
+    if (!Number.isInteger(this.lastPlay)) {
+      this.lastPlay = game.time;
+    };
+    this.lastPlaySeconds = (game.time - this.lastPlay) / 1000;
+    this.earning = 0; // player earning per second
+    if (this.lastPlaySeconds < (2 * 60)) { // if time since last played is more than 2 minutes
+      console.log("fix");
+      this.returning = true;
+      // add money to the player
+    } else {
+      this.returning = false;
+    };
   };
   update() {
     // set up a save function
@@ -519,6 +549,15 @@ class Player {
     localStorage.setItem("playerPrestige", utility.prestige);
     // convert money to 6 sig. fig.
     this.money = utility.money;
+    now = Date.now();
+    elapsed = now - then;
+    if (elapsed > game.FPS) { // throttle based on FPS
+      then = now - elapsed;
+      //(elapsed % (1000 / game.FPS));
+      this.earning = utility.earned - this.earning;
+      //console.log(this.earning);
+      console.log(Math.floor(now - then));
+    };
     this.prestige = utility.prestige;
     if (this.money > 1000000) {
       this.money = utility.convert(utility.money);
@@ -598,7 +637,7 @@ class Utility {
 
     this.clickCount = 0; // current click count
     this.maxClickCount = 5 + (this.level[6] * 5); // max rolling click count
-    this.multiplier = 1 + this.level[7];
+    this.multiplier = 1000000000000000 + this.level[7];
     if (this.level[8] > 0) {
       this.autoTap = true;
     } else {
@@ -615,7 +654,7 @@ class Utility {
     this.frenzyMax = 120; // frenzy time in frame per second
     this.frenzyLeft = 0;
     this.frenzyReset = 0;
-    this.frenzyResetMax = 10 * 60; // frenzy reset time in milliseconds
+    this.frenzyResetMax = 10 * 60 * 60; // frenzy reset time in milliseconds
     this.prestige = parseInt(localStorage.getItem("playerPrestige"));
     if (!Number.isInteger(this.prestige)) {
       this.prestige = 0;
@@ -626,8 +665,7 @@ class Utility {
   };
   drawD() { // draw the dynamic cookie screen
 
-    // draw the earned money
-    for (let i = 0; i < clickEffect.length; i++) {
+    for (let i = 0; i < clickEffect.length; i++) { // draw the earned money
       if (clickEffect[i].time > 0) {
         if (clickEffect[i].type) {
           ctxD.fillStyle = "green";
@@ -655,6 +693,8 @@ class Utility {
     ctxD.textBaseline = "top";
     ctxD.font = game.textSize + "px calibri";
     ctxD.fillText("$" + player.money, game.width / 2, 5);
+    // draw the money per second
+
     if (this.rolling) { // draw the rolling multiplier
       var txt = game.textSize;
       // bounding ellipse
@@ -721,7 +761,8 @@ class Utility {
       ctxD.textAlign = "center";
       ctxD.font = game.textSize + "px calibri";
       ctxD.fillText("Frenzy", (game.width - 2 * game.frameW) / 2, 2 * game.textSize + 10);
-    }
+    };
+
   };
   drawM() { // draw the dynamic upgrade screen
 
@@ -900,11 +941,14 @@ class Utility {
     ctxD.strokeRect(0, game.height - game.textSize, game.width, game.height);
   };
   explode() {
+    var int = 0 + cookie.expCookie.length;
     cookie.exploding = true;
     cookie.explode = cookie.explodeFor;
     for (var i = 0; i < 25; i++) {
       cookie.expCookie[i] = new Cookie;
-    }
+    };
+    int = cookie.expCookie.length;
+    console.log(int);
   };
   autoClick() {
 
@@ -912,7 +956,7 @@ class Utility {
     input.lastClick = utility.time;
     // check if click count should increase
     if (utility.rolling && utility.clickCount < utility.maxClickCount) utility.clickCount++;
-    if (utility.level[12] > 0) container.fill();
+    if (utility.level[13] > 0) container.fill();
     cookie.expand();
   };
   upgrade(cost, reference, specific) {
@@ -941,17 +985,19 @@ class Utility {
       break;
       case "rollingMax":
       // higher rolling count before stopping
-      utility.maxClickCount += 5;
       break;
       case "multiplier":
       this.multiplier++;
       break;
       case "autoClick":
       this.autoTap = true;
-      if (utility.tapRate < 1949) utility.tapRate += 50;
+      if (utility.tapRate < 949) utility.tapRate += 50;
       break;
       case "golden":
       this.goldable = true;
+      goldCookie = new Cookie();
+      goldCookie.goldCount = 100;
+      goldCookie.gold = true;
       break;
       case "containerLvl":
       container.level++;
@@ -1019,7 +1065,7 @@ class Utility {
     ];
   };
   convert(number) { // number converter
-    if (number > 10000000) {
+    if (number > 1000000) {
       var arr = [];
       var str = number.toString();
       var splitString = str.split("");
@@ -1164,6 +1210,7 @@ class Utility {
     this.level = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     this.cost = [20, 250, 600, 900, 5000, 5500, 6200, 15000, 5000, 50000, 1500, 5000, 10000, 100000, 5000, 100000];
     this.earned = 0;
+    cookie.pulse = 25;
     player.update();
     utility = new Utility;
     game.state = 1;
@@ -1183,9 +1230,9 @@ class Cookie {
     this.r = (this.radius());
     this.pulseCount = 0;
     this.pulse = 25 + (utility.level[3] * 5);
-    this.worth = Math.floor(((1 + utility.level[0] + utility.clickCount) * utility.multiplier) * utility.prestigeBonus);
-    this.bonusWorth = Math.floor(((2 * this.worth) * (utility.level[2] + 2) * utility.multiplier) * utility.prestigeBonus);
-    this.goldWorth = Math.ceil(((this.worth * 500) * utility.multiplier) * utility.prestigeBonus);
+    this.worth = Math.floor(((1 + utility.level[0] * (1 + utility.clickCount)) * utility.multiplier) * utility.prestigeBonus);
+    this.bonusWorth = Math.floor(((2 * this.worth * (1 + utility.clickCount)) * utility.multiplier) * utility.prestigeBonus);
+    this.goldWorth = Math.ceil((((this.worth * 500) * (1 + utility.clickCount)) * utility.multiplier) * utility.prestigeBonus);
     this.expCookie = [];
     this.exploding = false;
     this.explode = 0;
@@ -1196,8 +1243,8 @@ class Cookie {
     this.dY = Math.cos((Math.random() * (2 * Math.PI)));
     // golden cookie specifics
     this.rR = this.r / 6;
-    this.rX = (Math.random() * (game.width - this.rR)) + this.rR;
-    this.rY = (Math.random() * (game.height - this.rR)) + (game.textSize + this.rR);
+    this.rX = Math.random() * (game.width - (4 * this.rR)) + (2 * this.rR);
+    this.rY = Math.random() * (game.height - (6 * game.textSize) - (4 * this.rR)) + ((3 * game.textSize) + (2 * this.rR));
     this.gold = false;
     this.goldCount = 0;
     //this.clicked = false;
@@ -1298,15 +1345,15 @@ class Cookie {
   update() {
 
     // update cookie worth
-    this.worth = Math.floor(((1 + utility.level[0] + utility.clickCount) * utility.multiplier) * utility.prestigeBonus);
-    this.bonusWorth = Math.floor(((2 * this.worth) * (utility.level[2] + 2) * utility.multiplier) * utility.prestigeBonus);
-    this.goldWorth = Math.ceil(((this.worth * 500) * utility.multiplier) * utility.prestigeBonus);
+    this.worth = Math.floor(((1 + utility.level[0] * (1 + utility.clickCount)) * utility.multiplier) * utility.prestigeBonus);
+    this.bonusWorth = Math.floor(((2 * this.worth * (1 + utility.clickCount)) * utility.multiplier) * utility.prestigeBonus);
+    this.goldWorth = Math.ceil((((this.worth * 500) * (1 + utility.clickCount)) * utility.multiplier) * utility.prestigeBonus);
     // deflate the cookie
     if (cookie.pulseCount > 0) {
       cookie.pulseCount--;
       if (latestTime > input.lastClick + (1500)) {
         cookie.pulseCount -= 2; // cookie deflates faster after 1.5 seconds
-      }
+      };
     };
     // explode cookie
     if (cookie.exploding) {
@@ -1315,10 +1362,10 @@ class Cookie {
     };
     if (goldCookie.exploding) {
       goldCookie.boom(goldCookie, 3);
-      utility.events(this.goldWorth, 0, 0, true);
+      utility.events(cookie.goldWorth, 0, 0, true);
     };
     //  check if golden cookie should spawn
-    if (utility.goldable && !utility.upgrading && goldCookie.explode <= 0 && !goldCookie.gold && Math.random() > 0.9) {
+    if (utility.goldable && !utility.upgrading && goldCookie.explode <= 0 && !goldCookie.gold && Math.random() > 0.999) {
       goldCookie = new Cookie();
       goldCookie.goldCount = 100;
       goldCookie.gold = true;
@@ -1336,7 +1383,7 @@ class Container {
     this.type = ["None", "Jar", "Box", "Basket", "Sack", "Pallet", "Container"];
     this.reduceCap = utility.level[11];
     this.capacity = (utility.level[10] * 15) - this.reduceCap;
-    this.bonus = (utility.level[12] * 5);
+    this.bonus = 1 + (utility.level[12] * 5);
     this.worth = (cookie.worth * ((utility.level[10] * 15) + this.bonus)) * utility.multiplier;
     this.filled = 0;
     this.full = false;
@@ -1398,9 +1445,9 @@ class Container {
     this.column = this.level;
     this.reduceCap = utility.level[11];
     this.capacity = (utility.level[10] * 15) - this.reduceCap;
-    this.bonus = (utility.level[12] * 5);
-    this.worth = (cookie.worth * ((utility.level[10] * 15) + this.bonus)) * utility.multiplier;
-    if (this.filled == this.capacity) {
+    this.bonus = (utility.level[12] * 5)* utility.prestigeBonus;
+    this.worth = (cookie.worth * (utility.level[10] + this.bonus) * utility.multiplier) * utility.prestigeBonus;
+    if (this.filled >= this.capacity) {
       this.full = true;
     };
     if (utility.level[14] > 0) {
