@@ -178,7 +178,7 @@ class Game {
       game.update();
       cookie.update();
       if (utility.level[10] > 0) container.update();
-      player.update();
+      player.update(now);
       // auto click occasionally
       if (!lastTime || now - lastTime >= (1000 - utility.tapRate)) {
         lastTime = now;
@@ -195,18 +195,7 @@ class Game {
           goldCookie.goldCount--;
         };
         if (player.returning) { // display when player returns
-          ctxD.fillStyle = "black";
-          ctxD.globalAlpha = "0.8";
-          ctxD.fillRect(0, 0, game.width, game.height);
-          ctxD.fillStyle = "white";
-          ctxD.globalAlpha = "1";
-          ctxD.fillRect((game.width / 2) - (game.width / 4), (game.height / 2) - (game.height / 4), game.width / 2, game.height / 2);
-          ctxD.fillStyle = "black";
-          ctxD.fillText("It's been", (game.width / 2), (game.height / 4));
-          ctxD.fillText(Math.floor(player.lastPlaySeconds / 60), game.width / 2, (game.height / 4) + game.textSize);
-          ctxD.fillText("minutes", game.width / 2, (game.height / 4) + (2 * game.textSize));
-          ctxD.fillText("You earned", game.width / 2, (game.height / 4) + (4 * game.textSize));
-          ctxD.fillText(player.EPS, game.width / 2, (game.height / 4) + (5 * game.textSize));
+          player.returns();
         };
       } else if (game.state == 2) { // draw the shop screen
         btn1.update();
@@ -223,6 +212,7 @@ class Game {
         utility.drawT();
       };
     };
+    latestTime = Date.now();
     requestAnimationFrame(game.loop);
   };
 };
@@ -530,16 +520,43 @@ class Player {
       this.lastPlay = game.time;
     };
     this.lastPlaySeconds = (game.time - this.lastPlay) / 1000;
-    this.earning = 0; // player earning per second
-    if (this.lastPlaySeconds < (2 * 60)) { // if time since last played is more than 2 minutes
-      console.log("fix");
+    this.returnWorth = this.EPS * this.lastPlaySeconds;
+    this.earnedThen = utility.earned; // previous earned
+    this.earnedNow = 0; // earning now
+    this.EPS = 0; // player earning per second
+    if (this.lastPlaySeconds > (2 * 60)) { // if time since last played is more than 2 minutes
       this.returning = true;
       // add money to the player
     } else {
       this.returning = false;
     };
+    setInterval(this.calcEarning.bind(this), 2000);
   };
-  update() {
+  returns() {
+    ctxD.fillStyle = "black";
+    ctxD.globalAlpha = "0.8";
+    ctxD.fillRect(0, 0, game.width, game.height);
+    ctxD.fillStyle = "white";
+    ctxD.globalAlpha = "1";
+    ctxD.fillRect((game.width / 2) - (game.width / 4), (game.height / 2) - (game.height / 4), game.width / 2, game.height / 2);
+    ctxD.fillStyle = "black";
+    ctxD.textAlign = "center";
+    ctxD.textBaseline = "top";
+    ctxD.fillText("It's been", (game.width / 2), (game.height / 4));
+    ctxD.fillText(Math.floor(player.lastPlaySeconds / 60), game.width / 2, (game.height / 4) + game.textSize);
+    ctxD.fillText("minutes", game.width / 2, (game.height / 4) + (2 * game.textSize));
+    ctxD.fillText("Earning", game.width / 2, (game.height / 4) + (4 * game.textSize));
+    ctxD.fillText(player.returnWorth, game.width / 2, (game.height / 4) + (5 * game.textSize));
+    utility.money += this.returnWorth;
+    console.log(this.returnWorth);
+  };
+  calcEarning() {
+    this.earnedNow = utility.earned; // get how much player has earned
+    // get the difference between earned now and earned then over time
+    this.EPS = (this.earnedNow - this.earnedThen) / 2;
+    this.earnedThen = this.earnedNow;
+  };
+  update(now) {
     // set up a save function
     localStorage.setItem("playerMoney", utility.money);
     localStorage.setItem("playerMoneyEarned", utility.earned);
@@ -549,19 +566,11 @@ class Player {
     localStorage.setItem("playerPrestige", utility.prestige);
     // convert money to 6 sig. fig.
     this.money = utility.money;
-    now = Date.now();
-    elapsed = now - then;
-    if (elapsed > game.FPS) { // throttle based on FPS
-      then = now - elapsed;
-      //(elapsed % (1000 / game.FPS));
-      this.earning = utility.earned - this.earning;
-      //console.log(this.earning);
-      console.log(Math.floor(now - then));
-    };
     this.prestige = utility.prestige;
     if (this.money > 1000000) {
       this.money = utility.convert(utility.money);
     };
+
   };
 };
 
@@ -588,10 +597,10 @@ class Utility {
       this.earned = 0;
     };
     // set the price according to levels
-    this.costFactor = [1.5, 1, 1.35, 1.5, 1, 1.37, 5, 1.7, 1.9, 1, 2, 1.3, 1.6, 1, 1, 1];
+    this.costFactor = [1.5, 1, 1.35, 2, 1, 2.5, 5, 10, 1.9, 1, 3.33, 2.22, 2, 1, 1, 1];
     // get the stored upgrade values
     this.level = [];
-    this.cost = [20, 250, 600, 900, 5000, 5500, 6200, 15000, 5000, 50000, 1500, 5000, 10000, 100000, 5000, 100000];
+    this.cost = [20, 250, 600, 900, 7500, 10500, 12000, 50000, 5000, 50000, 1500, 5000, 10000, 100000, 5000, 100000];
     try { // get the player details
       this.getLevel = localStorage.getItem("playerUpgrades").split(",");
       this.getCosts = localStorage.getItem("upgradeCosts").split(",");
@@ -628,7 +637,7 @@ class Utility {
     } else {
       this.rolling = false;
     };
-    this.rollTime = 1000 + (500 * this.level[5]); // cookie rolling duration
+    this.rollTime = 500 * (1 + this.level[5]); // cookie rolling duration
     if (this.level[9] > 0) { // gold cookie
       this.goldable = true;
     } else {
@@ -637,13 +646,13 @@ class Utility {
 
     this.clickCount = 0; // current click count
     this.maxClickCount = 5 + (this.level[6] * 5); // max rolling click count
-    this.multiplier = 1000000000000000 + this.level[7];
+    this.multiplier = 1 + this.level[7];
     if (this.level[8] > 0) {
       this.autoTap = true;
     } else {
       this.autoTap = false;
     };
-    this.tapRate = (50 * this.level[8]);
+    this.tapRate = 0;
     if (this.level[15] > 0) { // cookie frenzy
       this.frenzy = true;
     } else {
@@ -687,28 +696,24 @@ class Utility {
         clickEffect.splice(0, 1);
       }
     };
-    // draw the money
     ctxD.fillStyle = "black";
-    ctxD.textAlign = "center";
+    ctxD.textAlign = "left";
     ctxD.textBaseline = "top";
     ctxD.font = game.textSize + "px calibri";
-    ctxD.fillText("$" + player.money, game.width / 2, 5);
-    // draw the money per second
-
+    ctxD.fillText("$" + player.money, 5, 5); // draw money
+    ctxD.font = game.textSize / 2 + "px calibri";
+    ctxD.textAlign = "right";
+    ctxD.fillText(utility.convert(player.EPS) + " $/s", game.width - 5, 5); // draw the money per second
     if (this.rolling) { // draw the rolling multiplier
-      var txt = game.textSize;
       // bounding ellipse
       ctxD.fillStyle = "white";
       ctxD.strokeStyle = "black";
       ctxD.beginPath();
-      ctxD.ellipse(
-        game.width - 100, // x
-        2 * txt + 50, // y
-        txt / 1.5, // radius x
-        txt / 3, // radius y
-        0, // rotation
-        0, // start angle
-        2 * Math.PI // end angle
+      ctxD.fillRect(
+        game.width - (2 * game.textSize) + 25, // x
+        2 * game.textSize + 10, // y
+        2 * game.textSize - 40, // width
+        game.textSize, // height
       );
       ctxD.closePath();
       ctxD.fill();
@@ -718,14 +723,11 @@ class Utility {
         ctxD.globalAlpha = ((this.time - input.lastClick) / this.rollTime);
         ctxD.fillStyle = "rgb(255,0,0)";
         ctxD.beginPath();
-        ctxD.ellipse(
-          game.width - 100, // x
-          2 * txt + 50, // y
-          ((this.time - input.lastClick) / this.rollTime) * (txt / 1.5) % (txt / 1.5), // radius x
-          txt / 3, // radius y
-          0, // rotation
-          0, // start angle
-          2 * Math.PI // end angle
+        ctxD.fillRect(
+          game.width - 15, // x
+          2 * game.textSize + 10, // y
+          -((this.time - input.lastClick) / this.rollTime) * (2 * game.textSize - 40), // width
+          game.textSize, // height
         );
         ctxD.closePath();
         ctxD.fill();
@@ -734,13 +736,13 @@ class Utility {
       ctxD.globalAlpha = 1;
       ctxD.fillStyle = "black";
       ctxD.strokeStyle = "darkgrey";
-      ctxD.textAlign = "right";
+      ctxD.textAlign = "left";
       ctxD.textBaseline = "middle";
-      ctxD.font = (txt * 0.35) + "px calibri";
-      ctxD.lineWidth = 10;
-      ctxD.strokeText("x" + this.clickCount, game.width - 100 + (txt / 4), 2 * txt + 51);
+      ctxD.font = (game.textSize / 2) + "px calibri";
+      ctxD.lineWidth = 8;
+      ctxD.strokeText("x " + this.clickCount, game.width - (1.5 * game.textSize), 2.5 * game.textSize + 5);
       ctxD.lineWidth = 5;
-      ctxD.fillText("x" + this.clickCount, game.width - 100 + (txt / 4), 2 * txt + 51);
+      ctxD.fillText("x " + this.clickCount, game.width - (1.5 * game.textSize), 2.5 * game.textSize + 5);
       ctxD.lineWidth = 1;
     };
     if (this.frenzy) { // draw the frenzy bar
@@ -840,10 +842,13 @@ class Utility {
       ctxD.globalAlpha = 1;
       // money
       ctxD.fillStyle = "black";
-      ctxD.textAlign = "center";
+      ctxD.textAlign = "left";
       ctxD.textBaseline = "top";
       ctxD.font = game.textSize + "px calibri";
-      ctxD.fillText("$" + player.money, game.width / 2, 5);
+      ctxD.fillText("$" + player.money, 5, 5); // draw money
+      ctxD.font = game.textSize / 2 + "px calibri";
+      ctxD.textAlign = "right";
+      ctxD.fillText(utility.convert(player.EPS) + " $/s", game.width - 5, 5); // draw the money per second
       ctxD.textAlign = "center";
       ctxD.fillStyle = "white";
       ctxD.fillRect(0, game.height - game.textSize, game.width, game.textSize);
@@ -852,6 +857,7 @@ class Utility {
       ctxD.fillRect(0, game.height - game.textSize, game.width, game.textSize);
       ctxD.globalAlpha = 1;
       ctxD.fillStyle = "black";
+      ctxD.font = game.textSize + "px calibri";
       ctxD.fillText("Close Shop", game.width / 2, game.height - game.textSize);
       ctxD.strokeRect(0, game.height - game.textSize, game.width, game.height);
   };
@@ -863,7 +869,7 @@ class Utility {
     ctxD.textAlign = "center";
     ctxD.textBaseline = "top";
     ctxD.font = game.textSize + "px calibri";
-    ctxD.fillText("$" + player.money, game.width / 2, 5); // money
+    //ctxD.fillText("$" + player.money, game.width / 2, 5); // money
     ctxD.lineWidth = 10;
     ctxD.fillText("Total Earnings", game.width / 2, 2.25 * game.textSize);
     ctxD.font = game.textSize / 1.25 + "px calibri";
@@ -923,10 +929,13 @@ class Utility {
     ctxD.fillRect(0, 2 * game.textSize, game.width, game.height);
     // money
     ctxD.fillStyle = "black";
-    ctxD.textAlign = "center";
+    ctxD.textAlign = "left";
     ctxD.textBaseline = "top";
     ctxD.font = game.textSize + "px calibri";
-    ctxD.fillText("$" + player.money, game.width / 2, 5);
+    ctxD.fillText("$" + player.money, 5, 5); // draw money
+    ctxD.font = game.textSize / 2 + "px calibri";
+    ctxD.textAlign = "right";
+    ctxD.fillText(utility.convert(player.EPS) + " $/s", game.width - 5, 5); // draw the money per second
     ctxD.lineWidth = 10;
     ctxD.textAlign = "center";
     ctxD.fillStyle = "white";
@@ -937,6 +946,7 @@ class Utility {
     ctxD.globalAlpha = 1;
     ctxD.fillStyle = "black";
     ctxD.strokeStyle = "black";
+    ctxD.font = game.textSize + "px calibri";
     ctxD.fillText("Close Third", game.width / 2, game.height - game.textSize);
     ctxD.strokeRect(0, game.height - game.textSize, game.width, game.height);
   };
@@ -951,13 +961,14 @@ class Utility {
     console.log(int);
   };
   autoClick() {
-
     // note the time
     input.lastClick = utility.time;
     // check if click count should increase
     if (utility.rolling && utility.clickCount < utility.maxClickCount) utility.clickCount++;
-    if (utility.level[13] > 0) container.fill();
-    cookie.expand();
+    for (var i = 0; i < utility.level[8]; i++) {
+      if (utility.level[13] > 0) container.fill();
+      cookie.expand();
+    };
   };
   upgrade(cost, reference, specific) {
     utility.occuring = 100;
@@ -981,7 +992,7 @@ class Utility {
       break;
       case "rollingDur":
       // more duration before expiry
-      utility.rollTime += 500;
+      this.rollTime = 500 * (1 + this.level[5]);
       break;
       case "rollingMax":
       // higher rolling count before stopping
@@ -991,7 +1002,6 @@ class Utility {
       break;
       case "autoClick":
       this.autoTap = true;
-      if (utility.tapRate < 949) utility.tapRate += 50;
       break;
       case "golden":
       this.goldable = true;
@@ -1032,6 +1042,7 @@ class Utility {
   };
   units() { // currency units
     return [
+      "K",//"Thousands",
       "M",//"Million",
       "B",//"Billion",
       "T",//"Trillion",
@@ -1067,19 +1078,21 @@ class Utility {
   convert(number) { // number converter
     if (number > 1000000) {
       var arr = [];
-      var str = number.toString();
+      var str = number.toPrecision(6);
       var splitString = str.split("");
-      //console.log(splitString);
-      var unit = Math.ceil(splitString.length / 3) - 3;
+      var unitString = str.split("e+");
+      var unit = Math.floor(unitString[1] / 3) - 1;
+      console.log(utility.money);
       arr.push(splitString[0]); // push the first digit
-      if (!Number.isInteger((splitString.length - 1) / 3)) { // push the second digit
-        arr.push(splitString[1]);
-        if (!Number.isInteger((splitString.length -2) / 3)) { // push the third digit
-          arr.push(splitString[2]);
-        };
+      if (Number.isInteger(unitString[1] - 1 / 3)) { // push the second digit
+        arr.push(splitString[2]);
+      };
+      if (Number.isInteger(unitString[1] - 2) / 3) { // push the third digit
+        arr.push(splitString[2]);
+        arr.push(splitString[3]);
       };
       arr.push(".");
-      var intermediate = arr.length - 1;
+      var intermediate = arr.length;
       for (var x = intermediate; x < (intermediate + 3); x++) {
         arr.push(splitString[x]);
       };
@@ -1218,7 +1231,6 @@ class Utility {
   update() {
     // tap if auto click is on
     if (this.autoTap) this.autoClick();
-    latestTime = Date.now();
     this.prestigeFor = Math.floor(Math.pow((1 + this.prestigeBonus) * (this.money / 1000000000), 0.15));
   };
 };
@@ -1446,7 +1458,7 @@ class Container {
     this.reduceCap = utility.level[11];
     this.capacity = (utility.level[10] * 15) - this.reduceCap;
     this.bonus = (utility.level[12] * 5)* utility.prestigeBonus;
-    this.worth = (cookie.worth * (utility.level[10] + this.bonus) * utility.multiplier) * utility.prestigeBonus;
+    this.worth = (cookie.worth * ((utility.level[10] * 15) + this.bonus)) * utility.multiplier;
     if (this.filled >= this.capacity) {
       this.full = true;
     };
