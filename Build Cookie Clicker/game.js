@@ -1084,10 +1084,10 @@ class Utility {
       var unit = Math.floor(unitString[1] / 3) - 1;
       console.log(utility.money);
       arr.push(splitString[0]); // push the first digit
-      if (Number.isInteger(unitString[1] - 1 / 3)) { // push the second digit
+      if (Number.isInteger((unitString[1] - 1) / 3)) { // push the second digit
         arr.push(splitString[2]);
       };
-      if (Number.isInteger(unitString[1] - 2) / 3) { // push the third digit
+      if (Number.isInteger((unitString[1] - 2) / 3) { // push the third digit
         arr.push(splitString[2]);
         arr.push(splitString[3]);
       };
