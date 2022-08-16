@@ -92,7 +92,7 @@ class Game {
     ctxS.textAlign = "right";
     ctxS.fillText("Prestige", this.width - 10, game.textSize + 10);
     ctxS.textAlign = "left";
-    ctxS.fillText("Third", 10, game.textSize + 10);
+    ctxS.fillText("Menu", 10, game.textSize + 10);
     ctxS.globalAlpha = 1;
     // draw the rest of the cookie screen
     if (utility.level[10] > 0) container.draw();
@@ -113,7 +113,7 @@ class Game {
     ctxS.globalAlpha = 0.5;
     ctxS.fillText("Shop", this.width / 2, game.textSize + 10);
     ctxS.textAlign = "left";
-    ctxS.fillText("Third", 10, game.textSize + 10);
+    ctxS.fillText("Menu", 10, game.textSize + 10);
     ctxS.globalAlpha = 1;
     ctxS.textAlign = "right";
     ctxS.fillText("Prestige", this.width - 10, game.textSize + 10);
@@ -137,7 +137,7 @@ class Game {
     ctxS.fillText("Prestige", this.width - 10, game.textSize + 10);
     ctxS.globalAlpha = 1;
     ctxS.textAlign = "left";
-    ctxS.fillText("Third", 10, game.textSize + 10);
+    ctxS.fillText("Menu", 10, game.textSize + 10);
   };
   update() {
     // count time between clicks
@@ -280,7 +280,7 @@ class InputHandler {
             game.state = 3;
             input.dY = this.lastdY;
           };
-          if (e.x < game.textSize && e.y < 2 * game.textSize) { //check if third button clicked
+          if (e.x < game.width / 3 && e.y < 2 * game.textSize) { //check if menu button clicked
             game.state = 4;
             input.dY = this.lastdY;
           };
@@ -317,8 +317,8 @@ class InputHandler {
             this.lastdY = input.dY;
             input.dY = 0;
           };
-          // third screen
-          if (e.x < game.textSize && e.y < 2 * game.textSize) {
+          // menu screen
+          if (e.x < game.width / 3 && e.y < 2 * game.textSize) {
             game.state = 4;
             this.lastdY = input.dY;
             input.dY = 0;
@@ -393,8 +393,8 @@ class InputHandler {
           game.state = 1;
           input.dY = this.lastdY;
         };
-        // third screen
-        if (!utility.prestigeConfirm && e.x < game.textSize && e.y < 2 * game.textSize) {
+        // menu screen
+        if (!utility.prestigeConfirm && e.x < game.width / 3 && e.y < 2 * game.textSize) {
           game.state = 4;
           input.dY = this.lastdY;
         };
@@ -413,11 +413,6 @@ class InputHandler {
           };
         };
       } else { // third screen
-        // close the third screen
-          if (e.x < game.width && e.y > game.height - game.textSize) {
-            game.state = 1;
-            input.dY = this.lastdY;
-          };
         // shop screen
         if (e.x > game.width / 3 && e.x < game.width - (game.width / 3) && e.y < 2 * game.textSize) {
           game.state = 2;
@@ -429,7 +424,7 @@ class InputHandler {
           input.dY = this.lastdY;
         };
         // third screen
-        if (e.x < game.textSize && e.y < 2 * game.textSize) {
+        if (e.x < game.width / 3 && e.y < 2 * game.textSize) {
           game.state = 1;
           input.dY = this.lastdY;
         };
@@ -773,8 +768,7 @@ class Utility {
 
   };
   drawM() { // draw the dynamic upgrade screen
-
-      // background
+    // background
       ctxD.fillStyle = "white";
       ctxD.strokeStyle = "black";
       ctxD.lineWidth = 10;
@@ -844,7 +838,7 @@ class Utility {
       ctxD.globalAlpha = 0.5;
       ctxD.fillText("Prestige", game.width - 10, game.textSize + 10);
       ctxD.textAlign = "left";
-      ctxD.fillText("Third", 10, game.textSize + 10);
+      ctxD.fillText("Menu", 10, game.textSize + 10);
       ctxD.globalAlpha = 1;
       // money
       ctxD.fillStyle = "black";
@@ -878,13 +872,13 @@ class Utility {
     ctxD.textAlign = "center";
     ctxD.textBaseline = "top";
     ctxD.font = game.textSize / 1.5 + "px calibri";
-    ctxD.globalAlpha = 1;
-    ctxD.fillText("Shop", game.width / 2, game.textSize + 10);
-    ctxD.textAlign = "right";
     ctxD.globalAlpha = 0.5;
-    ctxD.fillText("Prestige", game.width - 10, game.textSize + 10);
+    ctxD.fillText("Shop", game.width / 2, game.textSize + 10);
     ctxD.textAlign = "left";
-    ctxD.fillText("Third", 10, game.textSize + 10);
+    ctxD.fillText("Menu", 10, game.textSize + 10);
+    ctxD.textAlign = "right";
+    ctxD.globalAlpha = 1;
+    ctxD.fillText("Prestige", game.width - 10, game.textSize + 10);
     ctxD.globalAlpha = 1;
     ctxD.fillStyle = "black";
     ctxD.textAlign = "left";
@@ -901,14 +895,15 @@ class Utility {
     ctxD.lineWidth = 10;
     ctxD.fillText("Total Earnings", game.width / 2, 2.25 * game.textSize);
     ctxD.font = game.textSize / 1.25 + "px calibri";
+    ctxD.fillText(utility.convert(utility.earned), game.width / 2, 3.35 * game.textSize);
     ctxD.font = game.textSize / 2 + "px calibri";
     ctxD.textAlign = "left";
-    ctxD.fillText("You have:", game.frameW, 4.75 * game.textSize);
+    ctxD.fillText("You have:", game.frameW, 4.35 * game.textSize);
     ctxD.textAlign = "right";
-    ctxD.fillText(player.prestige + "  currency", game.width - game.frameW, 4.75 * game.textSize); // how much prestige the player currently has
+    ctxD.fillText(player.prestige + "  currency", game.width - game.frameW, 4.35 * game.textSize); // how much prestige the player currently has
     ctxD.textAlign = "center";
-    ctxD.fillText("increasing your earnings by:", game.width / 2, 5.33 * game.textSize);
-    ctxD.fillText(utility.prestigeBonus + " x", game.width / 2, 6 * game.textSize); // calculate how much the prestige amplifies profits
+    ctxD.fillText("increasing your earnings by:", game.width / 2, 4.85 * game.textSize);
+    ctxD.fillText(utility.prestigeBonus + " x", game.width / 2, 5.5 * game.textSize); // calculate how much the prestige amplifies profits
     ctxD.textAlign = "center";
     ctxD.fillStyle = "white";
     ctxD.fillRect(0, game.height - game.textSize, game.width, game.textSize);
