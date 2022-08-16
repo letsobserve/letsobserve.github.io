@@ -519,12 +519,16 @@ class Player {
     if (!Number.isInteger(this.lastPlay)) {
       this.lastPlay = game.time;
     };
+    this.lastEPS = parseInt(localStorage.getItem("playerBestEPS"));
+    if (!Number.isInteger(this.lastEPS)) {
+      this.lastEPS = 0;
+    };
     this.lastPlaySeconds = (game.time - this.lastPlay) / 1000;
-    this.returnWorth = this.EPS * this.lastPlaySeconds;
+    this.returnWorth = Math.ceil(this.lastEPS * this.lastPlaySeconds);
     this.earnedThen = utility.earned; // previous earned
     this.earnedNow = 0; // earning now
     this.EPS = 0; // player earning per second
-    if (this.lastPlaySeconds > (2 * 60)) { // if time since last played is more than 2 minutes
+    if (this.lastPlaySeconds < (2 * 60)) { // if time since last played is more than 2 minutes
       this.returning = true;
       // add money to the player
     } else {
@@ -542,13 +546,15 @@ class Player {
     ctxD.fillStyle = "black";
     ctxD.textAlign = "center";
     ctxD.textBaseline = "top";
+    ctxD.font = game.textSize + "px calibri";
     ctxD.fillText("It's been", (game.width / 2), (game.height / 4));
-    ctxD.fillText(Math.floor(player.lastPlaySeconds / 60), game.width / 2, (game.height / 4) + game.textSize);
+    ctxD.fillText((player.lastPlaySeconds / 60).toPrecision(1), game.width / 2, (game.height / 4) + game.textSize);
     ctxD.fillText("minutes", game.width / 2, (game.height / 4) + (2 * game.textSize));
     ctxD.fillText("Earning", game.width / 2, (game.height / 4) + (4 * game.textSize));
-    ctxD.fillText(player.returnWorth, game.width / 2, (game.height / 4) + (5 * game.textSize));
+    ctxD.fillText("$" + utility.convert(player.returnWorth), game.width / 2, (game.height / 4) + (5 * game.textSize));
     utility.money += this.returnWorth;
-    console.log(this.returnWorth);
+    ctxD.font = game.textSize / 2 + "px calibri";
+    ctxD.fillText("Tap to Continue", game.width / 2, (game.height / 4) + (7 * game.textSize));
   };
   calcEarning() {
     this.earnedNow = utility.earned; // get how much player has earned
@@ -564,6 +570,9 @@ class Player {
     localStorage.setItem("upgradeCosts", utility.cost);
     localStorage.setItem("playerLatestTime", latestTime);
     localStorage.setItem("playerPrestige", utility.prestige);
+    if (localStorage.getItem("playerBestEPS") < player.EPS) {
+      localStorage.setItem("playerBestEPS", player.EPS);
+    };
     // convert money to 6 sig. fig.
     this.money = utility.money;
     this.prestige = utility.prestige;
