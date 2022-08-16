@@ -532,6 +532,7 @@ class Player {
       this.returning = true;
       // add money to the player
 utility.money += this.returnWorth; 
+utility.earned += this.returnWorth; 
     } else {
       this.returning = false;
     };
