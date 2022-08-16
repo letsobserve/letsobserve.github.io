@@ -528,9 +528,10 @@ class Player {
     this.earnedThen = utility.earned; // previous earned
     this.earnedNow = 0; // earning now
     this.EPS = 0; // player earning per second
-    if (this.lastPlaySeconds < (2 * 60)) { // if time since last played is more than 2 minutes
+    if (this.lastPlaySeconds > (2 * 60)) { // if time since last played is more than 2 minutes
       this.returning = true;
       // add money to the player
+utility.money += this.returnWorth; 
     } else {
       this.returning = false;
     };
