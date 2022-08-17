@@ -990,9 +990,9 @@ class Utility {
   autoClick() {
     // tap if auto click is on
     // note the time
-    input.lastClick = utility.time;
+    //input.lastClick = utility.time;
     // check if click count should increase
-    if (utility.rolling && utility.clickCount < utility.maxClickCount) utility.clickCount++;
+    //if (utility.rolling && utility.clickCount < utility.maxClickCount) utility.clickCount++;
     if (utility.level[13] > 0) container.fill();
     cookie.expand();
   };
