@@ -647,7 +647,7 @@ class Utility {
     } else {
       this.rolling = false;
     };
-    this.rollTime = 500 + this.level[5]; // cookie rolling duration
+    this.rollTime = 500 * (1 + this.level[5]); // cookie rolling duration
     if (this.level[9] > 0) { // gold cookie
       this.goldable = true;
     } else {
