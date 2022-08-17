@@ -327,13 +327,13 @@ class InputHandler {
           if (e.x > btn1.x && e.x < game.width - (2 * game.frameW) && e.y > 2 * game.textSize && e.y < game.height - game.textSize) {
             // check each button
             // max level && can afford? && position
-            if (utility.level[0] < 500 && utility.cost[0] <= utility.money && e.y > btn1.y - input.dY && e.y < btn1.y + game.frameH - input.dY) {
+            if (utility.cost[0] <= utility.money && e.y > btn1.y - input.dY && e.y < btn1.y + game.frameH - input.dY) {
               utility.upgrade(utility.cost[0], 0, "extraMoney");
             };
             if (utility.level[1] == 0 && utility.cost[1] <= utility.money && e.y > btn2.y - input.dY && e.y < btn2.y + game.frameH - input.dY) {
               utility.upgrade(utility.cost[1], 1, "explodable");
             };
-            if (utility.level[2] < 100 && utility.cost[2] <= utility.money && e.y > btn3.y - input.dY && e.y < btn3.y + game.frameH - input.dY) {
+            if (utility.cost[2] <= utility.money && e.y > btn3.y - input.dY && e.y < btn3.y + game.frameH - input.dY) {
               utility.upgrade(utility.cost[2], 2, "explodeBonus");
             };
             if (utility.level[3] < 20 && utility.cost[3] <= utility.money && e.y > btn4.y - input.dY && e.y < btn4.y + game.frameH - input.dY) {
@@ -364,7 +364,7 @@ class InputHandler {
               if (container.capacity > (5 * utility.level[10]))
               utility.upgrade(utility.cost[11], 11, "containerCap");
             };
-            if (utility.level[10] > 0 && utility.level[12] < 100 && utility.cost[12] <= utility.money && e.y > btn13.y - input.dY && e.y < btn13.y + game.frameH - input.dY) {
+            if (utility.level[10] > 0 && utility.cost[12] <= utility.money && e.y > btn13.y - input.dY && e.y < btn13.y + game.frameH - input.dY) {
               utility.upgrade(utility.cost[12], 12, "containerWorth");
             };
             if (utility.level[10] > 0 && utility.level[13] == 0 && utility.cost[13] <= utility.money && e.y > btn14.y - input.dY && e.y < btn14.y + game.frameH - input.dY) {
@@ -655,7 +655,7 @@ class Utility {
     };
     this.clickCount = 0; // current click count
     this.maxClickCount = 5 + (this.level[6] * 5); // max rolling click count
-    this.multiplier = 100000000000 + this.level[7];
+    this.multiplier = 1 + this.level[7];
     if (this.level[8] > 0) {
       this.autoTap = true;
     } else {
