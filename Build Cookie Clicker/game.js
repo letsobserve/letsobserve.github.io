@@ -345,13 +345,13 @@ class InputHandler {
             if (utility.level[4] == 1 && utility.level[5] < 50 && utility.cost[5] <= utility.money && e.y > btn6.y - input.dY && e.y < btn6.y + game.frameH - input.dY) {
               utility.upgrade(utility.cost[5], 5, "rollingDur");
             };
-            if (utility.level[4] == 1 && utility.level[6] < 200 && utility.cost[6] <= utility.money && e.y > btn7.y - input.dY && e.y < btn7.y + game.frameH - input.dY) {
+            if (utility.level[4] == 1 && utility.cost[6] <= utility.money && e.y > btn7.y - input.dY && e.y < btn7.y + game.frameH - input.dY) {
               utility.upgrade(utility.cost[6], 6, "rollingMax");
             };
-            if (utility.level[7] < 99 && utility.cost[7] <= utility.money && e.y > btn8.y - input.dY && e.y < btn8.y + game.frameH - input.dY) {
+            if (utility.cost[7] <= utility.money && e.y > btn8.y - input.dY && e.y < btn8.y + game.frameH - input.dY) {
               utility.upgrade(utility.cost[7], 7, "multiplier");
             };
-            if (utility.level[8] < 40 && utility.cost[8] <= utility.money && e.y > btn9.y - input.dY && e.y < btn9.y + game.frameH - input.dY) {
+            if (utility.level[8] < 60 && utility.cost[8] <= utility.money && e.y > btn9.y - input.dY && e.y < btn9.y + game.frameH - input.dY) {
               utility.upgrade(utility.cost[8], 8, "autoClick");
             };
             if (utility.level[9] == 0 && utility.cost[9] <= utility.money && e.y > btn10.y - input.dY && e.y < btn10.y + game.frameH - input.dY) {
@@ -360,8 +360,8 @@ class InputHandler {
             if (utility.level[10] < 5 && utility.cost[10] <= utility.money && e.y > btn11.y - input.dY && e.y < btn11.y + game.frameH - input.dY) {
               utility.upgrade(utility.cost[10], 10, "containerLvl");
             };
-            if (utility.level[10] > 0 && utility.level[11] < 100 && utility.cost[11] <= utility.money && e.y > btn12.y - input.dY && e.y < btn12.y + game.frameH - input.dY) {
-              if ((container.capacity - (utility.level[11] + 1)) > 5)
+            if (utility.level[10] > 0 && utility.cost[11] <= utility.money && e.y > btn12.y - input.dY && e.y < btn12.y + game.frameH - input.dY) {
+              if (container.capacity > (5 * utility.level[10]))
               utility.upgrade(utility.cost[11], 11, "containerCap");
             };
             if (utility.level[10] > 0 && utility.level[12] < 100 && utility.cost[12] <= utility.money && e.y > btn13.y - input.dY && e.y < btn13.y + game.frameH - input.dY) {
@@ -531,8 +531,8 @@ class Player {
     if (this.lastPlaySeconds > (2 * 60)) { // if time since last played is more than 2 minutes
       this.returning = true;
       // add money to the player
-utility.money += this.returnWorth; 
-utility.earned += this.returnWorth; 
+      utility.money += this.returnWorth;
+      utility.earned += this.returnWorth;
     } else {
       this.returning = false;
     };
@@ -550,11 +550,10 @@ utility.earned += this.returnWorth;
     ctxD.textBaseline = "top";
     ctxD.font = game.textSize + "px calibri";
     ctxD.fillText("It's been", (game.width / 2), (game.height / 4));
-    ctxD.fillText((player.lastPlaySeconds / 60).toPrecision(1), game.width / 2, (game.height / 4) + game.textSize);
+    ctxD.fillText(player.lastPlaySeconds / 60, game.width / 2, (game.height / 4) + game.textSize);
     ctxD.fillText("minutes", game.width / 2, (game.height / 4) + (2 * game.textSize));
     ctxD.fillText("Earning", game.width / 2, (game.height / 4) + (4 * game.textSize));
     ctxD.fillText("$" + utility.convert(player.returnWorth), game.width / 2, (game.height / 4) + (5 * game.textSize));
-    utility.money += this.returnWorth;
     ctxD.font = game.textSize / 2 + "px calibri";
     ctxD.fillText("Tap to Continue", game.width / 2, (game.height / 4) + (7 * game.textSize));
   };
@@ -608,7 +607,7 @@ class Utility {
       this.earned = 0;
     };
     // set the price according to levels
-    this.costFactor = [1.5, 1, 1.35, 2, 1, 2.5, 5, 10, 1.9, 1, 3.33, 2.22, 2, 1, 1, 1];
+    this.costFactor = [1.5, 1, 1.35, 2, 1, 2.5, 5, 10, 1.9, 1, 20, 2.22, 2, 1, 1, 1];
     // get the stored upgrade values
     this.level = [];
     this.cost = [20, 250, 600, 900, 7500, 10500, 12000, 50000, 5000, 50000, 1500, 5000, 10000, 100000, 5000, 100000];
@@ -648,16 +647,15 @@ class Utility {
     } else {
       this.rolling = false;
     };
-    this.rollTime = 500 * (1 + this.level[5]); // cookie rolling duration
+    this.rollTime = 500 + this.level[5]; // cookie rolling duration
     if (this.level[9] > 0) { // gold cookie
       this.goldable = true;
     } else {
       this.goldable = false;
     };
-
     this.clickCount = 0; // current click count
     this.maxClickCount = 5 + (this.level[6] * 5); // max rolling click count
-    this.multiplier = 1 + this.level[7];
+    this.multiplier = 100000000000 + this.level[7];
     if (this.level[8] > 0) {
       this.autoTap = true;
     } else {
@@ -681,7 +679,7 @@ class Utility {
     if (!Number.isInteger(this.prestige)) {
       this.prestige = 0;
     };
-    this.prestigeBonus = Math.floor(1 + (this.prestige * 0.1));
+    this.prestigeBonus = 1 + (this.prestige * 0.1);
     this.prestigeUpgrade = 0;
     this.prestigeFor = Math.floor(Math.pow((1 + this.prestigeUpgrade) * (this.money / 1000000000), 0.15));
   };
@@ -692,9 +690,9 @@ class Utility {
           ctxD.fillStyle = "green";
           ctxD.textAlign = "center";
           if (player.EPS > 1000000) {
-            ctxD.font = i * (game.textSize / 25) + "px calibri";
+            ctxD.font = i * (game.textSize / 45) + "px calibri";
           } else {
-            ctxD.font = i * (game.textSize / 20) + "px calibri";
+            ctxD.font = i * (game.textSize / 25) + "px calibri";
           };
           ctxD.fillText("$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y - clickEffect[i].time);
         } else {
@@ -703,7 +701,7 @@ class Utility {
           ctxD.font = game.textSize + "px calibri";
           ctxD.fillText("-$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y - clickEffect[i].time);
         };
-        clickEffect[i].time -= clickEffect.length / 2;
+        clickEffect[i].time -= clickEffect.length / 3;
       } else {
         clickEffect.splice(0, 1);
       }
@@ -983,14 +981,11 @@ class Utility {
     ctxD.strokeRect(0, game.height - game.textSize, game.width, game.height);
   };
   explode() {
-    var int = 0 + cookie.expCookie.length;
     cookie.exploding = true;
     cookie.explode = cookie.explodeFor;
     for (var i = 0; i < 25; i++) {
-      cookie.expCookie[i] = new Cookie;
+      if (cookie.expCookie.length < 500) cookie.expCookie.push(new Cookie);
     };
-    int = cookie.expCookie.length;
-    console.log(int);
   };
   autoClick() {
     // tap if auto click is on
@@ -1401,6 +1396,11 @@ class Cookie {
     if (cookie.exploding) {
       cookie.boom(cookie, 2);
       utility.events(cookie.bonusWorth, 0, 0, true);
+      this.expCookie.forEach(function(c) {
+        //console.log(c);
+        if (c.x + c.xV < (-game.width * 4) || c.x + c.xV > (game.width * 4)) cookie.expCookie.splice(0,1);
+        if (c.y + c.yV < (-game.height * 4) || c.y + c.yV > (game.height * 4)) cookie.expCookie.splice(0,1);
+      });
     };
     if (goldCookie.exploding) {
       goldCookie.boom(goldCookie, 3);
