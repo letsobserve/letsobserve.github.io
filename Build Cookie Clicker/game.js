@@ -188,7 +188,7 @@ class Game {
       if (utility.autoTapRounds > 0) {
         utility.autoClick();
         utility.autoTapRounds--;
-      }
+      };
       if (game.state == 0) { // draw the start menu
         game.draw0();
       } else if (game.state == 1) { // draw the cookie screen
@@ -327,13 +327,13 @@ class InputHandler {
           if (e.x > btn1.x && e.x < game.width - (2 * game.frameW) && e.y > 2 * game.textSize && e.y < game.height - game.textSize) {
             // check each button
             // max level && can afford? && position
-            if (utility.cost[0] <= utility.money && e.y > btn1.y - input.dY && e.y < btn1.y + game.frameH - input.dY) {
+            if (utility.level[0] < 500 && utility.cost[0] <= utility.money && e.y > btn1.y - input.dY && e.y < btn1.y + game.frameH - input.dY) {
               utility.upgrade(utility.cost[0], 0, "extraMoney");
             };
             if (utility.level[1] == 0 && utility.cost[1] <= utility.money && e.y > btn2.y - input.dY && e.y < btn2.y + game.frameH - input.dY) {
               utility.upgrade(utility.cost[1], 1, "explodable");
             };
-            if (utility.cost[2] <= utility.money && e.y > btn3.y - input.dY && e.y < btn3.y + game.frameH - input.dY) {
+            if (utility.level[2] < 100 && utility.cost[2] <= utility.money && e.y > btn3.y - input.dY && e.y < btn3.y + game.frameH - input.dY) {
               utility.upgrade(utility.cost[2], 2, "explodeBonus");
             };
             if (utility.level[3] < 20 && utility.cost[3] <= utility.money && e.y > btn4.y - input.dY && e.y < btn4.y + game.frameH - input.dY) {
@@ -364,7 +364,7 @@ class InputHandler {
               if (container.capacity > (5 * utility.level[10]))
               utility.upgrade(utility.cost[11], 11, "containerCap");
             };
-            if (utility.level[10] > 0 && utility.cost[12] <= utility.money && e.y > btn13.y - input.dY && e.y < btn13.y + game.frameH - input.dY) {
+            if (utility.level[10] > 0 && utility.level[12] < 100 && utility.cost[12] <= utility.money && e.y > btn13.y - input.dY && e.y < btn13.y + game.frameH - input.dY) {
               utility.upgrade(utility.cost[12], 12, "containerWorth");
             };
             if (utility.level[10] > 0 && utility.level[13] == 0 && utility.cost[13] <= utility.money && e.y > btn14.y - input.dY && e.y < btn14.y + game.frameH - input.dY) {
@@ -647,7 +647,7 @@ class Utility {
     } else {
       this.rolling = false;
     };
-    this.rollTime = 500 * (1 + this.level[5]); // cookie rolling duration
+    this.rollTime = 500 + this.level[5]; // cookie rolling duration
     if (this.level[9] > 0) { // gold cookie
       this.goldable = true;
     } else {
@@ -684,24 +684,20 @@ class Utility {
     this.prestigeFor = Math.floor(Math.pow((1 + this.prestigeUpgrade) * (this.money / 1000000000), 0.15));
   };
   drawD() { // draw the dynamic cookie screen
+    ctxD.fillStyle = "green";
+    ctxD.textAlign = "center";
+    ctxD.font = game.textSize + "px calibri";
     for (let i = 0; i < clickEffect.length; i++) { // draw the earned money
       if (clickEffect[i].time > 0) {
         if (clickEffect[i].type) {
-          ctxD.fillStyle = "green";
-          ctxD.textAlign = "center";
-          if (player.EPS > 1000000) {
-            ctxD.font = i * (game.textSize / 45) + "px calibri";
-          } else {
-            ctxD.font = i * (game.textSize / 25) + "px calibri";
-          };
-          ctxD.fillText("$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y - clickEffect[i].time);
+          ctxD.fillText("$" + clickEffect[i].text, clickEffect[i].x - clickEffect[i].time, clickEffect[i].y);
         } else {
           ctxD.fillStyle = "red";
           ctxD.textAlign = "center";
           ctxD.font = game.textSize + "px calibri";
-          ctxD.fillText("-$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y - clickEffect[i].time);
+          ctxD.fillText("-$" + clickEffect[i].text, clickEffect[i].x + clickEffect[i].time, clickEffect[i].y);
         };
-        clickEffect[i].time -= clickEffect.length / 3;
+        clickEffect[i].time -= 5;
       } else {
         clickEffect.splice(0, 1);
       }
@@ -990,9 +986,9 @@ class Utility {
   autoClick() {
     // tap if auto click is on
     // note the time
-    //input.lastClick = utility.time;
+    input.lastClick = utility.time;
     // check if click count should increase
-    //if (utility.rolling && utility.clickCount < utility.maxClickCount) utility.clickCount++;
+    if (utility.rolling && utility.clickCount < utility.maxClickCount) utility.clickCount++;
     if (utility.level[13] > 0) container.fill();
     cookie.expand();
   };
@@ -1060,9 +1056,9 @@ class Utility {
   alternate() {
     var choice = [];
     if (this.switch) {
-      choice.push(game.width - (1.5 * game.textSize));
+      choice.push(game.textSize * 2);
     } else {
-      choice.push(1.5 * game.textSize);
+      choice.push(game.textSize);
     }
     this.switch = !this.switch;
     return choice;
@@ -1139,106 +1135,107 @@ class Utility {
   events() {
     switch (utility.event) {
       case "click":
-      clickEffect.push(new Effects(utility.convert(cookie.worth), this.alternate(), clickEffect.length, true));
+      clickEffect.push(new Effects(utility.convert(cookie.worth), game.width, this.alternate(), true));
       utility.event = null;
       break;
       case "reset":
-      clickEffect.push(new Effects(utility.convert(cookie.bonusWorth), game.width / 2, clickEffect.length, true));
+      clickEffect.push(new Effects(utility.convert(cookie.bonusWorth), game.width, 4 * game.textSize, true));
+      utility.event = null;
+      break;
+      case "sell":
+      clickEffect.push(new Effects(utility.convert(container.worth), game.width, 3 * game.textSize, true));
+      console.log("test");
       utility.event = null;
       break;
       case "extraMoney":
-      clickEffect.push(new Effects(utility.convert(utility.cost[0]), game.width / 2, clickEffect.length, false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[0]), 0, game.height - (5 * game.textSize), false));
       utility.cost[0] = utility.newPrice(utility.cost[0], utility.costFactor[0], utility.level[0]);
       utility.event = null;
       break;
       case "explodable":
-      clickEffect.push(new Effects(utility.convert(utility.cost[1]), game.width / 2, clickEffect.length, false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[1]), 0, game.height - (6 * game.textSize), false));
       utility.cost[1] = utility.checkMark;
       utility.event = null;
       break;
       case "explodeBonus":
-      clickEffect.push(new Effects(utility.convert(utility.cost[2]), game.width / 2, clickEffect.length, false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[2]), 0, game.height - (5 * game.textSize), false));
       utility.cost[2] = utility.newPrice(utility.cost[2], utility.costFactor[2], utility.level[2]);
       utility.event = null;
       break;
       case "explodeMore":
-      clickEffect.push(new Effects(utility.convert(utility.cost[3]), game.width / 2, clickEffect.length, false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[3]), 0, game.height - (5 * game.textSize), false));
       utility.cost[3] = utility.newPrice(utility.cost[3], utility.costFactor[3], utility.level[3]);
       utility.event = null;
       break;
       case "rolling":
-      clickEffect.push(new Effects(utility.convert(utility.cost[4]), game.width / 2, clickEffect.length, false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[4]), 0, game.height - (6 * game.textSize), false));
       utility.cost[4] = utility.checkMark;
       utility.event = null;
       break;
       case "rollingDur":
       // more duration before expiry
-      clickEffect.push(new Effects(utility.convert(utility.cost[5]), game.width / 2, clickEffect.length, false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[5]), 0, game.height - (5 * game.textSize), false));
       utility.cost[5] = utility.newPrice(utility.cost[5], utility.costFactor[5], utility.level[5]);
       utility.event = null;
       break;
       case "rollingMax":
       // higher rolling count before stopping
-      clickEffect.push(new Effects(utility.convert(utility.cost[6]), game.width / 2, clickEffect.length, false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[6]), 0, game.height - (5 * game.textSize), false));
       utility.maxClickCount += 5;
       utility.cost[6] = utility.newPrice(utility.cost[6], utility.costFactor[6], utility.level[6]);
       utility.event = null;
       break;
       case "multiplier":
-      clickEffect.push(new Effects(utility.convert(utility.cost[7]), game.width / 2, clickEffect.length, false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[7]), 0, game.height - (5 * game.textSize), false));
       utility.cost[7] = utility.newPrice(utility.cost[7], utility.costFactor[7], utility.level[7]);
       utility.event = null;
       break;
       case "autoClick":
-      clickEffect.push(new Effects(utility.convert(utility.cost[8]), game.width / 2, clickEffect.length, false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[8]), 0, game.height - (5 * game.textSize), false));
       utility.cost[8] = utility.newPrice(utility.cost[8], utility.costFactor[8], utility.level[8]);
       utility.event = null;
       break;
       case "golden":
-      clickEffect.push(new Effects(utility.convert(utility.cost[9]), game.width / 2, clickEffect.length, false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[9]), 0, game.height - (6 * game.textSize), false));
       utility.cost[9] = utility.checkMark;
       utility.event = null;
       break;
       case "goldCookie":
-      clickEffect.push(new Effects(utility.convert(cookie.goldWorth), game.width / 2, clickEffect.length, true));
-      utility.event = null;
-      break;
-      case "sell":
-      clickEffect.push(new Effects(utility.convert(container.worth), game.width / 2, clickEffect.length, true));
+      clickEffect.push(new Effects(utility.convert(cookie.goldWorth), 0, game.height - (6 * game.textSize), true));
       utility.event = null;
       break;
       case "containerLvl":
-      clickEffect.push(new Effects(utility.convert(utility.cost[10]), game.width / 2, clickEffect.length, false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[10]), 0, game.height - (6 * game.textSize), false));
       utility.cost[10] = utility.newPrice(utility.cost[10], utility.costFactor[10], utility.level[10]);
       utility.event = null;
       break;
       case "containerCap":
-      clickEffect.push(new Effects(utility.convert(utility.cost[11]), game.width / 2, clickEffect.length, false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[11]), 0, game.height - (5 * game.textSize), false));
       utility.cost[11] = utility.newPrice(utility.cost[11], utility.costFactor[11], utility.level[11]);
       utility.event = null;
       break;
       case "containerWorth":
-      clickEffect.push(new Effects(utility.convert(utility.cost[12]), game.width / 2, clickEffect.length, false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[12]), 0, game.height - (5 * game.textSize), false));
       utility.cost[12] = utility.newPrice(utility.cost[12], utility.costFactor[12], utility.level[12]);
       utility.event = null;
       break;
       case "containerFill":
-      clickEffect.push(new Effects(utility.convert(utility.cost[13]), game.width / 2, clickEffect.length, false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[13]), 0, game.height - (5 * game.textSize), false));
       utility.cost[13] = utility.checkMark;
       utility.event = null;
       break;
       case "containerSell":
-      clickEffect.push(new Effects(utility.convert(utility.cost[14]), game.width / 2, clickEffect.length, false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[14]), 0, game.height - (5 * game.textSize), false));
       utility.cost[14] = utility.checkMark;
       utility.event = null;
       break;
       case "explodeFrenzy":
-      clickEffect.push(new Effects(utility.convert(utility.cost[15]), game.width / 2, clickEffect.length, false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[15]), 0, game.height - (6 * game.textSize), false));
       utility.cost[15] = utility.checkMark;
       utility.event = null;
       break;
       case "frenzy":
-      clickEffect.push(new Effects(utility.convert(5 * cookie.bonusWorth), game.width / 2, clickEffect.length, true));
+      clickEffect.push(new Effects(utility.convert(5 * cookie.bonusWorth), game.width, 5 * game.textSize, true));
       utility.event = null;
       break;
     }
@@ -1270,7 +1267,7 @@ class Cookie {
     this.pulse = 25 + (utility.level[3] * 5);
     this.worth = Math.floor(((1 + utility.level[0] * (1 + utility.clickCount)) * utility.multiplier) * utility.prestigeBonus);
     this.bonusWorth = Math.floor((((1 + utility.level[2]) * this.worth * (1 + utility.clickCount)) * utility.multiplier) * utility.prestigeBonus);
-    this.goldWorth = Math.ceil((((this.worth * 500) * (1 + utility.clickCount)) * utility.multiplier) * utility.prestigeBonus);
+    this.goldWorth = Math.ceil((((this.bonusWorth * 100) * (1 + utility.clickCount)) * utility.multiplier) * utility.prestigeBonus);
     this.expCookie = [];
     this.exploding = false;
     this.explode = 0;
@@ -1384,7 +1381,7 @@ class Cookie {
     // update cookie worth
     this.worth = Math.floor(((1 + utility.level[0] * (1 + utility.clickCount)) * utility.multiplier) * utility.prestigeBonus);
     this.bonusWorth = Math.floor((((1 + utility.level[2]) * this.worth * (1 + utility.clickCount)) * utility.multiplier) * utility.prestigeBonus);
-    this.goldWorth = Math.ceil((((this.worth * 500) * (1 + utility.clickCount)) * utility.multiplier) * utility.prestigeBonus);
+    this.goldWorth = Math.ceil((((this.bonusWorth * 100) * (1 + utility.clickCount)) * utility.multiplier) * utility.prestigeBonus);
     // deflate the cookie
     if (cookie.pulseCount > 0) {
       cookie.pulseCount--;
@@ -1407,7 +1404,7 @@ class Cookie {
       utility.events(cookie.goldWorth, 0, 0, true);
     };
     //  check if golden cookie should spawn
-    if (utility.goldable && !utility.upgrading && goldCookie.explode <= 0 && !goldCookie.gold && Math.random() > 0.999) {
+    if (utility.goldable && !utility.upgrading && goldCookie.explode <= 0 && !goldCookie.gold && Math.random() > 0.9999) {
       goldCookie = new Cookie();
       goldCookie.goldCount = 100;
       goldCookie.gold = true;
@@ -1519,9 +1516,9 @@ class Effects {
   constructor(text, x, y, type) {
     this.text = text;
     this.x = x;
-    this.y = (2.5 * game.textSize) + game.height;
+    this.y = game.height - game.textSize - y;
     this.type = type;
-    this.time = game.height;
+    this.time = game.width + (1.5 * game.textSize);
   };
 };
 
