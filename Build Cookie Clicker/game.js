@@ -37,7 +37,6 @@ class Game {
       } else { // height less than 600
         this.textSize = this.frameW / 2;
       }
-
     };
     this.time = new Date();
   };
@@ -327,13 +326,13 @@ class InputHandler {
           if (e.x > btn1.x && e.x < game.width - (2 * game.frameW) && e.y > 2 * game.textSize && e.y < game.height - game.textSize) {
             // check each button
             // max level && can afford? && position
-            if (utility.level[0] < 500 && utility.cost[0] <= utility.money && e.y > btn1.y - input.dY && e.y < btn1.y + game.frameH - input.dY) {
+            if (utility.cost[0] <= utility.money && e.y > btn1.y - input.dY && e.y < btn1.y + game.frameH - input.dY) {
               utility.upgrade(utility.cost[0], 0, "extraMoney");
             };
             if (utility.level[1] == 0 && utility.cost[1] <= utility.money && e.y > btn2.y - input.dY && e.y < btn2.y + game.frameH - input.dY) {
               utility.upgrade(utility.cost[1], 1, "explodable");
             };
-            if (utility.level[2] < 100 && utility.cost[2] <= utility.money && e.y > btn3.y - input.dY && e.y < btn3.y + game.frameH - input.dY) {
+            if (utility.cost[2] <= utility.money && e.y > btn3.y - input.dY && e.y < btn3.y + game.frameH - input.dY) {
               utility.upgrade(utility.cost[2], 2, "explodeBonus");
             };
             if (utility.level[3] < 20 && utility.cost[3] <= utility.money && e.y > btn4.y - input.dY && e.y < btn4.y + game.frameH - input.dY) {
@@ -364,7 +363,7 @@ class InputHandler {
               if (container.capacity > (5 * utility.level[10]))
               utility.upgrade(utility.cost[11], 11, "containerCap");
             };
-            if (utility.level[10] > 0 && utility.level[12] < 100 && utility.cost[12] <= utility.money && e.y > btn13.y - input.dY && e.y < btn13.y + game.frameH - input.dY) {
+            if (utility.level[10] > 0 && utility.cost[12] <= utility.money && e.y > btn13.y - input.dY && e.y < btn13.y + game.frameH - input.dY) {
               utility.upgrade(utility.cost[12], 12, "containerWorth");
             };
             if (utility.level[10] > 0 && utility.level[13] == 0 && utility.cost[13] <= utility.money && e.y > btn14.y - input.dY && e.y < btn14.y + game.frameH - input.dY) {
@@ -544,16 +543,18 @@ class Player {
     ctxD.fillRect(0, 0, game.width, game.height);
     ctxD.fillStyle = "white";
     ctxD.globalAlpha = "1";
-    ctxD.fillRect((game.width / 2) - (game.width / 4), (game.height / 2) - (game.height / 4), game.width / 2, game.height / 2);
+    ctxD.fillRect((game.width / 2) - (game.width / 3), (game.height / 2) - (game.height / 4), game.width / 1.5, game.height / 2);
     ctxD.fillStyle = "black";
     ctxD.textAlign = "center";
     ctxD.textBaseline = "top";
     ctxD.font = game.textSize + "px calibri";
-    ctxD.fillText("It's been", (game.width / 2), (game.height / 4));
-    ctxD.fillText(player.lastPlaySeconds / 60, game.width / 2, (game.height / 4) + game.textSize);
-    ctxD.fillText("minutes", game.width / 2, (game.height / 4) + (2 * game.textSize));
-    ctxD.fillText("Earning", game.width / 2, (game.height / 4) + (4 * game.textSize));
-    ctxD.fillText("$" + utility.convert(player.returnWorth), game.width / 2, (game.height / 4) + (5 * game.textSize));
+    ctxD.fillText("It's been", (game.width / 2), (game.height / 3.5));
+    ctxD.fillText((player.lastPlaySeconds / 60).toPrecision(1), game.width / 2, (game.height / 3.5) + game.textSize);
+    ctxD.fillText("minutes", game.width / 2, (game.height / 3.5) + (2 * game.textSize));
+    ctxD.font = (game.textSize / 0.7) + "px calibri";
+    ctxD.fillText("Earning", game.width / 2, (game.height / 3.5) + (3 * game.textSize));
+    ctxD.font = game.textSize + "px calibri";
+    ctxD.fillText("$" + utility.convert(player.returnWorth), game.width / 2, (game.height / 3.5) + (4.5 * game.textSize));
     ctxD.font = game.textSize / 2 + "px calibri";
     ctxD.fillText("Tap to Continue", game.width / 2, (game.height / 4) + (7 * game.textSize));
   };
@@ -684,20 +685,20 @@ class Utility {
     this.prestigeFor = Math.floor(Math.pow((1 + this.prestigeUpgrade) * (this.money / 1000000000), 0.15));
   };
   drawD() { // draw the dynamic cookie screen
-    ctxD.fillStyle = "green";
-    ctxD.textAlign = "center";
-    ctxD.font = game.textSize + "px calibri";
     for (let i = 0; i < clickEffect.length; i++) { // draw the earned money
       if (clickEffect[i].time > 0) {
-        if (clickEffect[i].type) {
-          ctxD.fillText("$" + clickEffect[i].text, clickEffect[i].x - clickEffect[i].time, clickEffect[i].y);
+        ctxD.textAlign = "center";
+        ctxD.font = clickEffect[i].font;
+        ctxD.globalAlpha = clickEffect[i].time;
+        if (clickEffect[i].type) { // show earn money or lose money
+          ctxD.fillStyle = "green";
+          ctxD.fillText("$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y);
         } else {
           ctxD.fillStyle = "red";
-          ctxD.textAlign = "center";
-          ctxD.font = game.textSize + "px calibri";
-          ctxD.fillText("-$" + clickEffect[i].text, clickEffect[i].x + clickEffect[i].time, clickEffect[i].y);
+          ctxD.fillText("-$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y);
         };
-        clickEffect[i].time -= 5;
+        ctxD.globalAlpha = 1;
+        clickEffect[i].time -= 0.01;
       } else {
         clickEffect.splice(0, 1);
       }
@@ -908,7 +909,7 @@ class Utility {
     ctxD.fillText(player.prestige + "  currency", game.width - game.frameW, 4.35 * game.textSize); // how much prestige the player currently has
     ctxD.textAlign = "center";
     ctxD.fillText("increasing your earnings by:", game.width / 2, 4.85 * game.textSize);
-    ctxD.fillText(utility.prestigeBonus + " x", game.width / 2, 5.5 * game.textSize); // calculate how much the prestige amplifies profits
+    ctxD.fillText(utility.convert(utility.prestigeBonus) + " x", game.width / 2, 5.5 * game.textSize); // calculate how much the prestige amplifies profits
     ctxD.textAlign = "center";
     ctxD.fillStyle = "white";
     ctxD.fillRect(0, game.height - game.textSize, game.width, game.textSize);
@@ -1135,107 +1136,107 @@ class Utility {
   events() {
     switch (utility.event) {
       case "click":
-      clickEffect.push(new Effects(utility.convert(cookie.worth), game.width, this.alternate(), true));
+      clickEffect.push(new Effects(utility.convert(cookie.worth), game.width / 2, game.textSize * 2, true, game.textSize + (1.5 * clickEffect.length)));
       utility.event = null;
       break;
       case "reset":
-      clickEffect.push(new Effects(utility.convert(cookie.bonusWorth), game.width, 4 * game.textSize, true));
+      clickEffect.push(new Effects(utility.convert(cookie.bonusWorth), game.width / 2, 4 * game.textSize, true, 1.25 * game.textSize + (1.25 * clickEffect.length)));
       utility.event = null;
       break;
       case "sell":
-      clickEffect.push(new Effects(utility.convert(container.worth), game.width, 3 * game.textSize, true));
+      clickEffect.push(new Effects(utility.convert(container.worth), game.width / 2, 3 * game.textSize, true, 1.25 * game.textSize + clickEffect.length));
       console.log("test");
       utility.event = null;
       break;
+      case "frenzy":
+      clickEffect.push(new Effects(utility.convert(5 * cookie.bonusWorth), game.width / 2, 5 * game.textSize, true, 1.75 * game.textSize  + (1.5 * clickEffect.length)));
+      utility.event = null;
+      break;
+      case "goldCookie":
+      clickEffect.push(new Effects(utility.convert(cookie.goldWorth), game.width / 2, game.height - (4.2 * game.textSize), true, 1.75 * game.textSize + clickEffect.length));
+      utility.event = null;
+      break;
       case "extraMoney":
-      clickEffect.push(new Effects(utility.convert(utility.cost[0]), 0, game.height - (5 * game.textSize), false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[0]), game.width / 2, game.height - (5 * game.textSize), false));
       utility.cost[0] = utility.newPrice(utility.cost[0], utility.costFactor[0], utility.level[0]);
       utility.event = null;
       break;
       case "explodable":
-      clickEffect.push(new Effects(utility.convert(utility.cost[1]), 0, game.height - (6 * game.textSize), false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[1]), game.width / 2, game.height - (6 * game.textSize), false));
       utility.cost[1] = utility.checkMark;
       utility.event = null;
       break;
       case "explodeBonus":
-      clickEffect.push(new Effects(utility.convert(utility.cost[2]), 0, game.height - (5 * game.textSize), false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[2]), game.width / 2, game.height - (5 * game.textSize), false));
       utility.cost[2] = utility.newPrice(utility.cost[2], utility.costFactor[2], utility.level[2]);
       utility.event = null;
       break;
       case "explodeMore":
-      clickEffect.push(new Effects(utility.convert(utility.cost[3]), 0, game.height - (5 * game.textSize), false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[3]), game.width / 2, game.height - (5 * game.textSize), false));
       utility.cost[3] = utility.newPrice(utility.cost[3], utility.costFactor[3], utility.level[3]);
       utility.event = null;
       break;
       case "rolling":
-      clickEffect.push(new Effects(utility.convert(utility.cost[4]), 0, game.height - (6 * game.textSize), false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[4]), game.width / 2, game.height - (6 * game.textSize), false));
       utility.cost[4] = utility.checkMark;
       utility.event = null;
       break;
       case "rollingDur":
       // more duration before expiry
-      clickEffect.push(new Effects(utility.convert(utility.cost[5]), 0, game.height - (5 * game.textSize), false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[5]), game.width / 2, game.height - (5 * game.textSize), false));
       utility.cost[5] = utility.newPrice(utility.cost[5], utility.costFactor[5], utility.level[5]);
       utility.event = null;
       break;
       case "rollingMax":
       // higher rolling count before stopping
-      clickEffect.push(new Effects(utility.convert(utility.cost[6]), 0, game.height - (5 * game.textSize), false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[6]), game.width / 2, game.height - (5 * game.textSize), false));
       utility.maxClickCount += 5;
       utility.cost[6] = utility.newPrice(utility.cost[6], utility.costFactor[6], utility.level[6]);
       utility.event = null;
       break;
       case "multiplier":
-      clickEffect.push(new Effects(utility.convert(utility.cost[7]), 0, game.height - (5 * game.textSize), false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[7]), game.width / 2, game.height - (5 * game.textSize), false));
       utility.cost[7] = utility.newPrice(utility.cost[7], utility.costFactor[7], utility.level[7]);
       utility.event = null;
       break;
       case "autoClick":
-      clickEffect.push(new Effects(utility.convert(utility.cost[8]), 0, game.height - (5 * game.textSize), false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[8]), game.width / 2, game.height - (5 * game.textSize), false));
       utility.cost[8] = utility.newPrice(utility.cost[8], utility.costFactor[8], utility.level[8]);
       utility.event = null;
       break;
       case "golden":
-      clickEffect.push(new Effects(utility.convert(utility.cost[9]), 0, game.height - (6 * game.textSize), false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[9]), game.width / 2, game.height - (6 * game.textSize), false));
       utility.cost[9] = utility.checkMark;
       utility.event = null;
       break;
-      case "goldCookie":
-      clickEffect.push(new Effects(utility.convert(cookie.goldWorth), 0, game.height - (6 * game.textSize), true));
-      utility.event = null;
-      break;
       case "containerLvl":
-      clickEffect.push(new Effects(utility.convert(utility.cost[10]), 0, game.height - (6 * game.textSize), false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[10]), game.width / 2, game.height - (6 * game.textSize), false));
       utility.cost[10] = utility.newPrice(utility.cost[10], utility.costFactor[10], utility.level[10]);
       utility.event = null;
       break;
       case "containerCap":
-      clickEffect.push(new Effects(utility.convert(utility.cost[11]), 0, game.height - (5 * game.textSize), false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[11]), game.width / 2, game.height - (5 * game.textSize), false));
       utility.cost[11] = utility.newPrice(utility.cost[11], utility.costFactor[11], utility.level[11]);
       utility.event = null;
       break;
       case "containerWorth":
-      clickEffect.push(new Effects(utility.convert(utility.cost[12]), 0, game.height - (5 * game.textSize), false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[12]), game.width / 2, game.height - (5 * game.textSize), false));
       utility.cost[12] = utility.newPrice(utility.cost[12], utility.costFactor[12], utility.level[12]);
       utility.event = null;
       break;
       case "containerFill":
-      clickEffect.push(new Effects(utility.convert(utility.cost[13]), 0, game.height - (5 * game.textSize), false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[13]), game.width / 2, game.height - (5 * game.textSize), false));
       utility.cost[13] = utility.checkMark;
       utility.event = null;
       break;
       case "containerSell":
-      clickEffect.push(new Effects(utility.convert(utility.cost[14]), 0, game.height - (5 * game.textSize), false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[14]), game.width / 2, game.height - (5 * game.textSize), false));
       utility.cost[14] = utility.checkMark;
       utility.event = null;
       break;
       case "explodeFrenzy":
-      clickEffect.push(new Effects(utility.convert(utility.cost[15]), 0, game.height - (6 * game.textSize), false));
+      clickEffect.push(new Effects(utility.convert(utility.cost[15]), game.width / 2, game.height - (6 * game.textSize), false));
       utility.cost[15] = utility.checkMark;
-      utility.event = null;
-      break;
-      case "frenzy":
-      clickEffect.push(new Effects(utility.convert(5 * cookie.bonusWorth), game.width, 5 * game.textSize, true));
       utility.event = null;
       break;
     }
@@ -1404,7 +1405,7 @@ class Cookie {
       utility.events(cookie.goldWorth, 0, 0, true);
     };
     //  check if golden cookie should spawn
-    if (utility.goldable && !utility.upgrading && goldCookie.explode <= 0 && !goldCookie.gold && Math.random() > 0.9999) {
+    if (utility.goldable && !utility.upgrading && goldCookie.explode <= 0 && !goldCookie.gold && Math.random() > 0.999) {
       goldCookie = new Cookie();
       goldCookie.goldCount = 100;
       goldCookie.gold = true;
@@ -1513,12 +1514,13 @@ class Container {
 };
 
 class Effects {
-  constructor(text, x, y, type) {
+  constructor(text, x, y, type, size) {
     this.text = text;
     this.x = x;
     this.y = game.height - game.textSize - y;
+    this.font = size + "px calibri";
     this.type = type;
-    this.time = game.width + (1.5 * game.textSize);
+    this.time = 1;
   };
 };
 
