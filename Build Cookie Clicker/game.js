@@ -661,7 +661,7 @@ class Utility {
     };
     this.clickCount = 0; // current click count
     this.maxClickCount = 5 + (this.level[6] * 5); // max rolling click count
-    this.multiplier = 1000000000000000000 + this.level[7];
+    this.multiplier = 1 + this.level[7];
     if (this.level[8] > 0) { // auto click
       this.autoTap = true;
     } else {
