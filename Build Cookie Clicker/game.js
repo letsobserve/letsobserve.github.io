@@ -144,6 +144,7 @@ class Game {
     utility.update();
     cookie.update();
     if (utility.level[10] > 0) container.update();
+    if (game.state == 2) btn1.update();
     player.update(now);
   };
   loop(now) {
@@ -174,7 +175,6 @@ class Game {
           player.returns();
         };
       } else if (game.state == 2) { // draw the shop screen
-        btn1.update();
         utility.drawD();
         // draw the menu
         utility.drawM();
@@ -415,11 +415,12 @@ class InputHandler {
         game.state = 4;
         input.dY = this.lastdY;
       };
-      if (!utility.prestigeConfirm && x > game.width / 4 && x < ((3 * game.width) / 4) && y > game.height / 2 - (3 * game.frameH / 2) && y < game.height / 2 + (3 * game.frameH / 2)) { // click on prestige button
-        utility.prestigeConfirm = true;
+      if (!utility.prestigeConfirm && x > game.width / 4 && x < ((3 * game.width) / 4) && y > game.height / 2 && y < game.height / 2 + (3 * game.textSize)) { // click on prestige button
+        utility.prestigeScreen = true;
       };
       if (utility.prestigeConfirm && y < game.height / 2.5 || y > (game.height / 2) + (1.5 * game.textSize) || x < game.width / 5 || x > game.width - (game.width / 5)) { // click off the prestige button
         utility.prestigeConfirm = false;
+        //utility.prestigeScreen = false;
       };
       if (utility.prestigeConfirm && y > game.height / 2 && y < game.height / 1.75) { // prestige confirm buttons
         if (x > game.width / 2 - (2 * game.textSize) && x < game.width / 2 - (game.textSize)) { // confirm
@@ -427,6 +428,7 @@ class InputHandler {
         };
         if (x > (game.width / 2) + (game.textSize) && x < (game.width / 2) + (2 * game.textSize)) {
           utility.prestigeConfirm = false;
+          utility.prestigeScreen = false;
         };
       };
     } else { // third screen
@@ -520,6 +522,14 @@ class Player {
     if (!Number.isInteger(this.totalEarnings)) {
       this.totalEarnings = 0;
     };
+    this.spent = parseInt(localStorage.getItem("playerSpent"));
+    if (!Number.isInteger(this.spent)) {
+      this.spent = 0;
+    };
+    this.prestiges = parseInt(localStorage.getItem("playerPrestiges"));
+    if (!Number.isInteger(this.prestiges)) {
+      this.prestiges = 0;
+    };
     this.earnedThen = utility.earned; // previous earned
     this.earnedNow = 0; // earning now
     this.EPS = 0; // player earning per second
@@ -570,6 +580,12 @@ class Player {
     localStorage.setItem("playerLatestTime", latestTime);
     localStorage.setItem("playerPrestige", utility.prestige);
     localStorage.setItem("playerCookieClicked", cookie.clicked);
+    localStorage.setItem("playerCookieExploded", cookie.exploded);
+    localStorage.setItem("playerContainersSold", container.sold);
+    localStorage.setItem("playerGoldCookieClicked", cookie.goldCookieClicked);
+    localStorage.setItem("playerUpgradesPurchased", utility.purchased);
+    localStorage.setItem("playerSpent", player.spent);
+    localStorage.setItem("playerPrestiges", player.prestiges);
     if (localStorage.getItem("playerBestEPS") < player.EPS) {
       localStorage.setItem("playerBestEPS", player.EPS);
       this.lastEPS = player.EPS;
@@ -685,9 +701,13 @@ class Utility {
     if (!Number.isInteger(this.prestige)) { // if prestige not found
       this.prestige = 0;
     };
-    this.prestigeBonus = (1 + ((this.prestige) * 0.1)).toFixed(1);
+    this.prestigeBonus = (1 + ((this.prestige) * 0.1));
     this.prestigeUpgrade = 0;
     this.prestigeFor = Math.floor(Math.pow((1 + this.prestigeUpgrade) * (this.money / 1000000000), 0.15));
+    this.purchased = parseInt(localStorage.getItem("playerUpgradesPurchased"));
+    if (!Number.isInteger(this.purchased)) {
+      this.purchased = 0;
+    };
   };
   drawD() { // draw the dynamic cookie screen
     ctxD.textAlign = "center";
@@ -896,10 +916,10 @@ class Utility {
     ctxD.textAlign = "left";
     ctxD.fillText("You have:", game.frameW, 4.35 * game.textSize);
     ctxD.textAlign = "right";
-    ctxD.fillText(player.prestige + "  currency", game.width - game.frameW, 4.35 * game.textSize); // how much prestige the player currently has
+    ctxD.fillText(utility.convert(player.prestige) + "  currency", game.width - game.frameW, 4.35 * game.textSize); // how much prestige the player currently has
     ctxD.textAlign = "center";
     ctxD.fillText("increasing your earnings by:", game.width / 2, 4.85 * game.textSize);
-    ctxD.fillText(utility.prestigeBonus + " x", game.width / 2, 5.5 * game.textSize); // calculate how much the prestige amplifies profits
+    ctxD.fillText(utility.convert(utility.prestigeBonus) + " x", game.width / 2, 5.5 * game.textSize); // calculate how much the prestige amplifies profits
     ctxD.textAlign = "center";
     ctxD.fillStyle = "white";
     ctxD.fillRect(0, game.height - game.textSize, game.width, game.textSize);
@@ -913,19 +933,19 @@ class Utility {
     ctxD.fillText("Close Prestige", game.width / 2, game.height - game.textSize); // close prestige text
     ctxD.strokeRect(0, game.height - game.textSize, game.width, game.height);
     ctxD.fillStyle = "white";
-    ctxD.fillRect(game.width / 2 - (game.width / 4), game.height / 2 - (3 * game.textSize / 2), game.width / 2, 3 * game.textSize); // the prestige button
+    ctxD.fillRect(game.width / 2 - (game.width / 4), game.height / 2, game.width / 2, 3 * game.textSize); // the prestige button
     ctxD.fillStyle = "black";
-    ctxD.textBaseline = "middle";
+    ctxD.textBaseline = "top";
     ctxD.font  = game.textSize / 2 + "px calibri";
-    ctxD.fillText("Prestige for :", game.width / 2, (game.height / 2) - game.textSize); // prestige button text
-    ctxD.fillText("currency", game.width / 2, (game.height / 2) + game.textSize); // prestige units
+    ctxD.fillText("Prestige for :", game.width / 2, (game.height / 2) + (game.textSize / 3)); // prestige button text
+    ctxD.fillText("currency", game.width / 2, (game.height / 2) + (game.textSize * 2)); // prestige units
     ctxD.font = game.textSize / 1.5 + "px calibri";
-    ctxD.fillText(utility.prestigeFor, game.width / 2, game.height / 2); // prestige amount
+    ctxD.fillText(utility.convert(utility.prestigeFor), game.width / 2, (game.height / 2) + (game.textSize)); // prestige amount
     ctxD.font = game.textSize / 2 + "px calibri";
     ctxD.textAlign = "center";
-    ctxD.fillText("Prestiging gives you additional profits,", game.width / 2, game.height - (5 * game.textSize));
-    ctxD.fillText("however your progress is reset.", game.width / 2, game.height - (4.5 * game.textSize));
-    ctxD.fillText("(It's always worth it to prestige!)", game.width / 2, game.height - (4 * game.textSize)); // prestige information text
+    ctxD.fillText("Prestiging gives you additional profits,", game.width / 2, game.height - (3 * game.textSize));
+    ctxD.fillText("however your progress is reset.", game.width / 2, game.height - (2.5 * game.textSize));
+    ctxD.fillText("(It's always worth it to prestige!)", game.width / 2, game.height - (2 * game.textSize)); // prestige information text
     if (utility.prestigeConfirm) { // prestige confirm screen
       ctxD.fillStyle = "black";
       ctxD.globalAlpha = "0.5";
@@ -961,7 +981,12 @@ class Utility {
     ctxD.fillText(utility.convert(player.totalEarnings), game.width - 5, 3.5 * game.textSize - input.dY);
     ctxD.fillText(utility.convert(player.lastEPS), game.width - 5, 5.5 * game.textSize - input.dY);
     ctxD.fillText(utility.convert(cookie.clicked), game.width - 5, 7.5 * game.textSize - input.dY);
-
+    ctxD.fillText(utility.convert(cookie.exploded), game.width - 5, 9.5 * game.textSize - input.dY);
+    ctxD.fillText(utility.convert(container.sold), game.width - 5, 11.5 * game.textSize - input.dY);
+    ctxD.fillText(utility.convert(cookie.goldCookieClicked), game.width - 5, 13.5 * game.textSize - input.dY);
+    ctxD.fillText(utility.convert(utility.purchased), game.width - 5, 15.5 * game.textSize - input.dY);
+    ctxD.fillText(utility.convert(player.spent), game.width - 5, 17.5 * game.textSize - input.dY);
+    ctxD.fillText(utility.convert(player.prestiges), game.width - 5, 19.5 * game.textSize - input.dY);
     ctxD.fillText(utility.convert(player.EPS) + " $/s", game.width - 5, 5); // draw the money per second
     ctxD.lineWidth = 10;
     ctxD.textAlign = "center";
@@ -993,6 +1018,8 @@ class Utility {
     utility.money -= cost;
     utility.level[reference]++;
     utility.event = specific;
+    utility.purchased++;
+    player.spent += cost;
     switch (specific) {
       case "extraMoney":
       break;
@@ -1229,8 +1256,29 @@ class Utility {
       break;
     }
   };
+  resetScroll (top, bottom) {
+    if (top - input.dY > top) { // keep first button from scrolling too far
+      input.dY += 2;
+      if (top - input.dY > (1.15 * top)) {
+        input.dY += 10;
+      };
+      if (top - input.dY > (4 * top)) {
+        input.dY += 50;
+      };
+    };
+    if (bottom - input.dY < (game.height - (2.3 * game.textSize))) { // keep last button from scrolling too far
+      input.dY -= 2;
+      if (bottom - input.dY < (game.height - (2.5 * game.textSize))) {
+        input.dY -= 10;
+      };
+      if (bottom - input.dY < (game.height - (6 * game.textSize))) {
+        input.dY -= 50;
+      };
+    };
+  };
   setPrestige() { // prestige sequence
     this.prestige += this.prestigeFor;
+    player.prestiges++;
     this.money = 0;
     this.level = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     this.cost = [20, 250, 600, 900, 5000, 5500, 6200, 15000, 5000, 50000, 1500, 5000, 10000, 100000, 5000, 100000];
@@ -1240,6 +1288,7 @@ class Utility {
     player.earnedNow = 0;
     player.update();
     utility = new Utility;
+    cookie.gold = false;
     game.state = 1;
   };
   update() {
@@ -1264,6 +1313,8 @@ class Utility {
       utility.occuring--;
       utility.occuring--;
     };
+    if (utility.prestigeScreen) utility.prestigeConfirm = true;
+    if (game.state == 4) utility.resetScroll(3 * game.textSize, 19 * game.textSize);
   };
 };
 
@@ -1280,7 +1331,15 @@ class Cookie {
     this.clicked = parseInt(localStorage.getItem("playerCookieClicked"));
     if (!Number.isInteger(this.clicked)) {
       this.clicked = 0;
-    }
+    };
+    this.exploded = parseInt(localStorage.getItem("playerCookieExploded"));
+    if (!Number.isInteger(this.exploded)) {
+      this.exploded = 0;
+    };
+    this.goldCookieClicked = parseInt(localStorage.getItem("playerGoldCookieClicked"));
+    if (!Number.isInteger(this.goldCookieClicked)) {
+      this.goldCookieClicked = 0;
+    };
     this.expCookie = [];
     this.exploding = false;
     this.explode = 0;
@@ -1330,6 +1389,7 @@ class Cookie {
       utility.money += cookie.bonusWorth;
       utility.earned += cookie.bonusWorth;
       player.totalEarnings += cookie.bonusWorth;
+      cookie.exploded++;
       utility.explode();
       if (utility.inFrenzy) {
         cookie.frenzy();
@@ -1370,6 +1430,7 @@ class Cookie {
     utility.money += this.goldWorth;
     utility.earned += this.goldWorth;
     player.totalEarnings += this.goldWorth;
+    cookie.goldCookieClicked++;
     utility.event = "goldCookie";
     utility.occuring = 100;
     goldCookie.gold = false;
@@ -1447,6 +1508,10 @@ class Container {
     this.worth = (cookie.worth * ((utility.level[10] * 15) + this.bonus)) * utility.multiplier;
     this.filled = 0;
     this.full = false;
+    this.sold = parseInt(localStorage.getItem("playerContainersSold"));
+    if (!Number.isInteger(this.sold)) {
+      this.sold = 0;
+    };
     this.sin = 0;
     this.sinSwitch = false;
     this.increasing = false;
@@ -1507,6 +1572,7 @@ class Container {
       player.totalEarnings += this.worth + this.bonus;
       this.filled = 0;
       this.full = false;
+      this.sold++;
     };
   };
   update() {
@@ -1616,25 +1682,10 @@ class Button {
     ctxD.fillText(description, this.xPrice, this.yText + (game.textSize / 2) - input.dY);
   };
   update() {
-    if (btn1.y - input.dY > btn1.y) {
-      input.dY += 2;
-      if (btn1.y - input.dY > (1.15 * btn1.y)) {
-        input.dY += 10;
-      };
-      if (btn1.y - input.dY > (4 * btn1.y)) {
-        input.dY += 50;
-      };
+    if (game.state == 2) {
+      utility.resetScroll(btn1.y, btn16.y);
     };
-    if (btn16.y - input.dY < (game.height - (2.3 * game.textSize))) {
-      input.dY -= 2;
-      if (btn16.y - input.dY < (game.height - (2.5 * game.textSize))) {
-        input.dY -= 10;
-      };
-      if (btn16.y - input.dY < (game.height - (6 * game.textSize))) {
-        input.dY -= 50;
-      };
-    };
-  }; // end update
+  };
 };
 
 let game = new Game;
