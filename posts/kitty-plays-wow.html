@@ -1,15 +1,22 @@
 <!DOCTYPE html>
-<html lang="en-AU">
+<html lang="en">
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Observe Blog</title>
+	<title>OBSERVE: Dream Blog - Kitty plays Wow</title>
 	<link rel="icon" type="image/x-icon" href="../images/observeeyev2.png">
 	<link rel="stylesheet" href="../css/home.css">
-	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1480924343854494"
-	crossorigin="anonymous"></script>
 </head>
 <body>
-	<img class="banner" src="../images/banner-night-scene.png" alt="Observe Banner Image">
+	<div id="cookieNotice">
+		<span id="cookieClose" onclick="closeCookieNotice()">&times;</span>
+		<h6 class="cookieTitle">This website uses cookies</h6>
+		<p class="cookieMessage">As with most websites, we use cookies to remember you, your preferences and to create a better, more personalised experience. By accepting our cookies we can remember your preferences and you are able to view the embeded youtube videos.</p>
+		<div class="cookieButtonWrap">
+			<button class="cookieButton" onclick="acceptCookieConsent()">Accept</button>
+		</div>
+	</div>
+	<img id="banner" src="../images/banner-night-scene.png" alt="Observe Banner Image" data-transition="false">
+	<header id="site-header">
 	<nav class="navbar">
 		<a class="navbutton" href="../index.html">Home</a>
 		<a class="navbutton" href="../Nature.html">Nature</a>
@@ -25,6 +32,7 @@
 			</div>
 		</label>
 	</nav>
+</header>
 	<div id="site-main">
 		<div class="wrapper-main">
 			<main id="site-content" class="site-main">

@@ -1,32 +1,41 @@
 <!DOCTYPE html>
-<html lang="en-AU">
+<html lang="en">
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="referrer" content="strict-origin-when-cross-origin">
 	<title>OBSERVE: For things worth your attention</title>
 	<link rel="icon" type="image/x-icon" href="images/observeeyev2.png">
 	<link rel="stylesheet" href="css/home.css">
-	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1480924343854494"
-	crossorigin="anonymous"></script>
 </head>
 <body>
-	<img class="banner" src="images/banner-night-scene.png" alt="Observe Banner Image"/>
-	<h1 class="header-h1">OBSERVE</h1>
-	<nav class="navbar">
-		<a class="navbutton" href="index.html">Home</a>
-		<a class="navbutton" href="Nature.html">Nature</a>
-		<a class="navbutton" href="Food.html">Food</a>
-		<a class="navbutton" href="Dreams.html">Dreams</a>
-		<a class="navbutton" href="Media.html">Media</a>
-		<label class="themeToggleContainer" title="Toggle Theme">
-			<input id="toggleTheme" type="checkbox"/>
-			<section class="theme-slider">
-				<img id="themeImage" src="images/bg-slider.png" alt="A background for the website theme slider."/>
-				<img id="themeImageMoon" src="images/moon-slider.png" alt="An image of the moon for the website theme slider."/>
-				<img id="themeImageSun" src="images/sun-slider.png" alt="An image of the sun for the website theme slider."/>
-			</section>
-		</label>
-	</nav>
+	<div id="cookieNotice">
+		<span id="cookieClose" onclick="closeCookieNotice()">&times;</span>
+		<h6 class="cookieTitle">This website uses cookies</h6>
+		<p class="cookieMessage">As with most websites, we use cookies to remember you, your preferences and to create a better, more personalised experience. By accepting our cookies we can remember your preferences and you are able to view the embeded youtube videos.</p>
+		<div class="cookieButtonWrap">
+			<button class="cookieButton" onclick="acceptCookieConsent()">Accept</button>
+		</div>
+	</div>
+	<img id="banner" src="images/banner-night-scene.png" alt="Observe Banner Image" data-transition="true"/>
+	<header id="site-header">
+		<h1 id="pageHeader" class="header-h1">OBSERVE</h1>
+		<nav class="navbar">
+			<a class="navbutton" href="index.html">Home</a>
+			<a class="navbutton" href="Nature.html">Nature</a>
+			<a class="navbutton" href="Food.html">Food</a>
+			<a class="navbutton" href="Dreams.html">Dreams</a>
+			<a class="navbutton" href="Media.html">Media</a>
+			<label class="themeToggleContainer" title="Toggle Theme">
+				<input id="toggleTheme" type="checkbox"/>
+				<section class="theme-slider">
+					<img id="themeImage" src="images/bg-slider.png" alt="A background for the website theme slider."/>
+					<img id="themeImageMoon" src="images/moon-slider-crop.png" alt="An image of the moon for the website theme slider."/>
+					<img id="themeImageSun" src="images/sun-slider-crop.png" alt="An image of the sun for the website theme slider."/>
+				</section>
+			</label>
+		</nav>
+	</header>
 	<div id="site-main">
 		<div class="wrapper-main">
 			<main id="site-content" class="site-main">
@@ -37,8 +46,8 @@
 							<p>Here's the latest from the Observation Youtube Channel</p>
 							<br>
 							<div class="latest-video-box">
-								<iframe class="latest-video" src="https://www.youtube.com/embed/ttO3co4-RYk" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
-								</iframe>
+								<p class="latest-video-placeholder">You Must Accept Cookies To View This Video</p>
+								<iframe id="latest-video" width="560" height="315" src="" data-src="https://www.youtube.com/embed/ttO3co4-RYk" data-cookieconsent="marketing" referrerpolicy="strict-origin-when-cross-origin" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 							</div>
 							<a class="latest-text" href="https://youtu.be/ttO3co4-RYk" target="_blank">When Leaves are Not Green</a>
 							<br>
@@ -48,10 +57,10 @@
 							<h2 class="latest">Latest Blog Post</h2>
 							<p class="center-text">Here's the latest from the blog</p>
 							<br>
-							<a href="posts/review-19@TheStar.html"><img class="blog-image-teaser" src="images/19-0402-dinner.jpeg" alt="An arrangement of dishes; including salmon and steak with a glass of wine, and chairs by a large window in a fine dining restaurant."/></a>
-							<a class="latest-text" href="posts/review-19@TheStar.html">Review: Nineteen @ The Star</a>
+							<!--<a href="posts/recipe-chicken-inasal.html"><img class="blog-image-teaser" src="images/19-0402-dinner.jpeg" alt="An arrangement of dishes; including salmon and steak with a glass of wine, and chairs by a large window in a fine dining restaurant."/></a>-->
+							<a class="latest-text" href="posts/recipe-chicken-inasal.html">Recipe: Chicken Inasal</a>
 							<br>
-							<p>A review of the fine dining restaurant, Nineteen @ The Star in the Gold Coast Australia. Click through to find out my thoughts about this restaurant.</p>
+							<p>A recipe for chicken inasal, a popular marinated chicken dish. Named after the restaurant famous for this dish.</p>
 						</div>
 					</div>
 					<hr>
@@ -70,6 +79,8 @@
 						<h3>More About Observe</h3>
 						<p>This is idea started back in 2019, leading to the creation of a YouTube Channel-<a class="aboutMeLink" href="https://www.youtube.com/channel/UCjeoi7YeUK-iyexnpiJVo4g" target="_blank" title="Observation Youtube Channel">Observation</a> where I could show off the beauty of the natural world. Fast-foward to today and the evolution of this idea into a website that can further explore natural phenomena, like nature, food and dreaming- which I feel most passionate towards.</p>
 					</div>
+					<h3>Feeling Bored?</h3>
+					<a href="Build Cookie Clicker/cookieclicker.html">Cookie Clicker</a>
 				</div>
 			</aside>
 		</div>
@@ -78,7 +89,6 @@
 		<h3 class="footer-title">Observe</h3>
 		<p class="footer-text">Since 2019.</p>
 		<p class="footer-credit">This is a Hewett-Made Website.</p>
-		<a href="Build Cookie Clicker/cookieclicker.html">A game I coded solely with JS</a>
 		<br>
 	</footer>
 	<script src="js/script.js">

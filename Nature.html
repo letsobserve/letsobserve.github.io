@@ -1,31 +1,39 @@
 <!DOCTYPE html>
-<html lang="en-AU">
+<html lang="en">
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Observe Nature</title>
+	<title>OBSERVE: Nature</title>
 	<link rel="icon" type="image/x-icon" href="images/observeeyev2.png">
 	<link rel="stylesheet" href="css/home.css">
-	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1480924343854494"
-	crossorigin="anonymous"></script>
 </head>
 <body>
-	<img class="banner" src="images/banner-night-scene.png" alt="Observe Banner Image">
-	<h1 class="h1-nature">NATURE</h1>
-	<nav class="navbar">
-		<a class="navbutton" href="index.html">Home</a>
-		<a class="navbutton" href="Nature.html">Nature</a>
-		<a class="navbutton" href="Food.html">Food</a>
-		<a class="navbutton" href="Dreams.html">Dreams</a>
-		<a class="navbutton" href="Media.html">Media</a>
-		<label class="themeToggleContainer" title="Toggle Theme">
-			<input id="toggleTheme" type="checkbox"/>
-			<div class="theme-slider">
-				<img id="themeImage" src="images/bg-slider.png" alt="A background for the website theme slider."/>
-				<img id="themeImageMoon" src="images/moon-slider.png" alt="An image of the moon for the website theme slider."/>
-				<img id="themeImageSun" src="images/sun-slider.png" alt="An image of the sun for the website theme slider."/>
-			</div>
-		</label>
-	</nav>
+	<div id="cookieNotice">
+		<span id="cookieClose" onclick="closeCookieNotice()">&times;</span>
+		<h6 class="cookieTitle">This website uses cookies</h6>
+		<p class="cookieMessage">As with most websites, we use cookies to remember you, your preferences and to create a better, more personalised experience. By accepting our cookies we can remember your preferences and you are able to view the embeded youtube videos.</p>
+		<div class="cookieButtonWrap">
+			<button class="cookieButton" onclick="acceptCookieConsent()">Accept</button>
+		</div>
+	</div>
+	<img id="banner" src="images/banner-night-scene.png" alt="Observe Banner Image" data-transition="true"/>
+	<header id="site-header">
+		<h1 class="h1-nature">NATURE</h1>
+		<nav class="navbar">
+			<a class="navbutton" href="index.html">Home</a>
+			<a class="navbutton" href="Nature.html">Nature</a>
+			<a class="navbutton" href="Food.html">Food</a>
+			<a class="navbutton" href="Dreams.html">Dreams</a>
+			<a class="navbutton" href="Media.html">Media</a>
+			<label class="themeToggleContainer" title="Toggle Theme">
+				<input id="toggleTheme" type="checkbox"/>
+				<section class="theme-slider">
+					<img id="themeImage" src="images/bg-slider.png" alt="A background for the website theme slider."/>
+					<img id="themeImageMoon" src="images/moon-slider.png" alt="An image of the moon for the website theme slider."/>
+					<img id="themeImageSun" src="images/sun-slider.png" alt="An image of the sun for the website theme slider."/>
+				</section>
+			</label>
+		</nav>
+	</header>
 	<div id="site-main">
 		<div class="wrapper-main">
 			<main id="site-content" class="site-main">

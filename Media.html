@@ -1,12 +1,10 @@
 <!DOCTYPE html>
-<html lang="en-AU">
+<html lang="en">
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>OBSERVE Media</title>
+	<title>OBSERVE: Media</title>
 	<link rel="icon" type="image/x-icon" href="images/observeeyev2.png">
 	<link rel="stylesheet" href="css/home.css">
-	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1480924343854494"
-	crossorigin="anonymous"></script>
 </head>
 <body>
 	<modal id="mediaModal" class="media-modal">
@@ -14,23 +12,33 @@
 		<img id="mediaModalImg" class="media-modal-img" src="" alt=""/>
 		<p id="mediaModalP1" class="media-modal-alt">alt text</p>
 	</modal>
-	<img class="banner" src="images/banner-night-scene.png" alt="Observe Banner Image">
-	<h1 class="header-h1">Media</h1>
-	<nav class="navbar">
-		<a class="navbutton" href="index.html">Home</a>
-		<a class="navbutton" href="Nature.html">Nature</a>
-		<a class="navbutton" href="Food.html">Food</a>
-		<a class="navbutton" href="Dreams.html">Dreams</a>
-		<a class="navbutton" href="Media.html">Media</a>
-		<label class="themeToggleContainer" title="Toggle Theme">
-			<input id="toggleTheme" type="checkbox"/>
-			<div class="theme-slider">
-				<img id="themeImage" src="images/bg-slider.png" alt="A background for the website theme slider."/>
-				<img id="themeImageMoon" src="images/moon-slider.png" alt="An image of the moon for the website theme slider."/>
-				<img id="themeImageSun" src="images/sun-slider.png" alt="An image of the sun for the website theme slider."/>
-			</div>
-		</label>
-	</nav>
+	<div id="cookieNotice">
+		<span id="cookieClose" onclick="closeCookieNotice()">&times;</span>
+		<h6 class="cookieTitle">This website uses cookies</h6>
+		<p class="cookieMessage">As with most websites, we use cookies to remember you, your preferences and to create a better, more personalised experience. By accepting our cookies we can remember your preferences and you are able to view the embeded youtube videos.</p>
+		<div class="cookieButtonWrap">
+			<button class="cookieButton" onclick="acceptCookieConsent()">Accept</button>
+		</div>
+	</div>
+	<img id="banner" src="images/banner-night-scene.png" alt="Observe Banner Image" data-transition="true"/>
+	<header id="site-header">
+		<h1 class="header-h1">MEDIA</h1>
+		<nav class="navbar">
+			<a class="navbutton" href="index.html">Home</a>
+			<a class="navbutton" href="Nature.html">Nature</a>
+			<a class="navbutton" href="Food.html">Food</a>
+			<a class="navbutton" href="Dreams.html">Dreams</a>
+			<a class="navbutton" href="Media.html">Media</a>
+			<label class="themeToggleContainer" title="Toggle Theme">
+				<input id="toggleTheme" type="checkbox"/>
+				<section class="theme-slider">
+					<img id="themeImage" src="images/bg-slider.png" alt="A background for the website theme slider."/>
+					<img id="themeImageMoon" src="images/moon-slider.png" alt="An image of the moon for the website theme slider."/>
+					<img id="themeImageSun" src="images/sun-slider.png" alt="An image of the sun for the website theme slider."/>
+				</section>
+			</label>
+		</nav>
+	</header>
 	<div id="site-main">
 		<div class="wrapper-main">
 			<main id="site-content" class="site-main">
@@ -54,20 +62,20 @@
 							<br>
 							<hr>
 							<div class="image-list">
-								<img onclick="mediaModalFn(this)" class="media-image" src="images/dandelion-seed-head.jpeg" alt="Image of Fluffy, Delicate Dandelion Seeds." onclick="mediaModalFn(this.element)">
-								<img onclick="mediaModalFn(this)" class="media-image" src="images/low-angle-grass.jpeg" alt="Close Up Image of Grass." onclick="mediaModalFn(this.element)">
-								<img onclick="mediaModalFn(this)" class="media-image" src="images/night-scene.png" alt="Image of the Moon at Sunset Behind Silhouettes of Flowers." onclick="mediaModalFn(this.element)">
-								<img onclick="mediaModalFn(this)" class="media-image" src="images/redback-on-bonsai.jpg" alt="Image of a Redback Spider on the Underside of a Bonsai." onclick="mediaModalFn(this.element)">
-								<img onclick="mediaModalFn(this)" class="media-image" src="images/hot-pink-flower-close.jpeg" alt="Close Up Image of A Bright Pink Flower with Yellow Pollen in the Center." onclick="mediaModalFn(this.element)">
-								<img onclick="mediaModalFn(this)" class="media-image" src="images/baby-breath.jpeg" alt="Image of Small Delicate Flowers." onclick="mediaModalFn(this.element)">
-								<img onclick="mediaModalFn(this)" class="media-image" src="images/coleus-red-vein.jpeg" alt="Coleus Plant with Red Detail">
-								<img onclick="mediaModalFn(this)" class="media-image" src="images/dark-knight-close.jpeg" alt="Black Knight Plant Close Up.">
-								<img onclick="mediaModalFn(this)" class="media-image" src="images/low-ground-shot.jpeg" alt="Low Angle Shot of Bok Choy.">
-								<img onclick="mediaModalFn(this)" class="media-image" src="images/praying-mantis-upsidedown.png" alt="Upside Down Praying Mantis on Dying Corn Plant.">
-								<img onclick="mediaModalFn(this)" class="media-image" src="images/purple-flowers.jpeg" alt="Close Up of Small Purple Flowers.">
-								<img onclick="mediaModalFn(this)" class="media-image" src="images/sunflower-close.jpeg" alt="Close Up of a Sunflower.">
-								<img onclick="mediaModalFn(this)" class="media-image" src="images/colourful-bug.png" alt="Image of a Green, Purple and Red Bug.">
-								<img onclick="mediaModalFn(this)" class="media-image" src="images/white-daisy.jpeg" alt="Close Up of a Fluffy White Daisy.">
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/dandelion-seed-head.jpeg" alt="Image of Fluffy, Delicate Dandelion Seeds."/>
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/low-angle-grass.jpeg" alt="Close Up Image of Grass."/>
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/night-scene.png" alt="Image of the Moon at Sunset Behind Silhouettes of Flowers."/>
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/redback-on-bonsai.jpg" alt="Image of a Redback Spider on the Underside of a Bonsai."/>
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/hot-pink-flower-close.jpeg" alt="Close Up Image of A Bright Pink Flower with Yellow Pollen in the Center."/>
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/baby-breath.jpeg" alt="Image of Small Delicate Flowers."/>
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/coleus-red-vein.jpeg" alt="Coleus Plant with Red Detail"/>
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/dark-knight-close.jpeg" alt="Black Knight Plant Close Up."/>
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/low-ground-shot.jpeg" alt="Low Angle Shot of Bok Choy."/>
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/praying-mantis-upsidedown.png" alt="Upside Down Praying Mantis on Dying Corn Plant."/>
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/purple-flowers.jpeg" alt="Close Up of Small Purple Flowers."/>
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/sunflower-close.jpeg" alt="Close Up of a Sunflower."/>
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/colourful-bug.png" alt="Image of a Green, Purple and Red Bug."/>
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/white-daisy.jpeg" alt="Close Up of a Fluffy White Daisy."/>
 							</div>
 							<div id='Food'><a name="Food"></a></div>
 							<br>
@@ -80,9 +88,15 @@
 							<br>
 							<hr>
 							<div class="image-list">
-								<img onclick="mediaModalFn(this)" class="media-image" src="images/adobo-1.jpeg" alt="Image of Pork Adobo in a Bowl." onclick="mediaModalFn(this.element)">
-								<img onclick="mediaModalFn(this)" class="media-image" src="images/adobo-and-rice.jpeg" alt="Image of Pork Adobo and Rice on a Spoon." onclick="mediaModalFn(this.element)">
-								<img onclick="mediaModalFn(this)" class="media-image" src="images/adobo-closeup.jpeg" alt="Close Up Image of Pork Adobo." onclick="mediaModalFn(this.element)">
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/adobo-1.jpeg" alt="Image of Homemade Pork Adobo in a Bowl."/>
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/adobo-and-rice.jpeg" alt="Image of Homemade Pork Adobo and Rice on a Spoon."/>
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/adobo-closeup.jpeg" alt="Close Up Image of Homemade Pork Adobo."/>
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/19-crab-crisp.jpeg" alt="A thin, crispy piece of bread with creamy crab mix underneath. Taken during an evening at Nineteen at The Star."/>
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/19-oysters-2ways.jpeg" alt="A plate of oysters on cold rocks, half natural and half with toppings. Taken during an evening at Nineteen at The Star."/>
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/19-tomato-salad.jpeg" alt="A variety of tomatoes on a plate with beets, feta and basil, drizzled with seasonings. Taken during an evening at Nineteen at The Star."/>
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/19-sweet-potato.jpeg" alt="A delicious plate of soft, creamy sweet potato and a complementary range of toppings. Taken during an evening at Nineteen at The Star."/>
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/19-salmon.jpeg" alt="A perfectly cooked fillet of salmon on a bed of potatoes, spring onions and creme fraiche. Taken during an evening at Nineteen at The Star."/>
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/19-steak.jpeg" alt="A perfectly grilled steak, drizzled with it's own juices and a side of two different types of mustards. Taken during an evening at Nineteen at The Star."/>
 							</div>
 							<div id='Dreams'><a name="Dreams"></a></div>
 							<br>
@@ -95,7 +109,7 @@
 							<br>
 							<hr>
 							<div class="image-list">
-								<img onclick="mediaModalFn(this)" class="media-image" src="images/kitty-playing-wow.jpeg" alt="Orange Tabby Cat Plays World of Warcraft.">
+								<img onclick="mediaModalFn(this)" class="media-image" src="images/kitty-playing-wow.jpeg" alt="Drawing of an Orange Tabby Cat That Plays World of Warcraft."/>
 							</div>
 						</div>
 					</div>
