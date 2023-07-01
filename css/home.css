@@ -196,7 +196,7 @@ figcaption {
 	width: 100%;
 	max-height: 20%;
 	line-height: 75%;
-	font-size: 22vw;
+	font-size: 20vw;
 	text-align: center;
 	text-decoration: none;
 	text-transform: uppercase;
@@ -788,7 +788,7 @@ figcaption {
 		max-height: 120px;
 	}
 	.header-h1, .h1-nature, .h1-food, .h1-dreams {
-		font-size: 15vw;
+		font-size: 12vw;
 	}
 	.navbutton {
 		padding: 10px 20px;
@@ -839,7 +839,7 @@ figcaption {
 		float: right;
 	}
 	.header-h1, .h1-nature, .h1-food, .h1-dreams {
-		font-size: 12vw;
+		font-size: 15vh;
 		text-align: center;
 	}
 }

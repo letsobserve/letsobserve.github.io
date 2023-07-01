@@ -1,11 +1,15 @@
 const lightModeToggle = document.querySelector("#toggleTheme");
 const column = document.getElementsByClassName("column");
 const siteMain = document.getElementById("site-main");
+const banner = document.getElementById("banner");
+const header = document.getElementById("site-header");
+const title = document.getElementById("pageHeader");
 
 let lightMode = localStorage.getItem("lightMode");
 let btn = document.getElementById("toggleTheme");
 let sun = document.getElementById("themeImageSun");
 let moon = document.getElementById("themeImageMoon");
+let initalHeaderFontSize = parseFloat(window.getComputedStyle(title, null).getPropertyValue('font-size'));
 
 // if it's disabled, turn it on
 const enableLightMode = () => {
@@ -40,16 +44,10 @@ const disableLightMode = () => {
 	localStorage.setItem("lightMode", null);
 };
 
-let cookie_consent = getCookie("user_cookie_consent");
+let cookie_consent = getCookie("userCookieConsent");
 let ytFrame = document.getElementById("latest-video");
-
 if (cookie_consent != "") {
 	document.getElementById("cookieNotice").style.display = "none";
-	try {
-		ytFrame.src = ytFrame.dataset.src;
-	} catch {
-
-	};
 } else {
 	document.getElementById("cookieNotice").style.display = "block";
 };
@@ -59,7 +57,8 @@ function setCookie(cname, cvalue, exdays) {
 	const d = new Date();
 	d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
 	let expires = "expires=" + d.toUTCString();
-	document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/; SameSite=None; Secure";
+	document.cookie = cname + "=" + cvalue + ";";
+	console.log(document.cookie);
 };
 // delete a cookie
 function deleteCookie(cname) {
@@ -86,14 +85,10 @@ function getCookie(cname) {
 };
 // check for cookie consent
 function acceptCookieConsent() {
-	deleteCookie("user_cookie_consent");
-	setCookie("user_cookie_consent", 1, 30);
+	deleteCookie("userCookieConsent");
+	//setCookie("userCookieConsent",1,30);
+	document.cookie = "userCookieConsent=true";
 	document.getElementById("cookieNotice").style.display = "none";
-	try {
-		ytFrame.src = ytFrame.dataset.src;
-	} catch {
-		console.log("doesnt exist");
-	};
 };
 // close cookie consent notice
 function closeCookieNotice() {
@@ -124,21 +119,25 @@ function mediaModalFn(element) {
 	modalImg.src = element.src;
 	alttext.innerHTML = element.alt;
 };
-
 // close media modal
 function closeMediaModal() {
 	var modal = document.getElementById("mediaModal");
 	modal.style.display = "none";
 };
 
-// hide banner on scroll
+// hide banner and header on scroll
 window.addEventListener("scroll", (e) => {
-	const banner = document.getElementById("banner");
-	const header = document.getElementById("site-header");
-	const title = document.getElementById("pageHeader");
+	if (title.dataset.transition == "true") {
+		var halfOriginalSize = initalHeaderFontSize / 2;
+		var pageOffset = Math.floor(window.pageYOffset) - 100;
+		title.style.fontSize = initalHeaderFontSize - pageOffset + "px";
+		if (parseFloat(title.style.fontSize) < halfOriginalSize) title.style.fontSize = halfOriginalSize + "px";
+		if (parseFloat(title.style.fontSize) > initalHeaderFontSize) title.style.fontSize = initalHeaderFontSize + "px";
+		console.log(pageOffset);
+		// make header smaller as you scroll up to 50% original size
+	};
 	if (banner.dataset.transition == "true") {
-		banner.style.opacity =
-		(120 - Math.floor(window.pageYOffset)) + "%";
+		banner.style.opacity = (120 - Math.floor(window.pageYOffset)) + "%";
 	} else {
 		console.log(header.height);
 		header.style.top = banner.height - 48 + "px";
