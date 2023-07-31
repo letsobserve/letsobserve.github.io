@@ -1,55 +1,16 @@
-const lightModeToggle = document.querySelector("#toggleTheme");
 const column = document.getElementsByClassName("column");
 const siteMain = document.getElementById("site-main");
 const banner = document.getElementById("banner");
 const header = document.getElementById("site-header");
 const title = document.getElementById("pageHeader");
 
-let lightMode = localStorage.getItem("lightMode");
-let btn = document.getElementById("toggleTheme");
-let sun = document.getElementById("themeImageSun");
-let moon = document.getElementById("themeImageMoon");
 let initalHeaderFontSize = parseFloat(window.getComputedStyle(title, null).getPropertyValue('font-size'));
-
-// if it's disabled, turn it on
-const enableLightMode = () => {
-	// 1. add the class darkmode to the body
-	document.body.classList.add("light-mode");
-	siteMain.style.backgroundImage = "var(--alt-radialgradient)";
-	lightModeToggle.checked = true;
-	sun.style.opacity = "1";
-	moon.style.opacity = "0";
-	moon.style.left = "37px";
-	sun.style.right = "0";
-	for (i = 0; i < column.length; i++) {
-		column[i].style.borderColor = "var(--alt-darkgrey)";
-	}
-	//2. update lightmode in the localStorage
-	localStorage.setItem("lightMode", "enabled");
-};
-// if it's enabled, turn it off
-const disableLightMode = () => {
-	// 1. remove the class darkmode from the body
-	document.body.classList.remove("light-mode");
-	siteMain.style.backgroundImage = "var(--main-radialgradient)";
-	lightModeToggle.checked = false;
-	moon.style.opacity = "1";
-	sun.style.opacity = "0";
-	sun.style.right = "37px";
-	moon.style.left = "0";
-	for (i = 0; i < column.length; i++) {
-		column[i].style.borderColor = "var(--main-darkgrey)";
-	}
-	// 2. update lightmode in the localStorage
-	localStorage.setItem("lightMode", null);
-};
-
 let cookie_consent = getCookie("userCookieConsent");
 let ytFrame = document.getElementById("latest-video");
 if (cookie_consent != "") {
 	document.getElementById("cookieNotice").style.display = "none";
 } else {
-	document.getElementById("cookieNotice").style.display = "block";
+	//document.getElementById("cookieNotice").style.display = "block";
 };
 
 // create a cookie
@@ -95,20 +56,61 @@ function closeCookieNotice() {
 	document.getElementById("cookieNotice").style.display = "none";
 };
 
-// check if lightmode is enabled
-if (lightMode === "enabled") {
-	enableLightMode();
-};
-
-// toggle darkmode
-lightModeToggle.addEventListener("click", () => {
-	lightMode = localStorage.getItem("lightMode");
-	if (lightMode !== "enabled") {
-		enableLightMode();
-	} else {
-		disableLightMode();
+// Light / Dark Mode Toggle Try
+try {
+	const lightModeToggle = document.querySelector("#toggleTheme");
+	let lightMode = localStorage.getItem("lightMode");
+	let btn = document.getElementById("toggleTheme");
+	let sun = document.getElementById("themeImageSun");
+	let moon = document.getElementById("themeImageMoon");
+	// if it's disabled, turn it on
+	const enableLightMode = () => {
+		// 1. add the class darkmode to the body
+		document.body.classList.add("light-mode");
+		siteMain.style.backgroundImage = "var(--alt-radialgradient)";
+		lightModeToggle.checked = true;
+		sun.style.opacity = "1";
+		moon.style.opacity = "0";
+		moon.style.left = "37px";
+		sun.style.right = "0";
+		for (i = 0; i < column.length; i++) {
+			column[i].style.borderColor = "var(--alt-darkgrey)";
+		}
+		//2. update lightmode in the localStorage
+		localStorage.setItem("lightMode", "enabled");
 	}
-});
+	// if it's enabled, turn it off
+	const disableLightMode = () => {
+		// 1. remove the class darkmode from the body
+		document.body.classList.remove("light-mode");
+		siteMain.style.backgroundImage = "var(--main-radialgradient)";
+		lightModeToggle.checked = false;
+		moon.style.opacity = "1";
+		sun.style.opacity = "0";
+		sun.style.right = "37px";
+		moon.style.left = "0";
+		for (i = 0; i < column.length; i++) {
+			column[i].style.borderColor = "var(--main-darkgrey)";
+		}
+		// 2. update lightmode in the localStorage
+		localStorage.setItem("lightMode", null);
+	}
+	// check if lightmode is enabled
+	if (lightMode === "enabled") {
+		try {
+			enableLightMode();
+		} catch (e) {}
+	}
+	// toggle darkmode
+	lightModeToggle.addEventListener("click", () => {
+		lightMode = localStorage.getItem("lightMode");
+		if (lightMode !== "enabled") {
+			enableLightMode();
+		} else {
+			disableLightMode();
+		}
+	})
+} catch (e) {}
 
 // populate media modal
 function mediaModalFn(element) {
@@ -127,19 +129,17 @@ function closeMediaModal() {
 
 // hide banner and header on scroll
 window.addEventListener("scroll", (e) => {
-	if (title.dataset.transition == "true") {
+	/*if (title.dataset.transition == "true") {
+		// make header smaller as you scroll up to 50% original size
 		var halfOriginalSize = initalHeaderFontSize / 2;
 		var pageOffset = Math.floor(window.pageYOffset) - 100;
 		title.style.fontSize = initalHeaderFontSize - pageOffset + "px";
 		if (parseFloat(title.style.fontSize) < halfOriginalSize) title.style.fontSize = halfOriginalSize + "px";
 		if (parseFloat(title.style.fontSize) > initalHeaderFontSize) title.style.fontSize = initalHeaderFontSize + "px";
-		console.log(pageOffset);
-		// make header smaller as you scroll up to 50% original size
-	};
+	};*/
 	if (banner.dataset.transition == "true") {
 		banner.style.opacity = (120 - Math.floor(window.pageYOffset)) + "%";
 	} else {
-		console.log(header.height);
 		header.style.top = banner.height - 48 + "px";
 		banner.style.position = "sticky";
 		banner.style.top = "-1px";
