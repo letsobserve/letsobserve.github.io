@@ -116,7 +116,7 @@ figcaption {
 	position: sticky;
 	top: -1px;
 	border-style: solid;
-	border-top-width: 0px;
+	border-top-width: 0;
 	border-bottom-width: medium;
 	border-left-width: thick;
 	border-right-width: thick;
@@ -152,7 +152,7 @@ figcaption {
 /* Columns */
 .column-container {
 	display: grid;
-	grid-template-columns: repeat(auto-fit,minmax(260px, 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 	grid-auto-rows: 1fr;
 	align-content: center;
 	justify-content: space-evenly;
@@ -174,6 +174,31 @@ figcaption {
 	overflow: hidden;
 	justify-items: center;
 }
+.column-container-uneven {
+  display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+	grid-auto-rows: 1fr;
+  grid-auto-rows: auto;
+	align-content: center;
+	justify-content: space-evenly;
+	align-items: top;
+	justify-items: center;
+	width: 100%;
+	box-sizing: border-box;
+}
+.column-uneven {
+  box-sizing: border-box;
+	width: 100%;
+	height: 100%;
+	border-style: solid;
+	border-left-width: 5px;
+	border-right-width: 5px;
+	border-top-width: 0;
+	border-bottom-width: 0;
+	border-color: var(--main-accentcolor);
+	overflow: hidden;
+	justify-items: center;
+}
 
 /*
 ////////////////////////
@@ -182,8 +207,8 @@ figcaption {
 */
 /* Banner */
 #banner {
-	margin: 0;
-	padding: 0;
+	margin: 0 0;
+	padding: 0 0;
 	max-height: 200px;
 	width: 100%;
 	object-position: center;
@@ -196,6 +221,8 @@ figcaption {
 
 /* Navigation Bar */
 .navbar {
+  margin: 0 0;
+  padding: 0 0;
 	position: sticky;
 	background-color: inherit;
 	top: 50px;
@@ -385,7 +412,9 @@ figcaption {
 
 /* Image of the Week Section */
 .image-of-week-wrapper {
+  display: block;
 	width: 100%;
+  height: auto;
 }
 .image-of-week {
 	margin-left: auto;
@@ -396,7 +425,8 @@ figcaption {
 	background-image: url("../images/colourful-bug.png");
 	background-size: 200%;
 	background-position: center;
-	animation: pan-image 15s infinite;
+  background-repeat: no-repeat;
+	animation: pan-image 30s infinite;
 }
 @keyframes pan-image {
 	0% {
@@ -456,7 +486,7 @@ figcaption {
 	padding: 2vh;
 	background-image: var(--alt-bg);
 	border-bottom: 2px solid white;
-	text-align: right;
+	text-align: left;
 	text-decoration: none;
 	font-family: sans-serif;
 	font-weight: bolder;
@@ -571,6 +601,9 @@ figcaption {
 /* Text Fitting */
 .center-text {
 	text-align: center;
+}
+.h-margin {
+  margin: 15px;
 }
 
 /* Image Fitting */
@@ -853,11 +886,11 @@ figcaption {
 		max-height: 120px;
 	}
 	.header-h1, .h1-nature, .h1-food, .h1-dreams {
-		font-size: 12vw;
+		font-size: 8vw;
 		line-height: 12vh;
 	}
 	.header-h1:hover, .h1-nature:hover, .h1-food:hover, .h1-dreams:hover {
-		font-size: 13vw;
+		font-size: 10vw;
 	}
 	.navheader {
 		height: 12vh;
@@ -865,10 +898,31 @@ figcaption {
 	.navbutton {
 		padding: 10px 20px;
 	}
+  .column-container-uneven {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+  .column-uneven {
+    grid-column: span 3;
+  }
 	.image-of-week {
-		width: 75%;
+    margin: 0 0;
 		height: 300px;
 	}
+  @keyframes pan-image {
+  	0% {
+  		background-position: 25% 25%;
+  	}
+  	33% {
+  		background-position: 45% 55%;
+  	}
+  	66% {
+  		background-position: 10% 10%;
+      background-size: 190%;
+  	}
+  	100% {
+  		background-position:25% 25%;
+  	}
+  }
 	.image-list {
 		grid-template-columns: 1fr 1fr 1fr;
 	}
@@ -901,25 +955,38 @@ figcaption {
 	}
 	#site-aside {
 		margin: 0 0;
-		padding: 0 0;
+		padding: 2px;
 		width: 20%;
 		float: right;
 	}
+  #site-header {
+    margin-top: -5px;
+  }
 	.header-h1, .h1-nature, .h1-food, .h1-dreams {
-		font-size: 15vh;
-		line-height: 13vh;
+		font-size: 8vh;
+		line-height: 9vh;
 		text-align: center;
 	}
 	.header-h1:hover, .h1-nature:hover, .h1-food:hover, .h1-dreams:hover {
-		font-size: 16vh;
+		font-size: 10vh;
 	}
+  .navbar {
+    margin-top: -2px;
+  }
 	.navheader {
-		height: 14vh;
+		height: 9vh;
 		flex-basis: 33%;
 	}
+  .column-container-uneven {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  .column-uneven {
+    grid-column: span 2;
+  }
 	.image-of-week {
-		width: 66%;
-		height: 400px;
+    margin: 0 0;
+    width: 100%;
+    height: 400px;
 	}
 }
 @media (prefers-color-scheme: light) {
