@@ -58,6 +58,7 @@
     --alt-titletext: rgba(225,225,225,0.2);
     --main-bg: rgb(25,25,25);
     --alt-bg: rgb(75,75,75);
+    font-size: 16px;
 }
 * {
 	scroll-behavior: smooth;
@@ -229,9 +230,10 @@ figcaption {
 	left: 0;
 	display: flex;
 	flex-direction: row;
-	flex-wrap: wrap;
+	flex-wrap: nowrap;
 	justify-content: space-around;
 	align-items: center;
+  gap: 5px;
 	z-index: 2;
 }
 .navheader {
@@ -242,6 +244,7 @@ figcaption {
 	flex-basis: 100%;
 }
 .navbutton {
+  margin-left: auto;
 	padding: 8px 4px;
 	background-color: var(--main-offcolor);
 	color: var(--main-text);
@@ -249,6 +252,7 @@ figcaption {
 	font-size: 100%;
 	text-align: center;
 	text-decoration: none;
+  align-self: center;
 	z-index: 4;
 	transition: background-color 0.25s ease-in-out;
 }
@@ -301,17 +305,17 @@ figcaption {
 .h1-food,
 .h1-dreams {
 	padding-bottom: 5px;
-	position: relative;
-	display: block;
+	/*position: relative;
+	display: inline-block;*/
 	line-height: 9vh;
-	font-size: 20vw;
+	font-size: 2rem;
 	text-align: center;
 	text-decoration: none;
 	text-transform: uppercase;
 	text-shadow: 2px 5px 2px var(--main-titletext);
 	cursor: pointer;
 	color: var(--main-titletext);
-	background-size: cover;
+	background-size: auto;
 	background-repeat: no-repeat;
 	background-position: top;
 	-webkit-background-clip: text;
@@ -322,7 +326,7 @@ figcaption {
 .h1-nature:hover,
 .h1-food:hover,
 .h1-dreams:hover {
-	font-size: 21vw;
+	font-size: 3rem;
 }
 .header-h1 {
 	background-image: url(../images/low-ground-shot.jpeg);
@@ -423,25 +427,9 @@ figcaption {
 	height: 250px;
 	border: solid 10px var(--main-accentcolor);
 	background-image: url("../images/colourful-bug.png");
-	background-size: 200%;
+	background-size: cover;
 	background-position: center;
   background-repeat: no-repeat;
-	animation: pan-image 30s infinite;
-}
-@keyframes pan-image {
-	0% {
-		background-position: 25% 25%;
-	}
-	40% {
-		background-position: 75% 25%;
-	}
-	75% {
-		background-position: 50% 50%;
-		background-size: 150%;
-	}
-	100% {
-		background-position:25% 25%;
-	}
 }
 
 /* Latest Blog Post Section */
@@ -885,16 +873,6 @@ figcaption {
 	#banner {
 		max-height: 120px;
 	}
-	.header-h1, .h1-nature, .h1-food, .h1-dreams {
-		font-size: 8vw;
-		line-height: 12vh;
-	}
-	.header-h1:hover, .h1-nature:hover, .h1-food:hover, .h1-dreams:hover {
-		font-size: 10vw;
-	}
-	.navheader {
-		height: 12vh;
-	}
 	.navbutton {
 		padding: 10px 20px;
 	}
@@ -908,21 +886,6 @@ figcaption {
     margin: 0 0;
 		height: 300px;
 	}
-  @keyframes pan-image {
-  	0% {
-  		background-position: 25% 25%;
-  	}
-  	33% {
-  		background-position: 45% 55%;
-  	}
-  	66% {
-  		background-position: 10% 10%;
-      background-size: 190%;
-  	}
-  	100% {
-  		background-position:25% 25%;
-  	}
-  }
 	.image-list {
 		grid-template-columns: 1fr 1fr 1fr;
 	}
