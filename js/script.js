@@ -1,10 +1,10 @@
+const banner = document.createElement("img");
 const column = document.getElementsByClassName("column");
 const siteMain = document.getElementById("site-main");
-const banner = document.getElementById("banner");
-const header = document.getElementById("site-header");
+const header = document.createElement("header");
 const title = document.getElementById("pageHeader");
 
-let initalHeaderFontSize = parseFloat(window.getComputedStyle(title, null).getPropertyValue('font-size'));
+//let initalHeaderFontSize = parseFloat(window.getComputedStyle(title, null).getPropertyValue('font-size'));
 let cookie_consent = getCookie("userCookieConsent");
 let ytFrame = document.getElementById("latest-video");
 if (cookie_consent != "") {
@@ -12,7 +12,67 @@ if (cookie_consent != "") {
 } else {
 	//document.getElementById("cookieNotice").style.display = "block";
 };
-
+createHeader();
+// hide banner and header on scroll
+window.addEventListener("scroll", (e) => {
+	if (window.pageYOffset < 200) {
+		if (banner.dataset.transition == "true") {
+			banner.style.opacity = (120 - Math.floor(window.pageYOffset)) + "%";
+		} else {
+			header.style.top = banner.height - 48 + "px";
+			banner.style.position = "sticky";
+			banner.style.top = "-1px";
+		};
+    }
+});
+// create the site header
+function createHeader() {
+	// create elements
+	const nav = document.createElement("nav");
+	const a = document.createElement("a");
+	const a1 = document.createElement("a");
+	const a2 = document.createElement("a");
+	const a3 = document.createElement("a");
+	const a4 = document.createElement("a");
+	const h1 = document.createElement("h1");
+	// set up banner
+	banner.setAttribute("id", "banner");
+	banner.setAttribute("src", "/images/banner-night-scene.png");
+	banner.setAttribute("alt", "Shadows of flowers and leaves over a clear sky with the full moon visible.");
+	banner.setAttribute("data-transition", "true");
+	document.body.insertBefore(banner, document.body.firstChild);
+	// set up navigation bar
+	header.setAttribute("id", "site-header");
+	nav.setAttribute("class", "navbar");
+	header.appendChild(nav);
+	// home button and page title
+	a.setAttribute("class", "navheader");
+	a.setAttribute("href", "index.html");
+	h1.setAttribute("class", "header-h1");
+	h1.innerHTML = "Observe";
+	h1.setAttribute("id", "pageHeader");
+	h1.setAttribute("title", "Return to Homepage");
+	banner.insertAdjacentElement("afterend", header);
+	nav.appendChild(a);
+	a.appendChild(h1);
+	// navigation buttons
+	a1.setAttribute("class", "navbutton");
+	a1.setAttribute("href", "Nature.html");
+	a1.innerHTML = "Nature";
+	nav.appendChild(a1);
+	a2.setAttribute("class", "navbutton");
+	a2.setAttribute("href", "Food.html");
+	a2.innerHTML = "Food";
+	nav.appendChild(a2);
+	a3.setAttribute("class", "navbutton");
+	a3.setAttribute("href", "Dreams.html");
+	a3.innerHTML = "Dreams";
+	nav.appendChild(a3);
+	a4.setAttribute("class", "navbutton");
+	a4.setAttribute("href", "Media.html");
+	a4.innerHTML = "Media";
+	nav.appendChild(a4);
+};
 // create a cookie
 function setCookie(cname, cvalue, exdays) {
 	const d = new Date();
@@ -55,63 +115,6 @@ function acceptCookieConsent() {
 function closeCookieNotice() {
 	document.getElementById("cookieNotice").style.display = "none";
 };
-
-// Light / Dark Mode Toggle Try
-try {
-	const lightModeToggle = document.querySelector("#toggleTheme");
-	let lightMode = localStorage.getItem("lightMode");
-	let btn = document.getElementById("toggleTheme");
-	let sun = document.getElementById("themeImageSun");
-	let moon = document.getElementById("themeImageMoon");
-	// if it's disabled, turn it on
-	const enableLightMode = () => {
-		// 1. add the class darkmode to the body
-		document.body.classList.add("light-mode");
-		siteMain.style.backgroundImage = "var(--alt-radialgradient)";
-		lightModeToggle.checked = true;
-		sun.style.opacity = "1";
-		moon.style.opacity = "0";
-		moon.style.left = "37px";
-		sun.style.right = "0";
-		for (i = 0; i < column.length; i++) {
-			column[i].style.borderColor = "var(--alt-darkgrey)";
-		}
-		//2. update lightmode in the localStorage
-		localStorage.setItem("lightMode", "enabled");
-	}
-	// if it's enabled, turn it off
-	const disableLightMode = () => {
-		// 1. remove the class darkmode from the body
-		document.body.classList.remove("light-mode");
-		siteMain.style.backgroundImage = "var(--main-radialgradient)";
-		lightModeToggle.checked = false;
-		moon.style.opacity = "1";
-		sun.style.opacity = "0";
-		sun.style.right = "37px";
-		moon.style.left = "0";
-		for (i = 0; i < column.length; i++) {
-			column[i].style.borderColor = "var(--main-darkgrey)";
-		}
-		// 2. update lightmode in the localStorage
-		localStorage.setItem("lightMode", null);
-	}
-	// check if lightmode is enabled
-	if (lightMode === "enabled") {
-		try {
-			enableLightMode();
-		} catch (e) {}
-	}
-	// toggle darkmode
-	lightModeToggle.addEventListener("click", () => {
-		lightMode = localStorage.getItem("lightMode");
-		if (lightMode !== "enabled") {
-			enableLightMode();
-		} else {
-			disableLightMode();
-		}
-	})
-} catch (e) {}
-
 // populate media modal
 function mediaModalFn(element) {
 	var modal = document.getElementById("mediaModal");
@@ -126,26 +129,6 @@ function closeMediaModal() {
 	var modal = document.getElementById("mediaModal");
 	modal.style.display = "none";
 };
-
-// hide banner and header on scroll
-window.addEventListener("scroll", (e) => {
-	/*if (title.dataset.transition == "true") {
-		// make header smaller as you scroll up to 50% original size
-		var halfOriginalSize = initalHeaderFontSize / 2;
-		var pageOffset = Math.floor(window.pageYOffset) - 100;
-		title.style.fontSize = initalHeaderFontSize - pageOffset + "px";
-		if (parseFloat(title.style.fontSize) < halfOriginalSize) title.style.fontSize = halfOriginalSize + "px";
-		if (parseFloat(title.style.fontSize) > initalHeaderFontSize) title.style.fontSize = initalHeaderFontSize + "px";
-	};*/
-	if (banner.dataset.transition == "true") {
-		banner.style.opacity = (120 - Math.floor(window.pageYOffset)) + "%";
-	} else {
-		header.style.top = banner.height - 48 + "px";
-		banner.style.position = "sticky";
-		banner.style.top = "-1px";
-	};
-});
-
 // scroll to the top of the page
 function topFunction() {
 	window.scroll({

@@ -7,6 +7,8 @@
 	<link rel="stylesheet" href="../css/home.css">
 	<meta name="author" content="Jordan Hewett" />
 	<meta name="keywords" content="Jordan, Hewett, Observe, Nature, Dream, Dreams, Food, Recipes, Stories" />
+	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1480924343854494"
+			crossorigin="anonymous"></script>
 </head>
 <body>
 	<div id="cookieNotice">
@@ -17,6 +19,16 @@
 			<button class="cookieButton" onclick="acceptCookieConsent()">Accept</button>
 		</div>
 	</div>
+	<img id="banner" src="../images/banner-night-scene.png" alt="Observe Banner Image" data-transition="true">
+	<header id="site-header">
+		<a class="navheader" href="../index.html"><h1 id="pageHeader" class="header-h1" data-transition="true">Observe</h1></a>
+		<nav class="navbar">
+			<a class="navbutton" href="../Nature.html">Nature</a>
+			<a class="navbutton" href="../Food.html">Food</a>
+			<a class="navbutton" href="../Dreams.html">Dreams</a>
+			<a class="navbutton" href="../Media.html">Media</a>
+		</nav>
+	</header>
 	<div id="site-main">
 		<div class="wrapper-main">
 			<main id="site-content" class="site-main">
@@ -104,12 +116,19 @@
 	</div>
 	<br>
 	<footer class="footer">
-		<br />
-		<p class="footer-credit">Observing Since 2019.</p>
+		<h3 class="footer-title">Observe</h3>
+		<p class="footer-text">Since 2019.</p>
 		<p class="footer-credit">This is a Hewett-Made Website.</p>
 		<br>
 	</footer>
 	<script src="../js/script.js">
 	</script>
+	<?php
+	require('Persistence.php');
+	$comment_post_ID = 1;
+	$db = new Persistence();
+	$comments = $db->get_comments($comment_post_ID);
+	$has_comments = (count($comments) > 0);
+	?>
 </body>
 </html>

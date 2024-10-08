@@ -63,24 +63,16 @@
 * {
 	scroll-behavior: smooth;
 	box-sizing: border-box;
-	margin: 0;
-	padding: 0;
+	margin: 0 0;
+	padding: 0 0;
 }
 html {
-	margin: 0;
-	padding: 0;
+	margin: 0 0;
+	padding: 0 0;
 	width: 100%;
 	font-family: consolas, sans-serif;
 }
-head {
-	margin: 0 0;
-	padding: 0 0;
-	width: 100%;
-}
 body {
-	margin: 0 0;
-	padding: 0 0;
-	width: 100%;
 	background-color: var(--main-bg);
 	background-image: var(--main-radialgradient);
 	color: var(--main-text);
@@ -116,18 +108,12 @@ figcaption {
 	background-color: inherit;
 	position: sticky;
 	top: -1px;
-	border-style: solid;
-	border-top-width: 0;
-	border-bottom-width: medium;
-	border-left-width: thick;
-	border-right-width: thick;
-	border-color: var(--main-accentcolor);
 	background-color: var(--main-offcolor);
 	z-index: 3;
 }
 .wrapper-main {
 	margin: 0 auto;
-	padding: 0 20px;
+	padding: 0 0.8rem;
 }
 .site-main {
 	margin: 0 auto;
@@ -210,6 +196,7 @@ figcaption {
 #banner {
 	margin: 0 0;
 	padding: 0 0;
+  display: block;
 	max-height: 200px;
 	width: 100%;
 	object-position: center;
@@ -224,10 +211,9 @@ figcaption {
 .navbar {
   margin: 0 0;
   padding: 0 0;
+  height: 3rem;
 	position: sticky;
 	background-color: inherit;
-	top: 50px;
-	left: 0;
 	display: flex;
 	flex-direction: row;
 	flex-wrap: nowrap;
@@ -237,19 +223,17 @@ figcaption {
 	z-index: 2;
 }
 .navheader {
-	height: 9vh;
-	position: relative;
 	cursor: pointer;
 	text-decoration: none;
 	flex-basis: 100%;
 }
 .navbutton {
   margin-left: auto;
-	padding: 8px 4px;
+	padding: 0.5rem 0.25rem;
 	background-color: var(--main-offcolor);
 	color: var(--main-text);
 	font-family: impact;
-	font-size: 100%;
+	font-size: 1rem;
 	text-align: center;
 	text-decoration: none;
   align-self: center;
@@ -260,54 +244,12 @@ figcaption {
 	background-color: var(--alt-offcolor);
 	color: var(--alt-text);
 }
-.themeToggleContainer {
-	display: block;
-	height: auto;
-	position: relative;
-	top: 2.5px;
-	cursor: pointer;
-}
-.themeToggleContainer input {
-		display: none;
-}
-.theme-slider {
-	display: block;
-	width: 70px;
-	height: auto;
-	overflow: hidden;
-}
-.theme-slider img {
-	width: 100%;
-	height: auto;
-}
-#themeImageMoon {
-	width: auto;
-	height: 80%;
-	position: absolute;
-	top: 1.5px;
-	left: 0;
-	opacity: 1;
-	transition: opacity 0.5s ease-out, left 0.5s ease-out;
-}
-#themeImageSun {
-	width: auto;
-	height: 80%;
-	position: absolute;
-	top: 1.5px;
-	right: 0;
-	opacity: 0;
-	transition: opacity 0.5s ease-out, right 0.5s ease-out;
-}
 
 /* Headers */
 .header-h1,
 .h1-nature,
 .h1-food,
 .h1-dreams {
-	padding-bottom: 5px;
-	/*position: relative;
-	display: inline-block;*/
-	line-height: 9vh;
 	font-size: 2rem;
 	text-align: center;
 	text-decoration: none;
@@ -326,7 +268,7 @@ figcaption {
 .h1-nature:hover,
 .h1-food:hover,
 .h1-dreams:hover {
-	font-size: 3rem;
+	font-size: 2.5rem;
 }
 .header-h1 {
 	background-image: url(../images/low-ground-shot.jpeg);
@@ -342,8 +284,6 @@ figcaption {
 	text-shadow: 2px 5px 2px var(--alt-titletext);
 	background-image: url(../images/banner-night-scene.png);
 }
-
-
 
 /*
 ////////////////////////
@@ -873,9 +813,6 @@ figcaption {
 	#banner {
 		max-height: 120px;
 	}
-	.navbutton {
-		padding: 10px 20px;
-	}
   .column-container-uneven {
     grid-template-columns: 1fr 1fr 1fr 1fr;
   }
@@ -925,21 +862,6 @@ figcaption {
   #site-header {
     margin-top: -5px;
   }
-	.header-h1, .h1-nature, .h1-food, .h1-dreams {
-		font-size: 8vh;
-		line-height: 9vh;
-		text-align: center;
-	}
-	.header-h1:hover, .h1-nature:hover, .h1-food:hover, .h1-dreams:hover {
-		font-size: 10vh;
-	}
-  .navbar {
-    margin-top: -2px;
-  }
-	.navheader {
-		height: 9vh;
-		flex-basis: 33%;
-	}
   .column-container-uneven {
     grid-template-columns: 1fr 1fr 1fr;
   }
