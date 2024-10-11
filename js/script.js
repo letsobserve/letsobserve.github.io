@@ -79,17 +79,15 @@ function createFooter() {
 	const footer = document.createElement("footer");
 	const p = document.createElement("p");
 	const p1 = document.createElement("p");
-
 	footer.setAttribute("class", "footer");
 	p.setAttribute("class", "footer-credit");
 	p1.setAttribute("class", "footer-credit");
 	p.innerHTML = "Observing Since 2019.";
-	p1.innerHTML = "This is a Hewett-Made Website."
-
+	p1.innerHTML = "This is a Hewett-Made Website.";
 	footer.appendChild(p);
 	footer.appendChild(p1);
 	document.body.appendChild(footer);
-}
+};
 // create a cookie
 function setCookie(cname, cvalue, exdays) {
 	const d = new Date();
