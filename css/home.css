@@ -114,6 +114,8 @@ figcaption {
 .wrapper-main {
 	margin: 0 auto;
 	padding: 0 0.8rem;
+  display: flex;
+  flex-direction: column;
 }
 .site-main {
 	margin: 0 auto;
@@ -498,28 +500,38 @@ figcaption {
 .footer {
 	margin: 0;
 	padding: 0;
+  height: auto;
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  align-items: center;
 	border-top-style: solid;
 	border-top-width: thick;
 	border-top-color: var(--main-text);
 	background-image: var(--main-radialgradient);
-	text-align: left;
-	clear: both;
-}
-.footer-title {
-	margin-bottom: 10px;
-	font-size: 150%;
-	font-weight: bold;
-	text-align: left;
-	padding: 5px 15px;
 }
 .footer-text {
-	font-size: 80%;
+  padding: 1rem;
+  flex: 1 1 100%;
+	font-size: 1rem;
+  text-align: center;
+}
+.footer-icon {
+  width: 7.5%;
+}
+.footer-credit-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
 }
 .footer-credit {
-  padding: 1rem 0;
-	font-size: 80%;
-	text-align: right;
-	clear: both;
+  padding: 0.5rem;
+  width: auto;
+  display: inline;
+  flex: 1 0 50%;
+	font-size: 0.75rem;
+  text-align: center;
 }
 
 /*
@@ -805,12 +817,6 @@ figcaption {
 /////////////////////////////
 */
 @media screen and (min-width: 600px) {
-	.site-main {
-		width: 100%;
-	}
-	.site-aside-wrapper {
-		width: 100%;
-	}
 	#banner {
 		max-height: 120px;
 	}
@@ -849,20 +855,15 @@ figcaption {
 }
 @media screen and (min-width: 1000px) {
 	.site-main {
-		margin: 0 0;
-		padding: 0 0;
-		width: 80%;
-		float: left;
+		flex: 4 0 80%;
 	}
-	#site-aside {
-		margin: 0 0;
-		padding: 2px;
-		width: 20%;
-		float: right;
-	}
-  #site-header {
-    margin-top: -5px;
+  .wrapper-main {
+    flex-direction: row;
   }
+	#site-aside {
+		padding: 2px;
+		flex-grow: 1;
+	}
   .column-container-uneven {
     grid-template-columns: 1fr 1fr 1fr;
   }

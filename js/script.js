@@ -76,17 +76,32 @@ function createHeader() {
 };
 // create the site Footer
 function createFooter() {
+	// create all the elements
 	const footer = document.createElement("footer");
+	const div = document.createElement("div");
 	const p = document.createElement("p");
 	const p1 = document.createElement("p");
+	const p2 = document.createElement("p");
+	const icon = document.createElement("img");
+	const wrapperMain = document.getElementsByClassName("wrapper-main");
+	// build the footer section
+	wrapperMain[0].insertAdjacentElement("afterend", footer);
 	footer.setAttribute("class", "footer");
+	footer.appendChild(document.createElement("br"));
+	p2.setAttribute("class", "footer-text");
+	p2.innerHTML = "Have any comments or suggestions? Email them to me at garden.observation@gmail.com";
+	footer.appendChild(p2);
+	div.setAttribute("class", "footer-credit-wrapper");
+	footer.appendChild(div);
 	p.setAttribute("class", "footer-credit");
-	p1.setAttribute("class", "footer-credit");
 	p.innerHTML = "Observing Since 2019.";
+	div.appendChild(p);
+	icon.setAttribute("class", "footer-icon");
+	icon.setAttribute("src", "https://jordanhewett.com/images/observeeyev2.png");
+	div.appendChild(icon);
+	p1.setAttribute("class", "footer-credit");
 	p1.innerHTML = "This is a Hewett-Made Website.";
-	footer.appendChild(p);
-	footer.appendChild(p1);
-	document.body.appendChild(footer);
+	div.appendChild(p1);
 };
 // create a cookie
 function setCookie(cname, cvalue, exdays) {
