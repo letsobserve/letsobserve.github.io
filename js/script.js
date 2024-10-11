@@ -13,6 +13,7 @@ if (cookie_consent != "") {
 	//document.getElementById("cookieNotice").style.display = "block";
 };
 createHeader();
+createFooter();
 // hide banner and header on scroll
 window.addEventListener("scroll", (e) => {
 	if (window.pageYOffset < 200) {
@@ -37,7 +38,7 @@ function createHeader() {
 	const h1 = document.createElement("h1");
 	// set up banner
 	banner.setAttribute("id", "banner");
-	banner.setAttribute("src", "/images/banner-night-scene.png");
+	banner.setAttribute("src", "https://jordanhewett.com/images/banner-night-scene.png");
 	banner.setAttribute("alt", "Shadows of flowers and leaves over a clear sky with the full moon visible.");
 	banner.setAttribute("data-transition", "true");
 	document.body.insertBefore(banner, document.body.firstChild);
@@ -47,7 +48,7 @@ function createHeader() {
 	header.appendChild(nav);
 	// home button and page title
 	a.setAttribute("class", "navheader");
-	a.setAttribute("href", "//jordanhewett.com/index.html");
+	a.setAttribute("href", "https://jordanhewett.com/index.html");
 	h1.setAttribute("class", "header-h1");
 	h1.innerHTML = "Observe";
 	h1.setAttribute("id", "pageHeader");
@@ -57,22 +58,38 @@ function createHeader() {
 	a.appendChild(h1);
 	// navigation buttons
 	a1.setAttribute("class", "navbutton");
-	a1.setAttribute("href", "//jordanhewett.com/Nature.html");
+	a1.setAttribute("href", "https://jordanhewett.com/Nature.html");
 	a1.innerHTML = "Nature";
 	nav.appendChild(a1);
 	a2.setAttribute("class", "navbutton");
-	a2.setAttribute("href", "//jordanhewett.com/Food.html");
+	a2.setAttribute("href", "https://jordanhewett.com/Food.html");
 	a2.innerHTML = "Food";
 	nav.appendChild(a2);
 	a3.setAttribute("class", "navbutton");
-	a3.setAttribute("href", "//jordanhewett.com/Dreams.html");
+	a3.setAttribute("href", "https://jordanhewett.com/Dreams.html");
 	a3.innerHTML = "Dreams";
 	nav.appendChild(a3);
 	a4.setAttribute("class", "navbutton");
-	a4.setAttribute("href", "//jordanhewett.com/Media.html");
+	a4.setAttribute("href", "https://jordanhewett.com/Media.html");
 	a4.innerHTML = "Media";
 	nav.appendChild(a4);
 };
+// create the site Footer
+function createFooter() {
+	const footer = document.createElement("footer");
+	const p = document.createElement("p");
+	const p1 = document.createElement("p");
+
+	footer.setAttribute("class", "footer");
+	p.setAttribute("class", "footer-credit");
+	p1.setAttribute("class", "footer-credit");
+	p.innerHTML = "Observing Since 2019.";
+	p1.innerHTML = "This is a Hewett-Made Website."
+
+	footer.appendChild(p);
+	footer.appendChild(p1);
+	document.body.appendChild(footer);
+}
 // create a cookie
 function setCookie(cname, cvalue, exdays) {
 	const d = new Date();

@@ -516,6 +516,7 @@ figcaption {
 	font-size: 80%;
 }
 .footer-credit {
+  padding: 1rem 0;
 	font-size: 80%;
 	text-align: right;
 	clear: both;
