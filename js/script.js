@@ -13,8 +13,8 @@ if (cookie_consent != "") {
 	//document.getElementById("cookieNotice").style.display = "block";
 };
 createHeader();
+createBreadcrumbs();
 createFooter();
-console.log(window.location.href);
 // hide banner and header on scroll
 window.addEventListener("scroll", (e) => {
 	if (window.pageYOffset < 200) {
@@ -69,6 +69,32 @@ function createHeader() {
 	a3.setAttribute("href", "https://jordanhewett.com/Media.html");
 	a3.innerHTML = "Media";
 	nav.appendChild(a3);
+};
+// create breadcrumbs for the page
+function createBreadcrumbs() {
+	// check if page needs breadcrumbs
+	if (window.location.href.indexOf("/posts/") == -1) {
+		return;
+	};
+	// create the elements
+	const ul = document.createElement("ul");
+	const a = document.createElement("a");
+	const a1 = document.createElement("a");
+	const a2 = document.createElement("a");
+	const siteContentWrapper = document.getElementsByClassName("site-content-wrapper");
+	const title = document.getElementById("blogTitle").innerHTML;
+	// set up the elements
+	ul.setAttribute("class", "breadcrumbs");
+	a.setAttribute("href", "https://jordanhewett.com/index.html");
+	a.innerHTML = "Home";
+	a1.setAttribute("href", "https://jordanhewett.com/Blog.html");
+	a1.innerHTML = "Blog";
+	a2.innerHTML = title;
+	// insert the elements
+	siteContentWrapper[0].insertAdjacentElement("afterbegin", ul);
+	ul.appendChild(a);
+	ul.appendChild(a1);
+	ul.appendChild(a2);
 };
 // create the site Footer
 function createFooter() {

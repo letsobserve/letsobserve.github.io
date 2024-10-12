@@ -332,22 +332,19 @@ figcaption {
 	width: 100%;
 	list-style: none;
 }
-.breadcrumbs li {
+.breadcrumbs a {
 	display: inline;
 	font-size: 0.8rem;
+  color: var(--main-text);
+	text-decoration: none;
 }
-.breadcrumbs li+li::before {
+.breadcrumbs a+a::before {
 	padding: 8px;
 	color: inherit;
 	content: "/\00a0";
 }
-.breadcrumbs a {
-	color: var(--main-text);
-	text-decoration: none;
-}
 .breadcrumbs a:hover{
-	color: var(--alt-offaccentcolor);
-	text-decoration: underline;
+	color: var(--alt-offcolor);
 }
 
 /* Image of the Week Section */
