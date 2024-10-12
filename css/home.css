@@ -227,11 +227,13 @@ figcaption {
 .navheader {
 	cursor: pointer;
 	text-decoration: none;
-	flex-basis: 100%;
+	flex: 1 0 20%;
+  overflow: hidden;
 }
 .navbutton {
   margin-left: auto;
 	padding: 0.5rem 0.25rem;
+  flex: 0 1 10%;
 	background-color: var(--main-offcolor);
 	color: var(--main-text);
 	font-family: impact;
@@ -259,7 +261,7 @@ figcaption {
 	text-shadow: 2px 5px 2px var(--main-titletext);
 	cursor: pointer;
 	color: var(--main-titletext);
-	background-size: auto;
+	background-size: cover;
 	background-repeat: no-repeat;
 	background-position: top;
 	-webkit-background-clip: text;
@@ -505,6 +507,7 @@ figcaption {
   flex-wrap: nowrap;
   flex-direction: column;
   align-items: center;
+  overflow: hidden;
 	border-top-style: solid;
 	border-top-width: thick;
 	border-top-color: var(--main-text);
@@ -529,7 +532,7 @@ figcaption {
   padding: 0.5rem;
   width: auto;
   display: inline;
-  flex: 1 0 50%;
+  flex: 1 0 33%;
 	font-size: 0.75rem;
   text-align: center;
 }
