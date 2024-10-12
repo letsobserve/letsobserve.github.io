@@ -14,6 +14,7 @@ if (cookie_consent != "") {
 };
 createHeader();
 createFooter();
+console.log(window.location.href);
 // hide banner and header on scroll
 window.addEventListener("scroll", (e) => {
 	if (window.pageYOffset < 200) {
@@ -34,7 +35,6 @@ function createHeader() {
 	const a1 = document.createElement("a");
 	const a2 = document.createElement("a");
 	const a3 = document.createElement("a");
-	const a4 = document.createElement("a");
 	const h1 = document.createElement("h1");
 	// set up banner
 	banner.setAttribute("id", "banner");
@@ -50,7 +50,7 @@ function createHeader() {
 	a.setAttribute("class", "navheader");
 	a.setAttribute("href", "https://jordanhewett.com/index.html");
 	h1.setAttribute("class", "header-h1");
-	h1.innerHTML = "Observe";
+	h1.innerHTML = "Jordan Hewett";
 	h1.setAttribute("id", "pageHeader");
 	h1.setAttribute("title", "Return to Homepage");
 	banner.insertAdjacentElement("afterend", header);
@@ -58,21 +58,17 @@ function createHeader() {
 	a.appendChild(h1);
 	// navigation buttons
 	a1.setAttribute("class", "navbutton");
-	a1.setAttribute("href", "https://jordanhewett.com/Nature.html");
-	a1.innerHTML = "Nature";
+	a1.setAttribute("href", "https://jordanhewett.com/Blog.html");
+	a1.innerHTML = "Blog";
 	nav.appendChild(a1);
 	a2.setAttribute("class", "navbutton");
-	a2.setAttribute("href", "https://jordanhewett.com/Food.html");
-	a2.innerHTML = "Food";
+	a2.setAttribute("href", "https://jordanhewett.com/Projects.html");
+	a2.innerHTML = "Projects";
 	nav.appendChild(a2);
 	a3.setAttribute("class", "navbutton");
-	a3.setAttribute("href", "https://jordanhewett.com/Dreams.html");
-	a3.innerHTML = "Dreams";
+	a3.setAttribute("href", "https://jordanhewett.com/Media.html");
+	a3.innerHTML = "Media";
 	nav.appendChild(a3);
-	a4.setAttribute("class", "navbutton");
-	a4.setAttribute("href", "https://jordanhewett.com/Media.html");
-	a4.innerHTML = "Media";
-	nav.appendChild(a4);
 };
 // create the site Footer
 function createFooter() {
