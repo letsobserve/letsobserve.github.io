@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBSERVE: Snake</title>
+    <link rel="stylesheet" href="snake.css"/>
+    <script src="snake.js" defer></script>
+  </head>
+  <body>
+    <div id="startScreen">
+      <h1 id="title">SNAKE</h1>
+      <h2 id="finalScore"></h2>
+      <h3 id="difficultyTitle">Select Your Difficulty</h3>
+      <div class="selectDifficultyContainer">
+        <form id="difficultyForm" class="selectDifficulty">
+          <label for="normal" class="difficultyLabel">Normal</label>
+          <input id="normalCheck" type="radio" class="difficulty" name="difficulty"  value="normal" checked></input>
+          <label for="hard" class="difficultyLabel">Hard</label>
+          <input id="hardCheck" type="radio" class="difficulty" name="difficulty" value="hard"></input>
+        </form>
+      </div>
+      <p class="moreInfo"><b>W:</b> Up, <b>S:</b> Down<br><b>A:</b> Left, <b>D:</b> Right</p>
+      <p class="moreInfo" id="moreInfo">Press Space To Begin.</p>
+    </div>
+    <div class="scores">
+      <div id="highScoreCard"></div>
+      <div id="scoreCard"></div>
+    </div>
+    <div id="gameBoard"></div>
+  </body>
+</html>

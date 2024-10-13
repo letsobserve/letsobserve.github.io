@@ -36,38 +36,52 @@ function createHeader() {
 	const a2 = document.createElement("a");
 	const a3 = document.createElement("a");
 	const h1 = document.createElement("h1");
-	// set up banner
+	// set up element attributes
 	banner.setAttribute("id", "banner");
-	banner.setAttribute("src", "https://jordanhewett.com/images/banner-night-scene.png");
 	banner.setAttribute("alt", "Shadows of flowers and leaves over a clear sky with the full moon visible.");
 	banner.setAttribute("data-transition", "true");
-	document.body.insertBefore(banner, document.body.firstChild);
-	// set up navigation bar
 	header.setAttribute("id", "site-header");
 	nav.setAttribute("class", "navbar");
-	header.appendChild(nav);
-	// home button and page title
 	a.setAttribute("class", "navheader");
-	a.setAttribute("href", "https://jordanhewett.com/index.html");
 	h1.setAttribute("class", "header-h1");
-	h1.innerHTML = "Jordan Hewett";
 	h1.setAttribute("id", "pageHeader");
 	h1.setAttribute("title", "Return to Homepage");
+	a1.setAttribute("class", "navbutton");
+	a2.setAttribute("class", "navbutton");
+	a3.setAttribute("class", "navbutton");
+	// set the elements content
+	h1.innerHTML = "Jordan Hewett";
+	a1.innerHTML = "Blog";
+	a2.innerHTML = "Projects";
+	a3.innerHTML = "Media";
+	// set the correct href based on current href
+	if (window.location.href.indexOf("/posts/") > -1) {
+		banner.setAttribute("src", "../images/banner-night-scene.png");
+		a.setAttribute("href", "../index.html");
+		a1.setAttribute("href", "../Blog.html");
+		a2.setAttribute("href", "../Projects.html");
+		a3.setAttribute("href", "../Media.html");
+	} else if (window.location.href.indexOf("/projects/") > -1) {
+		banner.setAttribute("src", "../images/banner-night-scene.png");
+		a.setAttribute("href", "../index.html");
+		a1.setAttribute("href", "../Blog.html");
+		a2.setAttribute("href", "../Projects.html");
+		a3.setAttribute("href", "../Media.html");
+	} else {
+		banner.setAttribute("src", "images/banner-night-scene.png");
+		a.setAttribute("href", "index.html");
+		a1.setAttribute("href", "Blog.html");
+		a2.setAttribute("href", "Projects.html");
+		a3.setAttribute("href", "Media.html");
+	};
+	// insert the elements onto the page
+	document.body.insertBefore(banner, document.body.firstChild);
+	header.appendChild(nav);
 	banner.insertAdjacentElement("afterend", header);
 	nav.appendChild(a);
 	a.appendChild(h1);
-	// navigation buttons
-	a1.setAttribute("class", "navbutton");
-	a1.setAttribute("href", "https://jordanhewett.com/Blog.html");
-	a1.innerHTML = "Blog";
 	nav.appendChild(a1);
-	a2.setAttribute("class", "navbutton");
-	a2.setAttribute("href", "https://jordanhewett.com/Projects.html");
-	a2.innerHTML = "Projects";
 	nav.appendChild(a2);
-	a3.setAttribute("class", "navbutton");
-	a3.setAttribute("href", "https://jordanhewett.com/Media.html");
-	a3.innerHTML = "Media";
 	nav.appendChild(a3);
 };
 // create breadcrumbs for the page
@@ -85,9 +99,9 @@ function createBreadcrumbs() {
 	const title = document.getElementById("blogTitle").innerHTML;
 	// set up the elements
 	ul.setAttribute("class", "breadcrumbs");
-	a.setAttribute("href", "https://jordanhewett.com/index.html");
+	a.setAttribute("href", "../index.html");
 	a.innerHTML = "Home";
-	a1.setAttribute("href", "https://jordanhewett.com/Blog.html");
+	a1.setAttribute("href", "../Blog.html");
 	a1.innerHTML = "Blog";
 	a2.innerHTML = title;
 	// insert the elements

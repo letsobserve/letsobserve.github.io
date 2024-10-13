@@ -1,0 +1,9 @@
+* {
+  margin: 0;
+}
+
+#gameCanvas {
+  margin: auto;
+  padding: 0;
+  display: block;
+}

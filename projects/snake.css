@@ -1,0 +1,91 @@
+body {
+  margin: auto;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: lightgrey;
+}
+#gameBoard {
+  width: 90vmin;
+  height: 90vmin;
+  display: grid;
+  grid-template-columns: repeat(21, 1fr);
+  grid-template-rows: repeat(21, 1fr);
+  background-color: white;
+}
+.snake {
+  background-color: hsl(110, 100%, 50%);
+  border: 0.25vmin solid hsl(110, 100%, 30%);
+  border-radius: 15%;
+}
+.food {
+  background-color: hsl(0, 100%, 50%);
+  border: 0.25vmin solid hsl(0, 100%, 25%);
+  border-radius: 50%;
+}
+.scores {
+  display: flex;
+  justify-content: space-around;
+  width: 75%;
+  gap: auto;
+  position: absolute;
+  top: 0;
+  margin: 0 auto;
+  color: green;
+  font-size: 1.5rem;
+  font-weight: bolder;
+  border-style: solid;
+  border-color: black;
+  border-top: 0;
+  border-bottom: 0;
+}
+#startScreen {
+  width: 60vmin;
+  height: 60vmin;
+  display: block;
+  background-color: grey;
+  position: absolute;
+}
+#title {
+  margin: 0.2em;
+  color: green;
+  text-align: center;
+  font-size: 10vmin;
+}
+#finalScore {
+  margin: 0;
+  color: black;
+  text-align: center;
+  font-size: 8vmin;
+}
+.moreInfo {
+  text-align: center;
+  font-size: 4vmin;
+}
+
+#difficultyTitle {
+  text-align: center;
+  margin: 0;
+  margin-top: 1.5vmin;
+  font-size: 4vmin;
+}
+.selectDifficultyContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.selectDifficulty {
+  margin: 0 0;
+}
+.difficultyLabel {
+  font-size: 4vmin;
+}
+.difficulty {
+  margin: 0.2rem;
+  margin-right: 1rem;
+  border: solid blue 2px;
+  padding: 5px 10px;
+}
