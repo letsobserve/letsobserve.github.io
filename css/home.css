@@ -141,7 +141,7 @@ figcaption {
 /* Columns */
 .column-container {
 	display: grid;
-	grid-template-columns: auto;
+	grid-template-columns: repeat(autofit, minmax(260px, 1fr));
 	grid-auto-rows: 1fr;
 	align-content: center;
 	justify-content: space-evenly;
@@ -432,9 +432,13 @@ figcaption {
   flex: 0 1 50%;
 }
 .blog-image-teaser {
-  margin: auto;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 	padding: 5px;
   width: 90%;
+  max-height: 50%;
+  object-fit: contain;
 }
 .blog-image-teaser:hover {
 	opacity: 0.75;
