@@ -1037,9 +1037,10 @@ class Utility {
       utility.frenzyReset = 0;
     };
     // count time between clicks
-    if ((utility.time - input.lastClick) > utility.rollTime) {
+    if (utility.time > utility.rollTime) {
       utility.clickCount = 0;
     };
+    utility.time--;
     if (utility.prestigeScreen) utility.prestigeConfirm = true;
     if (game.state == 4) utility.resetScroll(3 * game.textSize, 19 * game.textSize);
   }
