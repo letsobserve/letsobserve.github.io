@@ -9,7 +9,40 @@ canvStat.height = dimension[1];
 canvDyn.width = dimension[0];
 canvDyn.height = dimension[1];
 
-const NUMBER_OF_UPGRADES = 18; // total shop upgrades
+const units = [ // list of money units
+  "K",//"Thousands",
+  "M",//"Million",
+  "B",//"Billion",
+  "T",//"Trillion",
+  "q",//"Quadrillion",
+  "Q",//"Quintillion",
+  "s",//"Sextillion",
+  "S",//"Septillion",
+  "o",//"Octillion",
+  "N",//"Nonillion",
+  "d",//"Decillion",
+  "U",//"Undecillion",
+  "D",//"Duodecillion",
+  "Td",//"Tredecillion",
+  "qd",//"Quattuordecillion",
+  "Qd",//"Quindecillion",
+  "sd",//"Sexdecillion",
+  "Sd",//"Septdecillion",
+  "Od",//"Octodecillion",
+  "Nd",//"Novemdecillion",
+  "V",//"Vigintillion",
+  "uV",//"Unvigintillion",
+  "dV",//"Duovigintillion",
+  "tV",//"Trevigintillion",
+  "qV",//"Quattuorvigintillion",
+  "QV",//"Quinvigintillion",
+  "sV",//"Sexvigintillion",
+  "SV",//"Septvigintillion",
+  "OV",//"Octovigintillion",
+  "NV",//"Novemvigintillion",
+  "TG",//"Trigintillion"
+];
+const NUMBER_OF_UPGRADES = 19; // total shop upgrades
 const MONEY_PER_CLICK = [0, 2, // index + texture row
   "Increase the money earned per click", // description
   30, 2, // base cost + cost factor
@@ -101,6 +134,11 @@ const PULSE_LIMIT = [17, 4,
  5000, 5,
  50, false,
  -1];
+const BONUS_INCREASE = [18, 4,
+  "Stacking bonus will increase faster",
+  25500, 8.5,
+  50, false,
+ ROLLING_MULTIPLIER[0]];
 
 let lastTime = 0;
 let now = new Date();
@@ -455,18 +493,19 @@ class Player {
     this.lastPlay = utility.parseFromLocalStorage("playerLatestTime", game.time);
     this.lastEPS = utility.parseFromLocalStorage("playerBestEPS", 0);
     this.lastPlaySeconds = (game.time - this.lastPlay) / 1000;
-    this.returnWorth = Math.ceil(utility.level[MONEY_PER_CLICK[0]] * this.lastPlaySeconds);
     this.totalEarnings = utility.parseFromLocalStorage("playerTotalEarnings", 0);
     this.spent = utility.parseFromLocalStorage("playerSpent", 0);
     this.prestiges = utility.parseFromLocalStorage("playerPrestiges", 0);
     this.earnedThen = utility.earned; // previous earned
     this.earnedNow = 0; // earning now
     this.EPS = 0; // player earning per second
-    if (this.lastPlaySeconds > (2 * 60)) { // if time since last played is more than 2 minutes
+    this.returnWorth = Math.ceil(utility.level[MONEY_PER_CLICK[0]] * this.lastPlaySeconds);
+    if (this.lastPlaySeconds > (5 * 60)) { // if time since last played is more than 5 minutes
       this.returning = true;
       // add money to the player
       utility.money += this.returnWorth;
       utility.earned += this.returnWorth;
+      clickEffect.push(new Effects(utility.convert(this.returnWorth), true));
     } else {
       this.returning = false;
     };
@@ -505,10 +544,11 @@ class Player {
       "Cookie Explode Worth: " + utility.convert(cookie.bonusWorth),
       "Container Worth: " + utility.convert(container.worth),
       "Current Multiplier: " + utility.convert(utility.multiplier),
+      "Current Earnings: " + utility.convert(utility.earned),
       "Prestige: " + utility.convert(utility.prestige),
       "Total Prestiges: " + utility.convert(player.prestiges),
       "Total Money Spent: " + utility.convert(player.spent),
-      "Lifetime Earnings: " + utility.convert(player.totalEarnings),
+      "Total Earnings: " + utility.convert(player.totalEarnings),
       "Highest Earnings Per Second: " + utility.convert(player.lastEPS),
       "Clicked Cookie: " + utility.convert(cookie.clicked),
       "Cookie Exploded: " + utility.convert(cookie.exploded),
@@ -527,7 +567,6 @@ class Player {
   reset(everything) {
     utility.money = 0;
     utility.earned = 0;
-    player.totalEarnings = 0;
     cookie.pulse = 0;
     player.earnedThen = 0;
     player.earnedNow = 0;
@@ -544,14 +583,15 @@ class Player {
       game.state = 1;
       return;
     };
+    player.totalEarnings = 0;
     container.sold = 0;
     cookie.goldCookieClicked = 0;
     utility.purchased = 0;
     player.spent = 0;
+    utility.prestige = 0;
     player.prestiges = 0;
     player.EPS = 0;
     player.lastEPS = 0;
-    utility.prestige = 0;
     cookie.clicked = 0;
     cookie.exploded = 0;
     player.update(now);
@@ -587,9 +627,6 @@ class Utility {
     this.time = 0;
     this.money = this.parseFromLocalStorage("playerMoney",0);
     this.earned = this.parseFromLocalStorage("playerMoneyEarned",0);
-    this.costFactor = [];
-    this.level = [];
-    this.cost = [];
     this.setUgrades();
     this.switch = false;
     this.clickCount = 1; // current click count
@@ -600,10 +637,10 @@ class Utility {
     this.frenzyReset = 0;
     this.frenzyResetMax = 10 * 60 * 60; // frenzy reset time in milliseconds
     this.prestige = this.parseFromLocalStorage("playerPrestige",0);
-    this.prestigeBonus = (1 + ((this.prestige) * 0.1));
+    this.prestigeBonus = (1 + ((this.prestige) * 0.01));
     this.prestigeUpgrade = 0;
     this.prestigeFor = Math.floor(Math.pow((1 + this.prestigeUpgrade) * (this.money / 1000000000), 0.15));
-    this.purchased = 0;
+    this.purchased = this.parseFromLocalStorage("playerUpgradesPurchased", 0);
   };
   parseFromLocalStorage(key, defaultValue) {
     const value = parseInt(localStorage.getItem(key));
@@ -731,6 +768,8 @@ class Utility {
     player.updateStats();
   };
   setUgrades() {
+    this.level = [];
+    this.cost = [];
     try { // get the player details
       this.getLevel = localStorage.getItem("playerUpgrades").split(",");
       for (let i = 0; i < NUMBER_OF_UPGRADES; i++) {
@@ -745,11 +784,10 @@ class Utility {
         this.level.push(0);
       };
     };
-    this.cost = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     for (let i = 0; i < NUMBER_OF_UPGRADES; i++) {
-      this.cost[i] = SHOP_BUTTONS[i].baseCost * (1 + (this.level[i] * SHOP_BUTTONS[i].costFactor));
-    }
-    // this.cost = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]; // testing purposes
+      this.cost.push(SHOP_BUTTONS[i].baseCost * (1 + (this.level[i] * SHOP_BUTTONS[i].costFactor)));
+    };
+    this.clickIncrease = (1 + this.level[BONUS_INCREASE[0]]) * 0.01;
     if (this.level[COOKIE_EXPLODE[0]] > 0) this.explodable = true;
     else this.explodable = false;
     if (this.level[ROLLING_MULTIPLIER[0]] > 0) this.rolling = true;
@@ -802,67 +840,18 @@ class Utility {
     this.switch = !this.switch;
     return choice;
   };
-  units() { // currency units
-    return [
-      "K",//"Thousands",
-      "M",//"Million",
-      "B",//"Billion",
-      "T",//"Trillion",
-      "q",//"Quadrillion",
-      "Q",//"Quintillion",
-      "s",//"Sextillion",
-      "S",//"Septillion",
-      "o",//"Octillion",
-      "N",//"Nonillion",
-      "d",//"Decillion",
-      "U",//"Undecillion",
-      "D",//"Duodecillion",
-      "Td",//"Tredecillion",
-      "qd",//"Quattuordecillion",
-      "Qd",//"Quindecillion",
-      "sd",//"Sexdecillion",
-      "Sd",//"Septdecillion",
-      "Od",//"Octodecillion",
-      "Nd",//"Novemdecillion",
-      "V",//"Vigintillion",
-      "uV",//"Unvigintillion",
-      "dV",//"Duovigintillion",
-      "tV",//"Trevigintillion",
-      "qV",//"Quattuorvigintillion",
-      "QV",//"Quinvigintillion",
-      "sV",//"Sexvigintillion",
-      "SV",//"Septvigintillion",
-      "OV",//"Octovigintillion",
-      "NV",//"Novemvigintillion",
-      "TG",//"Trigintillion"
-    ];
-  };
   convert(number) { // number converter
-    if (number > 10000) {
-      var arr = [];
-      var str = number.toPrecision(4);
-      var splitString = str.split("");
-      var unitString = str.split("e+");
-      var unit = Math.floor(unitString[1] / 3) - 1;
-      arr.push(splitString[0]); // push the first digit
-      if (Number.isInteger((unitString[1] - 1) / 3)) { // push the second digit
-        arr.push(splitString[2]);
-      };
-      if (Number.isInteger((unitString[1] - 2) / 3)) { // push the third digit
-        arr.push(splitString[2]);
-        arr.push(splitString[3]);
-      };
-      arr.push(".");
-      var intermediate = arr.length;
-      for (var x = intermediate; x < (intermediate + 2); x++) {
-        arr.push(splitString[x]);
-      };
-      var result = arr.join("");
-      var final = result + "" + utility.units()[unit];
-      return final;
-    } else {
-      return utility.round(number);
-    };
+    if (number < 1e3) return utility.round(number);
+    if (number >= 1e3 && number < 1e6) return +(number / 1e3).toFixed(3) + units[0];
+    if (number >= 1e6 && number < 1e9) return +(number / 1e6).toFixed(3) + units[1];
+    if (number >= 1e9 && number < 1e12) return +(number / 1e9).toFixed(3) + units[2];
+    if (number >= 1e12 && number < 1e15) return +(number / 1e12).toFixed(3) + units[3];
+    if (number >= 1e15 && number < 1e18) return +(number / 1e15).toFixed(3) + units[4];
+    if (number >= 1e18 && number < 1e21) return +(number / 1e18).toFixed(3) + units[5];
+    if (number >= 1e21 && number < 1e24) return +(number / 1e21).toFixed(3) + units[6];
+    if (number >= 1e24 && number < 1e27) return +(number / 1e24).toFixed(3) + units[7];
+    if (number >= 1e27 && number < 1e30) return +(number / 1e27).toFixed(3) + units[8];
+    // continue on...
   };
   resetScroll (top, bottom) {
     if (top - input.dY > top) { // keep first button from scrolling too far
@@ -934,7 +923,7 @@ class Cookie {
     this.pulseSlow = 1.05 - (utility.level[PULSE_SLOW[0]] / PULSE_SLOW[5]);
     this.pulseLimit = this.r * (3 - (3 * (utility.level[PULSE_LIMIT[0]] / (PULSE_LIMIT[5] + 3))));
     this.worth = utility.multiply(1 + (utility.level[MONEY_PER_CLICK[0]] / 5));
-    //this.worth = 100000000; // testing purposes
+    //this.worth = 77; // testing purposes
     this.bonusWorth = utility.multiply(this.worth * (2 + (utility.level[EXPLODE_BONUS[0]] / 2)));
     this.goldWorth = this.bonusWorth * utility.level[EXPLODE_BONUS[0]];
   };
@@ -946,9 +935,9 @@ class Cookie {
     };
   };
   color() {
-    if ((this.r + this.pulseCount) > this.r * 2.8) {
+    if (this.r + this.pulseCount > this.pulseLimit * 0.95) {
       return 2;
-    } else if ((this.r + this.pulseCount) > this.r * 2) {
+    } else if (this.r + this.pulseCount > this.pulseLimit * 0.75) {
       return 1;
     } else {
       return 0;
@@ -961,7 +950,7 @@ class Cookie {
     player.totalEarnings += cookie.worth;
     if (utility.rolling && playerInput) {
       utility.time = utility.rollTime; // start rolling time
-      if (utility.round(utility.clickCount) < utility.round(utility.maxClickCount)) utility.clickCount += utility.round(0.01); // increase if less than max rolling bonus
+      if (utility.round(utility.clickCount) < utility.round(utility.maxClickCount)) utility.clickCount += utility.round(utility.clickIncrease); // increase if less than max rolling bonus
     };
     if (utility.inFrenzy) { // check if frenzy time should increase
       if (utility.frenzyLeft < utility.frenzyMax - 1.5) {
@@ -1242,17 +1231,18 @@ const SHOP_BUTTONS = [
   new Button(ROLLING_MULTIPLIER, 10),
   new Button(ROLLING_DURATION, 11),
   new Button(ROLLING_BONUS, 12),
-  new Button(OVERALL_MULTIPLIER, 15),
+  new Button(OVERALL_MULTIPLIER, 16),
   new Button(AUTOCLICKERS, 9),
-  new Button(GOLDEN_COOKIE, 16),
+  new Button(GOLDEN_COOKIE, 17),
   new Button(CONTAINER_LEVEL, 6),
   new Button(CONTAINER_SIZE, 7),
   new Button(CONTAINER_PRICE, 8),
-  new Button(CONTAINER_AUTOCLICK, 13),
-  new Button(CONTAINER_AUTOSELL, 14),
-  new Button(EXPLODE_FRENZY, 17),
+  new Button(CONTAINER_AUTOCLICK, 14),
+  new Button(CONTAINER_AUTOSELL, 15),
+  new Button(EXPLODE_FRENZY, 18),
   new Button(PULSE_SLOW, 4),
-  new Button(PULSE_LIMIT, 5)
+  new Button(PULSE_LIMIT, 5),
+  new Button(BONUS_INCREASE, 13)
 ];
 let utility = new Utility;
 let cookie = new Cookie;
