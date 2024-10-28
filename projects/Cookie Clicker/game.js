@@ -982,7 +982,7 @@ class Cookie {
     this.pulseSlow = 1.05 - (utility.level[PULSE_SLOW[0]] / PULSE_SLOW[5]);
     this.pulseLimit = this.r * (3 - (3 * (utility.level[PULSE_LIMIT[0]] / (PULSE_LIMIT[5] + 3))));
     this.worth = utility.multiply(1 + (utility.level[MONEY_PER_CLICK[0]] / 5));
-    this.worth = 7777; // testing purposes
+    //this.worth = 7777; // testing purposes
     this.bonusWorth = utility.multiply(this.worth * (2 + (utility.level[EXPLODE_BONUS[0]] / 2)));
     this.goldWorth = this.bonusWorth * utility.level[EXPLODE_BONUS[0]];
   };
