@@ -140,8 +140,8 @@ const BONUS_INCREASE = [18, 4,
   50, false,
  ROLLING_MULTIPLIER[0]];
 const ADD_CONTAINER = [19, 2,
-  "Purchase an additional container",
-  50000, 0.85,
+  "Purchase a container to fill and sell",
+  1500, 0.65,
   3, false,
   CONTAINER_LEVEL[0]];
 // index + texture row
@@ -691,18 +691,22 @@ class Utility {
     if (utility.rolling) { // draw the rolling multiplier
       // bounding ellipse
       ctxD.fillStyle = "white";
-      ctxD.fillRect(
-        0, game.height - game.textSize, // x & y
-        game.width, game.textSize // width & height
-      );
-      // slow filling timer
+      ctxD.beginPath();
+      ctxD.arc(1.5 * game.textSize, game.textSize * 4.5, game.textSize, 0, 2 * Math.PI);
+      ctxD.fill();
       if (this.clickCount > 0) {
         ctxD.globalAlpha = 1.05 - (utility.time / utility.rollTime);
         ctxD.fillStyle = "rgb(255,0,0)";
-        ctxD.fillRect(
-          0, game.height - game.textSize, // x & y
-          game.width * (utility.time / utility.rollTime), game.textSize // width & height
-        );
+        ctxD.beginPath();
+        //ctxD.translate(1.5 * game.textSize, game.textSize * 4.5);
+        //ctxD.rotate((45 * Math.PI) / 180);
+        ctxD.moveTo(1.5 * game.textSize, game.textSize * 4.5);
+        ctxD.arc(1.5 * game.textSize, game.textSize * 4.5, game.textSize, 0, 2 * Math.PI * (utility.time / utility.rollTime), true);
+        ctxD.lineTo(1.5 * game.textSize, game.textSize * 4.5);
+        ctxD.closePath();
+        ctxD.fill();
+        //ctxD.rotate((45 * Math.PI) / 180);
+        //ctxD.translate(-1.5 * game.textSize, -game.textSize * 4.5);
       };
       ctxD.globalAlpha = 1;
       ctxD.fillStyle = "black";
@@ -724,7 +728,7 @@ class Utility {
       ctxD.textAlign = "center";
       ctxD.font = game.textSize + "px calibri";
       if (this.canFrenzy) ctxD.fillStyle = "green";
-      ctxD.fillRect(10, 2 * game.textSize + 10, game.width - 2 * game.textSize, game.textSize); // base frenzy bar
+      ctxD.fillRect(10, game.height - game.textSize, game.width - 2 * game.textSize, game.textSize); // base frenzy bar
       ctxD.fillStyle = "red";
       if (utility.inFrenzy) { // time left bar if in frenzy
         ctxD.fillRect(10, 2 * game.textSize + 10, (utility.frenzyLeft / utility.frenzyMax) * (game.width - 2 * game.textSize), game.textSize);
@@ -824,12 +828,14 @@ class Utility {
       this.cost.push(
         Math.pow(SHOP_BUTTONS[i].baseCost, 1 + (this.level[i] * SHOP_BUTTONS[i].costFactor)));
     };
-    this.clickIncrease = (1 + this.level[BONUS_INCREASE[0]]) * 0.01;
+    this.clickRounds = this.level[BONUS_INCREASE[0]];
+    this.clickIncrease = 0.01;
     if (this.level[COOKIE_EXPLODE[0]] > 0) this.explodable = true;
     else this.explodable = false;
     if (this.level[ROLLING_MULTIPLIER[0]] > 0) this.rolling = true;
     else this.rolling = false;
-    this.rollTime = 15 * (1 + this.level[ROLLING_DURATION[0]])
+    this.rollTime = 15 * (1 + this.level[ROLLING_DURATION[0]]);
+    this.rollTime = 500; console.log("remove me");
     if (this.level[GOLDEN_COOKIE[0]] > 0) this.goldable = true;
     else this.goldable = false;
     this.maxClickCount = 2 + (this.level[ROLLING_BONUS[0]] * 2);
@@ -1004,7 +1010,9 @@ class Cookie {
       CONTAINERS[temp].fill();
       if (utility.rolling) {
         utility.time = utility.rollTime; // start rolling time
-        if (utility.round(utility.clickCount) < utility.round(utility.maxClickCount)) utility.clickCount += utility.round(utility.clickIncrease); // increase if less than max rolling bonus
+        for (var i = 0; i <= utility.clickRounds; i++) {
+          if (utility.round(utility.clickCount) < utility.round(utility.maxClickCount)) utility.clickCount += utility.round(utility.clickIncrease); // increase if less than max rolling bonus
+        };
       };
     };
     if (utility.inFrenzy) { // check if frenzy time should increase
@@ -1120,7 +1128,7 @@ class Container {
     this.row = 7;
     this.position = position;
     this.level = utility.level[index];
-    this.x = game.frameW + (this.position * (game.frameW*1.1));
+    this.x = (0.5 * game.frameW) + (this.position * (game.frameW*1.55));
     this.y = game.height - game.textSize - (2 * game.frameW);
     this.length = game.frameW;
     this.type = ["", "Jar", "Basket", "Box", "Pallet", "Factory"];
@@ -1141,9 +1149,11 @@ class Container {
     this.reducedCap = this.cap * (utility.level[CONTAINER_SIZE[0]] / (CONTAINER_SIZE[5] + 1));
     this.capacity = Math.floor(this.cap - this.reducedCap);
     this.worth = utility.multiply(cookie.worth * (this.level + utility.level[CONTAINER_PRICE[0]]));
+    if (utility.level[ADD_CONTAINER[0]] >= this.position) this.active = true;
+    else this.active = false;
   };
   draw() {
-    if (utility.level[ADD_CONTAINER[0]] < this.position) return;
+    if (!this.active) return;
     ctxD.globalAlpha = "0.3";
     ctxD.drawImage( // the container image
       texture, // the texture sheet
@@ -1168,8 +1178,8 @@ class Container {
     ctxD.textBaseline = "bottom";
     ctxD.font = (game.textSize / 1.5) + "px calibri";
     // draw the name and capacity of the container
-    ctxD.fillText(this.type[this.level] + ": ", this.x + (this.length / 2), this.y - (this.length / 2));
-    ctxD.fillText(this.filled + "/" + this.capacity, this.x + (this.length / 2), this.y);
+    ctxD.fillText(this.filled, this.x + (this.length / 2), this.y - (this.length / 2));
+    ctxD.fillText("/" + this.capacity, this.x + (this.length / 2), this.y);
   };
   fill() {
     if (utility.level[ADD_CONTAINER[0]] < this.position) return;
@@ -1292,7 +1302,7 @@ const SHOP_BUTTONS = [
   new Button(OVERALL_MULTIPLIER, 17),
   new Button(AUTOCLICKERS, 9),
   new Button(GOLDEN_COOKIE, 18),
-  new Button(CONTAINER_LEVEL, 6),
+  new Button(CONTAINER_LEVEL, 16),
   new Button(CONTAINER_SIZE, 7),
   new Button(CONTAINER_PRICE, 8),
   new Button(CONTAINER_AUTOCLICK, 14),
@@ -1301,7 +1311,7 @@ const SHOP_BUTTONS = [
   new Button(PULSE_SLOW, 4),
   new Button(PULSE_LIMIT, 5),
   new Button(BONUS_INCREASE, 13),
-  new Button(ADD_CONTAINER, 16)
+  new Button(ADD_CONTAINER, 6)
 ];
 let utility = new Utility;
 let cookie = new Cookie;
@@ -1314,7 +1324,6 @@ CONTAINERS.push(new Container(CONTAINER_LEVEL[0],1));
 CONTAINERS.push(new Container(CONTAINER_LEVEL[0],2));
 CONTAINERS.push(new Container(CONTAINER_LEVEL[0],3));
 CONTAINERS.push(new Container(CONTAINER_LEVEL[0],4));
-CONTAINERS.push(new Container(CONTAINER_LEVEL[0],5));
 player.updateStats();
 
 then = Date.now();
