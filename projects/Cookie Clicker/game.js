@@ -390,7 +390,7 @@ class InputHandler {
           CONTAINERS[i].sell();
         };
       };
-      if (yDown > 2 * game.textSize + 10 && yDown < 2 * game.textSize + 10 + game.frameH && xDown > 10 && xDown < game.width - 2 * game.frameW) {
+      if (y > utility.frenzyY && y < (utility.frenzyY + game.textSize) && x > utility.frenzyX && x < (utility.frenzyX + utility.frenzyLength)) {
         if (utility.canFrenzy) {
           utility.frenzyLeft = utility.frenzyMax;
           utility.inFrenzy = true;
@@ -671,6 +671,9 @@ class Utility {
     this.clickCountR = game.textSize;
     this.canFrenzy = true;
     this.inFrenzy = false;
+    this.frenzyX = game.textSize;
+    this.frenzyY = game.textSize * 4;
+    this.frenzyLength = game.width - (game.textSize * 1.5);
     this.frenzyMax = 120; // frenzy time in frames per second
     this.frenzyLeft = 0;
     this.frenzyReset = 0;
@@ -691,6 +694,25 @@ class Utility {
     ctxD.textAlign = "left";
     ctxD.textBaseline = "top";
     ctxD.font = game.textSize + "px calibri";
+    if (this.frenzy) { // draw the frenzy bar
+      ctxD.fillStyle = "white";
+      ctxD.textBaseline = "top";
+      ctxD.textAlign = "center";
+      ctxD.font = game.textSize + "px calibri";
+      if (this.canFrenzy) ctxD.fillStyle = "green";
+      ctxD.fillRect(this.frenzyX, this.frenzyY, this.frenzyLength, game.textSize); // base frenzy bar
+      ctxD.fillStyle = "red";
+      if (utility.inFrenzy) { // time left bar if in frenzy
+        ctxD.fillRect(this.frenzyX, this.frenzyY, (utility.frenzyLeft / utility.frenzyMax) * this.frenzyLength, game.textSize);
+      } else {
+        ctxD.globalAlpha = 0.5;
+        ctxD.fillRect(this.frenzyX, this.frenzyY, (utility.frenzyReset / utility.frenzyResetMax) * this.frenzyLength, game.textSize);
+        ctxD.globalAlpha = 1;
+      };
+      ctxD.fillStyle = "black";
+      ctxD.textBaseline = "top";
+      ctxD.fillText("Frenzy", game.width / 2, this.frenzyY);
+    };
     if (utility.rolling) { // draw the rolling multiplier
       // bounding ellipse
       ctxD.fillStyle = "white";
@@ -723,24 +745,6 @@ class Utility {
       ctxD.lineWidth = 5;
       ctxD.fillText("x " + utility.round(utility.clickCount), 1.5 * game.textSize, game.textSize * 4.5);
       ctxD.lineWidth = 1;
-    };
-    if (this.frenzy) { // draw the frenzy bar
-      ctxD.fillStyle = "white";
-      ctxD.textBaseline = "top";
-      ctxD.textAlign = "center";
-      ctxD.font = game.textSize + "px calibri";
-      if (this.canFrenzy) ctxD.fillStyle = "green";
-      ctxD.fillRect(10, game.height - game.textSize, game.width - 2 * game.textSize, game.textSize); // base frenzy bar
-      ctxD.fillStyle = "red";
-      if (utility.inFrenzy) { // time left bar if in frenzy
-        ctxD.fillRect(10, 2 * game.textSize + 10, (utility.frenzyLeft / utility.frenzyMax) * (game.width - 2 * game.textSize), game.textSize);
-      } else {
-        ctxD.globalAlpha = 0.5;
-        ctxD.fillRect(10, 2 * game.textSize + 10, (utility.frenzyReset / utility.frenzyResetMax) * (game.width - 2 * game.textSize), game.textSize);
-        ctxD.globalAlpha = 1;
-      };
-      ctxD.fillStyle = "black";
-      ctxD.fillText("Frenzy", (game.width - 2 * game.frameW) / 2, 2 * game.textSize + 10);
     };
   };
   drawShop() { // draw the dynamic upgrade screen
@@ -1130,7 +1134,7 @@ class Container {
     this.position = position;
     this.level = utility.level[index];
     this.x = (0.5 * game.frameW) + (this.position * (game.frameW*1.55));
-    this.y = game.height - game.textSize - (2 * game.frameW);
+    this.y = game.height - game.textSize - (1.5 * game.frameW);
     this.length = game.frameW;
     this.type = ["", "Jar", "Basket", "Box", "Pallet", "Factory"];
     this.filled = 0;
