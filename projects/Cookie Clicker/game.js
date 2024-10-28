@@ -666,6 +666,9 @@ class Utility {
     this.setUgrades();
     this.switch = false;
     this.clickCount = 1; // current click count
+    this.clickCountX = 1.5 * game.textSize;
+    this.clickCountY = game.textSize * 4.5;
+    this.clickCountR = game.textSize;
     this.canFrenzy = true;
     this.inFrenzy = false;
     this.frenzyMax = 120; // frenzy time in frames per second
@@ -692,34 +695,33 @@ class Utility {
       // bounding ellipse
       ctxD.fillStyle = "white";
       ctxD.beginPath();
-      ctxD.arc(1.5 * game.textSize, game.textSize * 4.5, game.textSize, 0, 2 * Math.PI);
+      ctxD.arc(this.clickCountX, this.clickCountY, this.clickCountR, 0, 2 * Math.PI);
       ctxD.fill();
       if (this.clickCount > 0) {
-        ctxD.globalAlpha = 1.05 - (utility.time / utility.rollTime);
-        ctxD.fillStyle = "rgb(255,0,0)";
+        //ctxD.globalAlpha = 1.05 - (utility.time / utility.rollTime);
+        ctxD.fillStyle = "rgb(0,255,0)";
         ctxD.beginPath();
-        //ctxD.translate(1.5 * game.textSize, game.textSize * 4.5);
-        //ctxD.rotate((45 * Math.PI) / 180);
-        ctxD.moveTo(1.5 * game.textSize, game.textSize * 4.5);
-        ctxD.arc(1.5 * game.textSize, game.textSize * 4.5, game.textSize, 0, 2 * Math.PI * (utility.time / utility.rollTime), true);
-        ctxD.lineTo(1.5 * game.textSize, game.textSize * 4.5);
+        ctxD.translate(this.clickCountX, this.clickCountY);
+        ctxD.rotate(-(90 * Math.PI) / 180);
+        //ctxD.moveTo(1.5 * game.textSize, game.textSize * 4.5);
+        ctxD.arc(0, 0, game.textSize, 0, 2 * Math.PI * (utility.time / utility.rollTime), true);
+        ctxD.lineTo(0, 0);
         ctxD.closePath();
         ctxD.fill();
-        //ctxD.rotate((45 * Math.PI) / 180);
-        //ctxD.translate(-1.5 * game.textSize, -game.textSize * 4.5);
+        ctxD.rotate((90 * Math.PI) / 180);
+        ctxD.translate(-this.clickCountX, -this.clickCountY);
       };
       ctxD.globalAlpha = 1;
       ctxD.fillStyle = "black";
       ctxD.textAlign = "center";
-      ctxD.textBaseline = "bottom";
-      ctxD.font = game.textSize + "px calibri";
+      ctxD.textBaseline = "middle";
+      ctxD.font = 0.65 * game.textSize + "px calibri";
       // counter
       ctxD.strokeStyle = "darkergrey";
-      ctxD.textAlign = "right";
       ctxD.lineWidth = 5;
-      ctxD.strokeText("x " + utility.round(utility.clickCount), game.width - 10, game.height);
+      ctxD.strokeText("x " + utility.round(utility.clickCount), 1.5 * game.textSize, game.textSize * 4.5);
       ctxD.lineWidth = 5;
-      ctxD.fillText("x " + utility.round(utility.clickCount), game.width - 10, game.height);
+      ctxD.fillText("x " + utility.round(utility.clickCount), 1.5 * game.textSize, game.textSize * 4.5);
       ctxD.lineWidth = 1;
     };
     if (this.frenzy) { // draw the frenzy bar
@@ -835,7 +837,6 @@ class Utility {
     if (this.level[ROLLING_MULTIPLIER[0]] > 0) this.rolling = true;
     else this.rolling = false;
     this.rollTime = 15 * (1 + this.level[ROLLING_DURATION[0]]);
-    this.rollTime = 500; console.log("remove me");
     if (this.level[GOLDEN_COOKIE[0]] > 0) this.goldable = true;
     else this.goldable = false;
     this.maxClickCount = 2 + (this.level[ROLLING_BONUS[0]] * 2);
