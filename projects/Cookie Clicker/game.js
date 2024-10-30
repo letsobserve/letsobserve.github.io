@@ -175,6 +175,7 @@ class Game {
     this.state = 0;
     this.textSize = 45 * (this.height / this.width);
     this.time = new Date();
+    // this.rotation = 0;
   };
   drawBackground() { // draw the background
     ctxS.fillStyle = "hsl(195, 50%, 70%)"; // background
@@ -255,15 +256,15 @@ class Game {
           ctxD.globalAlpha = 0.65 - clickEffect[i].time;
           //ctxD.fillStyle = clickEffect[i].color;
           //ctxD.strokeStyle = clickEffect[i].stroke;
-
+          ctxD.fillStyle = clickEffect[i].color;
           if (clickEffect[i].type) { // show earn money or lose money
-            ctxD.fillStyle = "green";
-            ctxD.strokeStyle = "darkgreen";
+            //ctxD.fillStyle = "green";
+            //ctxD.strokeStyle = "darkgreen";
             ctxD.fillText("+$" + clickEffect[i].text, clickEffect[i].x * clickEffect[i].time, clickEffect[i].y);
             ctxD.strokeText("+$" + clickEffect[i].text, clickEffect[i].x * clickEffect[i].time, clickEffect[i].y);
           } else {
-            ctxD.fillStyle = "red";
-            ctxD.strokeStyle = "darkred";
+            //ctxD.fillStyle = "red";
+            //ctxD.strokeStyle = "darkred";
             ctxD.fillText("-$" + clickEffect[i].text, clickEffect[i].x * clickEffect[i].time, clickEffect[i].y);
             ctxD.strokeText("-$" + clickEffect[i].text, clickEffect[i].x * clickEffect[i].time, clickEffect[i].y);
           };
@@ -278,11 +279,19 @@ class Game {
   update() {
     utility.update();
     cookie.update();
+    for (let i = 0; i < explodingCookie.length; i++) {
+      if (explodingCookie[i].x + explodingCookie[i].xV < -explodingCookie[i].r || explodingCookie[i].x + explodingCookie[i].xV > game.width + explodingCookie[i].r || explodingCookie[i].y + explodingCookie[i].yV < -explodingCookie[i].r || explodingCookie[i].y + explodingCookie[i].yV > game.height + explodingCookie[i].r) {
+        explodingCookie[i] = null;
+        explodingCookie.splice(i,1);
+      };
+    };
     if (utility.level[ADD_CONTAINER[0]] > 0) {
       for (let i = 0; i < CONTAINERS.length; i++) {
         CONTAINERS[i].update();
       };
     };
+    // if (game.rotation < 0) game.rotation += 0.01;
+    // else game.rotation -= 0.01;
     player.update(now);
   };
   loop(now) {
@@ -292,6 +301,8 @@ class Game {
       then = now - (elapsed % (1000 / game.FPS));
       ctxS.clearRect(0, 0, game.width, game.height);
       ctxD.clearRect(0, 0, game.width, game.height);
+      // console.log(game.rotation);
+      // ctxD.rotate(game.rotation);
       if (game.state > 0) game.update(); // update the game parameters
       if (game.state == 0) { // draw the start menu
         game.drawStartScreen();
@@ -299,6 +310,12 @@ class Game {
         game.drawBackground();
         utility.drawDynamic();
         // draw the cookie
+        for (let i = 0; i < explodingCookie.length; i++) {
+          explodingCookie[i].draw(explodingCookie[i].x + (explodingCookie[i].r / 3), explodingCookie[i].xV, explodingCookie[i].y + (explodingCookie[i].r / 3), explodingCookie[i].yV, explodingCookie[i].r / 2, explodingCookie[i].pulseCount, explodingCookie[i].color(), 0);
+          // move cookies in random direction
+          explodingCookie[i].xV += explodingCookie[i].dX * 30;
+          explodingCookie[i].yV += explodingCookie[i].dY * 30;
+        };
         cookie.draw(cookie.x, cookie.xV, cookie.y, cookie.yV, cookie.r, cookie.pulseCount, cookie.color(), 0);
         for (let i = 0; i < goldCookie.lenght; i++) {
           goldCookie[i].draw(goldCookie.rX, 0, goldCookie.rY, 0, goldCookie.rR, 0, 3, 0);
@@ -309,7 +326,7 @@ class Game {
         };
         for (let i = 0; i < goldCookie.length; i++) {
           goldCookie[i].draw();
-          goldCookie[i].update();
+          goldCookie[i].update(i);
         };
         if (player.returning) { // display when player returns
           player.returns();
@@ -335,7 +352,7 @@ class Game {
         };
       };
     };
-    if (Math.random() > 0.999) {
+    if (utility.level[GOLDEN_COOKIE[0]] > 0 && Math.random() > 0.9995) {
       goldCookie.push(new GoldCookie());
     };
     latestTime = Date.now();
@@ -388,7 +405,7 @@ class InputHandler {
         };
         for (let i = 0; i < goldCookie.length; i++) {
           if (x > goldCookie[i].x && x < goldCookie[i].x + goldCookie[i].size && y > goldCookie[i].y && y < goldCookie[i].y + goldCookie[i].size) {
-            goldCookie[i].click();
+            goldCookie[i].click(i);
           };
         };
       };
@@ -469,8 +486,8 @@ class InputHandler {
           cookie.click();
         };
         for (let j = 0; j < goldCookie.length; j++) {
-          if (xDown > goldCookie[i].x && xDown < goldCookie[i].x + goldCookie[i].size && yDown > goldCookie[i].y && yDown < goldCookie[i].y + goldCookie[i].size) {
-            goldCookie[j].click();
+          if (xDown > goldCookie[j].x && xDown < goldCookie[j].x + goldCookie[j].size && yDown > goldCookie[j].y && yDown < goldCookie[j].y + goldCookie[j].size) {
+            goldCookie[j].click(j);
           };
         };
         for (let i = 0; i < CONTAINERS.length; i++) {
@@ -884,7 +901,7 @@ class Utility {
     utility.level[index]++;
     utility.purchased++;
     player.spent += utility.cost[index];
-    clickEffect.push(new Effects(utility.convert(utility.cost[index]), false));
+    clickEffect.push(new Effects(utility.convert(utility.cost[index]), false, "red"));
     game.update();
     utility.setUgrades();
   };
@@ -981,8 +998,8 @@ class Cookie {
     this.explodeFor = 200;
     this.xV = 0;
     this.yV = 0;
-    this.dX = Math.sin((Math.random() * (2 * Math.PI)));
-    this.dY = Math.cos((Math.random() * (2 * Math.PI)));
+    this.dX = Math.sin((Math.random() * (2 * Math.PI))) * 1.5;
+    this.dY = Math.cos((Math.random() * (2 * Math.PI))) * 1.5;
   };
   setUgrades() {
     this.pulse = 15 + (utility.level[EXPLODE_QUICKER[0]] * 5);
@@ -1001,7 +1018,7 @@ class Cookie {
     };
   };
   color() {
-    if (this.golden) return 3;
+    if (cookie.golden) return 3;
     if (this.r + this.pulseCount > this.pulseLimit * 0.95) {
       return 2;
     } else if (this.r + this.pulseCount > this.pulseLimit * 0.75) {
@@ -1023,27 +1040,26 @@ class Cookie {
           if (utility.round(utility.clickCount) < utility.round(utility.maxClickCount)) utility.clickCount += utility.round(utility.clickIncrease); // increase if less than max rolling bonus
         };
       };
+      game.rotation = Math.sin((Math.random() * (2 * Math.PI)));
     };
     if (utility.inFrenzy) { // check if frenzy time should increase
       if (utility.frenzyLeft < utility.frenzyMax - 1.5) {
-        utility.frenzyLeft += 2;
+        utility.frenzyLeft += 3;
       };
     };
     if (cookie.r + cookie.pulseCount < cookie.pulseLimit) { // if cookie should expand
       cookie.pulseCount += cookie.pulse;
     } else cookie.reset();
-    utility.money += cookie.worth;
-    utility.earned += cookie.worth;
-    player.totalEarnings += cookie.worth;
-    clickEffect.push(new Effects(utility.convert(cookie.worth), true));
     let amount = cookie.worth;
+    let clr = "green";
     if (this.golden) {
       amount *= this.goldBonus;
+      clr = "yellow";
     };
     utility.money += amount;
     utility.earned += amount;
     player.totalEarnings += amount;
-    clickEffect.push(new Effects(utility.convert(amount), true));
+    clickEffect.push(new Effects(utility.convert(amount), true, clr));
   };
   reset() {
     if (utility.explodable) {
@@ -1055,47 +1071,33 @@ class Cookie {
         if (explodingCookie.length < 150) explodingCookie.push(new Cookie);
       };
       let amount = cookie.bonusWorth;
+      let clr = "blue";
       if (utility.inFrenzy) {
         amount *= 10;
+        clr = "pink";
       };
       if (this.golden) {
         amount *= this.goldBonus;
+        clr = "orange";
       };
       utility.money += amount;
       utility.earned += amount;
       player.totalEarnings += amount;
-      clickEffect.push(new Effects(utility.convert(amount), true, 1.5));
+      clickEffect.push(new Effects(utility.convert(amount), true, clr, 1.5));
     };
   };
-  boom(which, color) {
-    // draw new cookies
-    explodingCookie.forEach(
-      function(c) {
-      which.draw(c.x + (c.r / 3), c.xV, c.y + (c.r / 3), c.yV, c.r / 2, c.pulseCount, color, 0);
-      // move cookies in random direction
-      c.xV += c.dX * 30;
-      c.yV += c.dY * 30;
-    });
-    if (this.explode > 0) { // turn off the explode
-      this.explode--;
-    }
-    if (this.explode <= 0) {
-      this.exploding = false;
-      explodingCookie = [];
-    }
-  };
-  goldReset() {
-    utility.money += this.goldWorth;
-    utility.earned += this.goldWorth;
-    player.totalEarnings += this.goldWorth;
-    cookie.goldCookieClicked++;
-    goldCookie.gold = false;
-    goldCookie.exploding = true;
-    //goldCookie.explode = goldCookie.explodeFor;
-    for (var i = 0; i < 75; i++) {
-      explodingCookie.push(new Cookie);
-    };
-  };
+  // goldReset() {
+  //   utility.money += this.goldWorth;
+  //   utility.earned += this.goldWorth;
+  //   player.totalEarnings += this.goldWorth;
+  //   cookie.goldCookieClicked++;
+  //   goldCookie.gold = false;
+  //   goldCookie.exploding = true;
+  //   //goldCookie.explode = goldCookie.explodeFor;
+  //   for (var i = 0; i < 75; i++) {
+  //     explodingCookie.push(new Cookie);
+  //   };
+  // };
   draw(x, xV, y, yV, r, pC, column, row) {
     ctxD.imageSmoothingEnabled = true;
     ctxD.imageSmoothingQuality = "high";
@@ -1118,20 +1120,10 @@ class Cookie {
     if (cookie.pulseCount > 0) {
       cookie.pulseCount -= cookie.pulseSlow;
     };
-    // explode cookie
     if (this.golden) {
       this.goldenTimer++;
     };
     if (this.goldenTimer > this.goldenTime) this.golden = false;
-    if (cookie.exploding) {
-      cookie.boom(cookie, 2);
-      explodingCookie.forEach(function(c) {
-        if (c.x + c.xV < (-game.width * 2) || c.x + c.xV > (game.width * 2) || c.y + c.yV < (-game.height * 2) || c.y + c.yV > (game.height * 2)) {
-          explodingCookie[0] = null;
-          explodingCookie.splice(0,1);
-        };
-      });
-    };
   };
 };
 
@@ -1143,7 +1135,6 @@ class GoldCookie {
     this.dY = Math.sin((Math.random() * (2 * Math.PI)));
     this.speed = 2;
     this.size = game.frameW;
-    this.index = goldCookie.length - 1;
   };
   draw() {
     ctxD.imageSmoothingEnabled = true;
@@ -1160,18 +1151,18 @@ class GoldCookie {
       this.size // drawn height
     );
   };
-  click() {
+  click(index) {
     cookie.golden = true;
     cookie.goldenTimer = 0;
-    goldCookie[this.index] = null;
-    goldCookie.splice(this.index, 1);
+    goldCookie[index] = null;
+    goldCookie.splice(index, 1);
   };
-  update() {
+  update(index) {
     this.x += this.dX * this.speed;
     this.y += this.dY * this.speed;
     if ((this.x > (game.width + this.size) || this.x < (0 - this.size)) || (this.y > (game.height + this.size) || this.y < (0 - this.size))) {
-      goldCookie[this.index] = null;
-      goldCookie.splice(this.index, 1);
+      goldCookie[index] = null;
+      goldCookie.splice(index, 1);
     };
   };
 };
@@ -1254,7 +1245,7 @@ class Container {
       utility.money += amount;
       utility.earned += amount;
       player.totalEarnings += amount;
-      clickEffect.push(new Effects(utility.convert(amount), true, 1.5));
+      clickEffect.push(new Effects(utility.convert(amount), true, "purple", 1.5));
     };
   };
   update() {
@@ -1275,19 +1266,20 @@ class Container {
       } else {
         this.sin += 0.025;
       }
-      if (this.sin > 0.99) this.sinSwitch = true;
-      if (this.sin < 0.01) this.sinSwitch = false;
+      if (this.sin > 0.97) this.sinSwitch = true;
+      if (this.sin < 0.03) this.sinSwitch = false;
     };
   };
 };
 
 class Effects {
-  constructor(text, type, size = 1) {
+  constructor(text, type, color, size = 1) {
     this.text = text;
     this.x = 2 * game.width;
     this.y = 1.5 * game.textSize;
     this.font = size * game.textSize;
     this.type = type;
+    this.color = color;
     this.time = 0;
     this.hue = 0;
   };
