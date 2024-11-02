@@ -42,10 +42,10 @@ const units = [ // list of money units
   "NV",//"Novemvigintillion",
   "TG",//"Trigintillion"
 ];
-const NUMBER_OF_UPGRADES = 21; // total shop upgrades
+const NUMBER_OF_UPGRADES = 23; // total shop upgrades
 const MONEY_PER_CLICK = [0, 2, // index + texture row
   "Increase the money earned per click", // description
-  30, 0.25, // base cost + cost factor
+  30, 0.15, // base cost + cost factor
   99, false, // max level, one time purchase?
   -1]; // requirement
 const COOKIE_EXPLODE = [1, 2,
@@ -55,45 +55,15 @@ const COOKIE_EXPLODE = [1, 2,
   -1];
 const EXPLODE_BONUS = [2, 2,
   "Increase bonus when the cookie explodes",
-  300, 0.35,
+  300, 0.25,
   99,
   false,
   COOKIE_EXPLODE[0]];
 const EXPLODE_QUICKER = [3, 2,
   "The cookie will get larger faster",
-  300, 0.3,
+  300, 0.25,
   50, false,
   COOKIE_EXPLODE[0]];
-const ADD_CONTAINER = [19, 2,
-  "Purchase a container to fill and sell",
-  1500, 0.45,
-  5, false,
-  -1];
-const CONTAINER_LEVEL = [10, 2,
-  "Increase container level",
-  15000, 0.85,
-  5, false,
-  ADD_CONTAINER[0]];
-const CONTAINER_SIZE = [11, 2,
-  "Decrease size of container",
-  8000, 0.3,
-  50, false,
-  ADD_CONTAINER[0]];
-const CONTAINER_PRICE = [12, 2,
-   "Increase container sell price",
-   5000, 0.8,
-   99, false,
-   ADD_CONTAINER[0]];
-const CONTAINER_AUTOCLICK = [13, 2,
-  "Auto clicks fill up containers",
-  15000, 0,
-  1, true,
-  ADD_CONTAINER[0]];
-const CONTAINER_AUTOSELL = [14, 2,
-  "Auto sells full containers",
-  30000, 0,
-  1, true,
-  ADD_CONTAINER[0]];
 const ROLLING_MULTIPLIER = [4, 2,
   "A stacking bonus for quick clicks",
   10000, 0,
@@ -101,29 +71,54 @@ const ROLLING_MULTIPLIER = [4, 2,
   -1];
 const ROLLING_DURATION = [5, 2,
   "Increase the time before the bonus expires",
-  20000, 0.3,
+  20000, 0.2,
   99, false,
   ROLLING_MULTIPLIER[0]];
 const ROLLING_BONUS = [6, 2,
   "Increase max bonus for clicking",
-  25000, 0.7,
+  25000, 0.4,
   99,  false,
   ROLLING_MULTIPLIER[0]];
 const OVERALL_MULTIPLIER = [7, 2,
   "Overall multiplier",
-  20000, 0.5,
+  20000, 0.25,
   99, false,
   -1];
 const AUTOCLICKERS = [8, 2,
   "The cookie will auto click periodically",
-  8500, 0.15,
+  8500, 0.05,
   50, false,
   -1];
 const GOLDEN_COOKIE = [9, 2,
-  "Unlock golden cookies",
+  "Unlock rare golden cookies, tap for bonus to all earnings for a short time.",
   5000000, 0,
   1, true,
   -1];
+const CONTAINER_LEVEL = [10, 2,
+  "Increase container level",
+  15000, 0.85,
+  5, false,
+  19];
+const CONTAINER_SIZE = [11, 2,
+  "Decrease size of container",
+  8000, 0.2,
+  50, false,
+  19];
+const CONTAINER_PRICE = [12, 2,
+   "Increase container sell price",
+   5000, 0.4,
+   99, false,
+   19];
+const CONTAINER_AUTOCLICK = [13, 2,
+  "Auto clicks fill up containers",
+  15000, 0,
+  1, true,
+  19];
+const CONTAINER_AUTOSELL = [14, 2,
+  "Auto sells full containers",
+  30000, 0,
+  1, true,
+  19];
 const EXPLODE_FRENZY = [15, 2,
   "Unlock Explode Frenzy",
   10000000, 0,
@@ -131,24 +126,39 @@ const EXPLODE_FRENZY = [15, 2,
   -1];
 const PULSE_SLOW = [16, 4,
   "The cookie will shrink at a slower pace",
-  4000, 0.5,
+  4000, 0.2,
   50, false,
   -1];
 const PULSE_LIMIT = [17, 4,
  "Reduce the size before the cookie explodes",
- 5000, 0.6,
+ 5000, 0.3,
  50, false,
  -1];
 const BONUS_INCREASE = [18, 4,
   "Stacking bonus will increase faster",
-  25500, 0.65,
+  25500, 0.3,
   50, false,
  ROLLING_MULTIPLIER[0]];
-const CONTAINER_FILL = [19, 4,
+const ADD_CONTAINER = [19, 2,
+ "Purchase a container to fill and sell",
+ 1500, 0.35,
+ 5, false,
+ -1];
+const CONTAINER_FILL = [20, 4,
   "Fill more containers with each tap",
-  50000, 0.5,
+  50000, 0.3,
   5, false,
  ADD_CONTAINER[0]];
+const GOLDEN_COOKIE_TIME = [21, 4,
+  "Increase the time your cookie is golden",
+  1000000, 0.1,
+  10, false,
+GOLDEN_COOKIE[0]];
+const GOLDEN_COOKIE_SPEED = [22, 4,
+"Golden cookies will move slower across the screen.",
+1000000, 0.075,
+15, false,
+GOLDEN_COOKIE[0]];
 
 // index + texture row
 // description
@@ -275,6 +285,7 @@ class Game {
           clickEffect[i].time += 0.01;
           ctxD.globalAlpha = 1;
         } else {
+          clickEffect[0] = null;
           clickEffect.splice(0, 1);
         }
       };
@@ -900,7 +911,6 @@ class Utility {
     return returnValue;
   };
   upgrade(index) {
-    console.log(index);
     if (player.money < player.cost[index]) return;
     if (SHOP_BUTTONS[index].oneTimePurchase && player.level[index] > 0) return;
     if (player.level[index] >= SHOP_BUTTONS[index].maxLevel) return;
@@ -1007,7 +1017,6 @@ class Cookie {
     this.pulseCount = 0;
     this.golden = false;
     this.goldenTimer = 0;
-    this.goldenTime = 200;
     this.exploding = false;
     this.explode = 0;
     this.explodeFor = 200;
@@ -1024,6 +1033,7 @@ class Cookie {
     //this.worth = 77777777; // testing purposes
     this.bonusWorth = utility.multiply(this.worth * (2 + (player.level[EXPLODE_BONUS[0]] / 2)));
     this.goldBonus = 50;
+    this.goldenTime = 200 + (player.level[GOLDEN_COOKIE_TIME[0]] * 50);
   };
   radius() {
     if (game.width > game.height) {
@@ -1133,7 +1143,7 @@ class GoldCookie {
     this.y = Math.random() * game.height;
     this.dX = Math.sin((Math.random() * (2 * Math.PI)));
     this.dY = Math.sin((Math.random() * (2 * Math.PI)));
-    this.speed = 2;
+    this.speed = 2 - (player.level[GOLDEN_COOKIE_SPEED] / 10);
     this.size = game.frameW;
   };
   draw() {
@@ -1362,12 +1372,14 @@ const SHOP_BUTTONS = [
   new Button(CONTAINER_PRICE, 8),
   new Button(CONTAINER_AUTOCLICK, 14),
   new Button(CONTAINER_AUTOSELL, 15),
-  new Button(EXPLODE_FRENZY, 20),
+  new Button(EXPLODE_FRENZY, 22),
   new Button(PULSE_SLOW, 4),
   new Button(PULSE_LIMIT, 5),
   new Button(BONUS_INCREASE, 13),
   new Button(ADD_CONTAINER, 6),
-  new Button(CONTAINER_FILL, 17)
+  new Button(CONTAINER_FILL, 17),
+  new Button(GOLDEN_COOKIE_TIME, 20),
+  new Button(GOLDEN_COOKIE_SPEED, 21)
 ];
 let utility = new Utility;
 let cookie = new Cookie;
