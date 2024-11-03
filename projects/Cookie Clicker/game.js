@@ -184,9 +184,8 @@ class Game {
     this.frameW = 120;
     this.frameH = 120;
     this.FPS = 60;
-    // state the game is
-    // 0 = Start menu, 1 = Cookie screen, 2 = Shop, 3 = Prestige, 4 = add 3rd screen
-    this.states = [0, 1, 2, 3, 4]; // states the game can be in
+    // 0 = Start, 1 = Cookie, 2 = Shop, 3 = Prestige, 4 = Menu
+    this.states = [0, 1, 2, 3, 4];
     this.state = 0;
     this.textSize = 45 * (this.height / this.width);
     this.time = new Date();
@@ -929,16 +928,6 @@ class Utility {
     player.initPlayer();
     utility.setUgrades();
   };
-  alternate() { // alternate positions
-    var choice = [];
-    if (this.switch) {
-      choice.push(game.textSize * 2);
-    } else {
-      choice.push(game.textSize);
-    }
-    this.switch = !this.switch;
-    return choice;
-  };
   convert(number) { // number converter
     if (number < 1e3) return utility.round(number);
     if (number >= 1e3 && number < 1e6) return +(number / 1e3).toPrecision(4) + units[0];
@@ -1208,11 +1197,10 @@ class Container {
   setUgrades() {
     this.level = 1 + player.level[CONTAINER_LEVEL[0]];
     this.column = this.level - 1;
-    this.cap = this.level * (8 * this.level);
-    this.reducedCap = this.cap * (player.level[CONTAINER_SIZE[0]] / (CONTAINER_SIZE[5] + 1));
+    this.cap = this.level * (10 * this.level);
+    this.reducedCap = this.cap * (player.level[CONTAINER_SIZE[0]] / (CONTAINER_SIZE[6] + 1));
     this.capacity = Math.floor(this.cap - this.reducedCap);
     this.worth = utility.multiply(cookie.worth * (this.level + player.level[CONTAINER_PRICE[0]]));
-    this.fills = 1; // future upgrade
     if (player.level[ADD_CONTAINER[0]] > this.position) this.active = true;
     else this.active = false;
   };
