@@ -44,124 +44,124 @@ const units = [ // list of money units
 ];
 const NUMBER_OF_UPGRADES = 23; // total shop upgrades
 const MONEY_PER_CLICK = [0, 2, // index + texture row
-  "Increase the money earned per click", // description
-  30, 0.15, // base cost + cost factor
+  "Quality Baking", "Increase the base money earned for each tap.", // title + description
+  30, 0.08, // base cost + cost factor
   99, false, // max level, one time purchase?
   -1]; // requirement
 const COOKIE_EXPLODE = [1, 2,
-  "The cookie will explode for bonus money",
+  "Cookie Explosion", "The cookie will explode at a certain size for bonus money.",
   150, 0,
   1, true,
   -1];
 const EXPLODE_BONUS = [2, 2,
-  "Increase bonus when the cookie explodes",
-  300, 0.25,
+  "Better Explosions", "Increase bonus money when the cookie explodes.",
+  200, 0.09,
   99,
   false,
   COOKIE_EXPLODE[0]];
 const EXPLODE_QUICKER = [3, 2,
-  "The cookie will get larger faster",
-  300, 0.25,
+  "Explosive Taps", "The cookie will increase in size faster.",
+  200, 0.09,
   50, false,
   COOKIE_EXPLODE[0]];
 const ROLLING_MULTIPLIER = [4, 2,
-  "A stacking bonus for quick clicks",
+  "Quick Tap Bonus", "A stacking bonus for quick taps, increasing all profits for a short duration.",
   10000, 0,
   1, true,
   -1];
 const ROLLING_DURATION = [5, 2,
-  "Increase the time before the bonus expires",
-  20000, 0.2,
+  "Longer Bonus", "Increase the time before the stacking bonus expires.",
+  8000, 0.03,
   99, false,
   ROLLING_MULTIPLIER[0]];
 const ROLLING_BONUS = [6, 2,
-  "Increase max bonus for clicking",
-  25000, 0.4,
+  "Higher Bonus", "Increase max for the stacking bonus.",
+  8000, 0.08,
   99,  false,
   ROLLING_MULTIPLIER[0]];
 const OVERALL_MULTIPLIER = [7, 2,
-  "Overall multiplier",
-  20000, 0.25,
+  "Better Logistics", "An overall multiplier, increasing all profits by a small margin.",
+  10000, 0.1,
   99, false,
   -1];
 const AUTOCLICKERS = [8, 2,
-  "The cookie will auto click periodically",
-  8500, 0.05,
+  "Automation", "The cookie will be auto tapped periodically.",
+  8500, 0.03,
   50, false,
   -1];
 const GOLDEN_COOKIE = [9, 2,
-  "Unlock rare golden cookies, tap for bonus to all earnings for a short time.",
+  "The Golden Cookie", "Unlock rare golden cookies that travel across the screen, tap for bonus to all earnings for a short time.",
   5000000, 0,
   1, true,
   -1];
 const CONTAINER_LEVEL = [10, 2,
-  "Increase container level",
-  15000, 0.85,
+  "Container Improvements", "Increase the level of your containers.",
+  15000, 0.2,
   5, false,
   19];
 const CONTAINER_SIZE = [11, 2,
-  "Decrease size of container",
-  8000, 0.2,
+  "Smaller Containers", "Decrease the amount of cookies required for your containers.",
+  8000, 0.1,
   50, false,
   19];
 const CONTAINER_PRICE = [12, 2,
-   "Increase container sell price",
-   5000, 0.4,
+   "Quality Containers", "Increase the sell price of each of your containers.",
+   5000, 0.07,
    99, false,
    19];
 const CONTAINER_AUTOCLICK = [13, 2,
-  "Auto clicks fill up containers",
+  "Filling Automation", "Your auto taps will now fill up containers.",
   15000, 0,
   1, true,
   19];
 const CONTAINER_AUTOSELL = [14, 2,
-  "Auto sells full containers",
+  "Selling Automation", "Your containers will now auto sell when full.",
   30000, 0,
   1, true,
   19];
 const EXPLODE_FRENZY = [15, 2,
-  "Unlock Explode Frenzy",
-  10000000, 0,
+  "Cookie Frenzy", "Unlock the cookie frenzy bonus, explosions are more profitable for a short duration. Tap the cookie to increase the duration.",
+  5000000, 0,
   1, true,
   -1];
 const PULSE_SLOW = [16, 4,
-  "The cookie will shrink at a slower pace",
-  4000, 0.2,
+  "Stronger Ingredients", "The cookie will shrink at a slower pace.",
+  4000, 0.07,
   50, false,
   -1];
 const PULSE_LIMIT = [17, 4,
- "Reduce the size before the cookie explodes",
- 5000, 0.3,
+ "Early Explosions", "Reduce the size required before the cookie explodes.",
+ 5000, 0.09,
  50, false,
  -1];
 const BONUS_INCREASE = [18, 4,
-  "Stacking bonus will increase faster",
-  25500, 0.3,
+  "Better Stacking", "Stacking bonus will increase by a larger amount.",
+  25500, 0.06,
   50, false,
  ROLLING_MULTIPLIER[0]];
 const ADD_CONTAINER = [19, 2,
- "Purchase a container to fill and sell",
- 1500, 0.35,
+ "Purchase Container", "Purchase a container to fill and sell for more profit streams.",
+ 1500, 0.2,
  5, false,
  -1];
 const CONTAINER_FILL = [20, 4,
-  "Fill more containers with each tap",
-  50000, 0.3,
+  "Container Logistics", "Each tap will fill more containers.",
+  50000, 0.15,
   5, false,
  ADD_CONTAINER[0]];
 const GOLDEN_COOKIE_TIME = [21, 4,
-  "Increase the time your cookie is golden",
-  1000000, 0.1,
+  "Golden Duration", "Increase the time your golden bonus lasts.",
+  500000, 0.05,
   10, false,
 GOLDEN_COOKIE[0]];
 const GOLDEN_COOKIE_SPEED = [22, 4,
-"Golden cookies will move slower across the screen.",
-1000000, 0.075,
+"Slower Gold Cookies", "Golden cookies will move slower across the screen.",
+500000, 0.075,
 15, false,
 GOLDEN_COOKIE[0]];
 
 // index + texture row
-// description
+// title + description
 // base cost + cost factor
 // max level, one time purchase = false
 // requirement = -1
@@ -436,7 +436,7 @@ class InputHandler {
       };
     };
     if (game.state == 2) { // shop screen
-      if (x > SHOP_BUTTONS[0].x && x < (SHOP_BUTTONS[0].x + SHOP_BUTTONS[0].length) && y > 2.5 * game.textSize) { // check if in upgrade button area
+      if (x > SHOP_BUTTONS[0].length - SHOP_BUTTONS[0].size && x < SHOP_BUTTONS[0].length && y > 2.5 * game.textSize) { // check if in upgrade button area
         for (let i = 0; i < NUMBER_OF_UPGRADES; i++) { // check each button
           if (y > SHOP_BUTTONS[i].y - input.dY && y < SHOP_BUTTONS[i].y + SHOP_BUTTONS[i].size - input.dY) {
             utility.upgrade(i);
@@ -640,6 +640,7 @@ class Player {
       CONTAINERS[i].active = false;
       CONTAINERS[i].filled = 0;
       CONTAINERS[i].filling = 0;
+      CONTAINERS[i].full = false;
     };
     this.level = [];
     for (let i = 0; i < NUMBER_OF_UPGRADES; i++) {
@@ -729,6 +730,7 @@ class Utility {
   constructor() {
     this.checkMark = "\uD83D\uDDF9";
     this.time = 0;
+    this.fullCheck = 0;
     this.switch = false;
     this.clickCount = 1; // current click count
     this.clickCountX = 1.25 * game.textSize;
@@ -776,6 +778,10 @@ class Utility {
     };
     if (utility.rolling) { // draw the rolling multiplier
       // bounding ellipse
+      ctxD.fillStyle = "lightgrey";
+      ctxD.beginPath();
+      ctxD.arc(this.clickCountX, this.clickCountY, this.clickCountR * 1.15, 0, 2 * Math.PI);
+      ctxD.fill();
       ctxD.fillStyle = "white";
       ctxD.beginPath();
       ctxD.arc(this.clickCountX, this.clickCountY, this.clickCountR, 0, 2 * Math.PI);
@@ -935,26 +941,26 @@ class Utility {
   };
   convert(number) { // number converter
     if (number < 1e3) return utility.round(number);
-    if (number >= 1e3 && number < 1e6) return +(number / 1e3).toFixed(3) + units[0];
-    if (number >= 1e6 && number < 1e9) return +(number / 1e6).toFixed(3) + units[1];
-    if (number >= 1e9 && number < 1e12) return +(number / 1e9).toFixed(3) + units[2];
-    if (number >= 1e12 && number < 1e15) return +(number / 1e12).toFixed(3) + units[3];
-    if (number >= 1e15 && number < 1e18) return +(number / 1e15).toFixed(3) + units[4];
-    if (number >= 1e18 && number < 1e21) return +(number / 1e18).toFixed(3) + units[5];
-    if (number >= 1e21 && number < 1e24) return +(number / 1e21).toFixed(3) + units[6];
-    if (number >= 1e24 && number < 1e27) return +(number / 1e24).toFixed(3) + units[7];
-    if (number >= 1e27 && number < 1e30) return +(number / 1e27).toFixed(3) + units[8];
-    if (number >= 1e30 && number < 1e33) return +(number / 1e30).toFixed(3) + units[9];
-    if (number >= 1e33 && number < 1e36) return +(number / 1e33).toFixed(3) + units[10];
-    if (number >= 1e36 && number < 1e39) return +(number / 1e36).toFixed(3) + units[11];
-    if (number >= 1e39 && number < 1e42) return +(number / 1e39).toFixed(3) + units[12];
-    if (number >= 1e42 && number < 1e45) return +(number / 1e42).toFixed(3) + units[13];
-    if (number >= 1e45 && number < 1e48) return +(number / 1e45).toFixed(3) + units[14];
-    if (number >= 1e48 && number < 1e51) return +(number / 1e48).toFixed(3) + units[15];
-    if (number >= 1e51 && number < 1e54) return +(number / 1e51).toFixed(3) + units[16];
-    if (number >= 1e54 && number < 1e57) return +(number / 1e54).toFixed(3) + units[17];
-    if (number >= 1e57 && number < 1e60) return +(number / 1e57).toFixed(3) + units[18];
-    if (number >= 1e60 && number < 1e63) return +(number / 1e60).toFixed(3) + units[19];
+    if (number >= 1e3 && number < 1e6) return +(number / 1e3).toPrecision(4) + units[0];
+    if (number >= 1e6 && number < 1e9) return +(number / 1e6).toPrecision(4) + units[1];
+    if (number >= 1e9 && number < 1e12) return +(number / 1e9).toPrecision(4) + units[2];
+    if (number >= 1e12 && number < 1e15) return +(number / 1e12).toPrecision(4) + units[3];
+    if (number >= 1e15 && number < 1e18) return +(number / 1e15).toPrecision(4) + units[4];
+    if (number >= 1e18 && number < 1e21) return +(number / 1e18).toPrecision(4) + units[5];
+    if (number >= 1e21 && number < 1e24) return +(number / 1e21).toPrecision(4) + units[6];
+    if (number >= 1e24 && number < 1e27) return +(number / 1e24).toPrecision(4) + units[7];
+    if (number >= 1e27 && number < 1e30) return +(number / 1e27).toPrecision(4) + units[8];
+    if (number >= 1e30 && number < 1e33) return +(number / 1e30).toPrecision(4) + units[9];
+    if (number >= 1e33 && number < 1e36) return +(number / 1e33).toPrecision(4) + units[10];
+    if (number >= 1e36 && number < 1e39) return +(number / 1e36).toPrecision(4) + units[11];
+    if (number >= 1e39 && number < 1e42) return +(number / 1e39).toPrecision(4) + units[12];
+    if (number >= 1e42 && number < 1e45) return +(number / 1e42).toPrecision(4) + units[13];
+    if (number >= 1e45 && number < 1e48) return +(number / 1e45).toPrecision(4) + units[14];
+    if (number >= 1e48 && number < 1e51) return +(number / 1e48).toPrecision(4) + units[15];
+    if (number >= 1e51 && number < 1e54) return +(number / 1e51).toPrecision(4) + units[16];
+    if (number >= 1e54 && number < 1e57) return +(number / 1e54).toPrecision(4) + units[17];
+    if (number >= 1e57 && number < 1e60) return +(number / 1e57).toPrecision(4) + units[18];
+    if (number >= 1e60 && number < 1e63) return +(number / 1e60).toPrecision(4) + units[19];
     if (number >= 1e63) return "A lot";
   };
   resetScroll (top, bottom) {
@@ -978,16 +984,20 @@ class Utility {
     };
   };
   fillContainer() {
+    let maxLoop = 0;
     let activeContainers = player.level[ADD_CONTAINER[0]];
     if (activeContainers == 0) return;
-    for (let i = 0; i < utility.containerFills; i++) {
-      let temp = i % activeContainers;
-      if (!CONTAINERS[i].full && CONTAINERS[i].active) {
-        CONTAINERS[i].fill();
-      } else {
-        CONTAINERS[temp].fill();
+    do {
+      for (let i = 0; i < activeContainers; i++) {
+        if (!CONTAINERS[i].full && utility.containerFills > 0) {
+          CONTAINERS[i].fill();
+          utility.containerFills--;
+        };
       };
-    };
+      if (maxLoop > 10) break;
+      else maxLoop++;
+    } while (utility.containerFills > 0);
+    utility.containerFills = 1 + player.level[CONTAINER_FILL[0]];
   };
   update() {
     if (utility.frenzyLeft > 0) {
@@ -1237,9 +1247,7 @@ class Container {
   };
   fill() {
     if (!this.active) return;
-    if (this.filled < this.capacity) {
-      this.filled++;
-    };
+    if (this.filled < this.capacity) this.filled++;
   };
   sell() {
     if (player.level[ADD_CONTAINER[0]] < this.position) return;
@@ -1298,20 +1306,33 @@ class Effects {
 
 class Button {
   constructor(btn, order) {
-      //btn[index, texture row, description, base cost, cost factor, max level, one time purchase?, requirement]
+      //btn[index, texture row, title, description, base cost, cost factor, max level, one time purchase?, requirement]
     this.width = game.frameW;
     this.height = game.frameH;
     this.index = btn[0];
     this.row = btn[1];
-    this.description = btn[2];
-    this.baseCost = btn[3];
-    this.costFactor = btn[4];
-    this.maxLevel = btn[5];
-    this.oneTimePurchase = btn[6];
-    this.requirement = btn[7];
+    this.title= btn[2];
+    this.description = "";
+    this.splitDesc = btn[3].split(" ");
+    this.lineCount = 0;
+    for (let i = 0; i < this.splitDesc.length; i++) {
+      if (this.lineCount < 5) {
+          this.description += this.splitDesc[i] + " ";
+          this.lineCount++;
+      } else {
+        this.description += "---" + this.splitDesc[i] + " ";
+        this.lineCount = 1;
+      }
+    };
+    this.description = this.description.split("---");
+    this.baseCost = btn[4];
+    this.costFactor = btn[5];
+    this.maxLevel = btn[6];
+    this.oneTimePurchase = btn[7];
+    this.requirement = btn[8];
     this.x = game.textSize / 2;
-    this.size = game.frameW;
-    this.length = game.frameH;
+    this.size = game.frameW * 1.5;
+    this.length = game.width - (this.x * 2);
     this.y = (1.2 * this.size * order) + (3.5 * game.textSize);
     this.level;
     this.price;
@@ -1322,7 +1343,7 @@ class Button {
     ctxD.imageSmoothingEnabled = true;
     ctxD.imageSmoothingQuality = "high";
     ctxD.fillStyle = "white";
-    ctxD.fillRect(this.x, this.y - input.dY, game.width - (this.x * 2), this.size);
+    ctxD.fillRect(this.x, this.y - input.dY, this.length, this.size);
     let newRow = this.row;
     if (this.price <= player.money && utility.purchasable(this.index, this.requirement)) { // the button background
       ctxD.fillStyle = "hsl(105, 100%, 50%)";
@@ -1330,8 +1351,6 @@ class Button {
       ctxD.fillStyle = "lightgrey";
       newRow = this.row - 1;
     };
-    ctxD.fillRect(this.x, this.y - input.dY, this.length, this.size);
-      //game.width - (2 * game.textSize), this.size);
     ctxD.drawImage(
       texture, // the texture sheet
       this.index * game.frameW, newRow * game.frameH, // texture x and y
@@ -1339,18 +1358,22 @@ class Button {
       this.x, this.y - input.dY, // destination x and y
       this.size, this.size // drawn width and height
     );
-    ctxD.fillStyle = "lightgrey";
-    ctxD.fillRect(game.width - this.x - this.size, this.y - input.dY, this.length, this.size); // level box
+    ctxD.fillRect(game.width - this.x - this.size, this.y - input.dY, this.size, this.size); // level box
     ctxD.fillStyle = "black";
     ctxD.textAlign = "center";
-    ctxD.textBaseline = "middle";
-    ctxD.font = (0.65 * game.textSize) + "px calibri";
-    ctxD.fillText(this.level, game.width - this.x - (this.size / 2), (this.y + (this.size / 2)) - input.dY); // the button level
-    ctxD.textAlign = "left";
+    ctxD.textBaseline = "bottom";
     ctxD.font = (game.textSize * 0.5) + "px calibri";
-    ctxD.fillText("$" + utility.convert(this.price), this.x + this.size, (this.y + (this.size / 4)) - input.dY); // the button price
+    ctxD.fillText(this.level, game.width - this.x - (this.size / 2), (this.y + this.size) - input.dY); // the button level
+    ctxD.fillText("Level:", game.width - this.x - (this.size / 2), (this.y + (3 * this.size / 4)) - input.dY); // level text
+    ctxD.fillText("Cost:", game.width - this.x - (this.size / 2), (this.y + (this.size / 4)) - input.dY); // price text
+    ctxD.fillText("$" + utility.convert(this.price), game.width - this.x - (this.size / 2), (this.y + (this.size / 2)) - input.dY); // the button price
+    ctxD.font = "bold " + (game.textSize * 0.45) + "px calibri";
+    ctxD.textAlign = "left";
+    ctxD.fillText(this.title, this.x + (1.1 * this.size), this.y + (this.size / 4) - input.dY);
     ctxD.font = (game.textSize * 0.4) + "px calibri";
-    ctxD.fillText(this.description, this.x + this.size, this.y + (3 * this.size / 4) - input.dY); // the button description
+    for (let i = 0; i < this.description.length; i++) {
+      ctxD.fillText(this.description[i], this.x + (1.1 * this.size), this.y + ((2.6 + i) * this.size / 6) - input.dY); // the button description
+    };
   };
 };
 
