@@ -559,17 +559,14 @@ class InputHandler {
 class Player {
   constructor() {
     this.initPlayer();
-    this.lastPlaySeconds = (game.time - this.lastPlay) / 1000;
+    this.lastPlaySeconds = (game.time - this.latestTime) / 1000;
+    this.playerReturned = false;
     this.earnedThen = this.earned; // previous earned
     this.earnedNow = 0; // earning now
     this.EPS = 0; // player earning per second
     this.returnWorth = Math.ceil(this.level[MONEY_PER_CLICK[0]] * this.lastPlaySeconds);
     if (this.lastPlaySeconds > (5 * 60)) { // if time since last played is more than 5 minutes
       this.returning = true;
-      // add money to the player
-      player.money += this.returnWorth;
-      player.earned += this.returnWorth;
-      clickEffect.push(new Effects(utility.convert(this.returnWorth), true));
     } else {
       this.returning = false;
     };
@@ -595,6 +592,13 @@ class Player {
     ctxD.fillText("$" + utility.convert(player.returnWorth), game.width / 2, (game.height / 3.5) + (4.5 * game.textSize));
     ctxD.font = game.textSize / 2 + "px calibri";
     ctxD.fillText("Tap to Continue", game.width / 2, (game.height / 4) + (7 * game.textSize));
+    if (!this.playerReturned) {
+      // add money to the player
+      player.money += this.returnWorth;
+      player.earned += this.returnWorth;
+      clickEffect.push(new Effects(utility.convert(this.returnWorth), true));
+      this.playerReturned = true;
+    }
   };
   calcEarning() {
     this.earnedNow = player.earned; // get how much player has earned
@@ -851,12 +855,17 @@ class Utility {
       ctxD.globalAlpha = "1";
       ctxD.fillStyle = "white";
       ctxD.fillRect(game.width / 2 - (game.width / 3), game.height / 2 - (3 * game.textSize / 2), game.width / 1.5, 3 * game.textSize);
-      ctxD.fillStyle = "black";
-      ctxD.fillText("Are you sure?", game.width / 2, game.height / 2.2);
       ctxD.fillStyle = "green";
       ctxD.fillRect(game.width / 2 - (2 * game.textSize), game.height / 2, game.textSize, game.textSize);
       ctxD.fillStyle = "red";
       ctxD.fillRect(game.width / 2 + (game.textSize), game.height / 2, game.textSize, game.textSize);
+      ctxD.textAlign = "center";
+      ctxD.textBaseline = "middle";
+      ctxD.fillStyle = "black";
+      ctxD.fillText("Are you sure?", game.width / 2, game.height / 2 - 0.75 * game.textSize);
+      ctxD.fillStyle = "white";
+      ctxD.fillText("\u2713", game.width / 2 - (1.5 * game.textSize), game.height / 2 + (0.5 * game.textSize));
+      ctxD.fillText("\u2715", game.width / 2 + (1.5 * game.textSize), game.height / 2 + (0.5 * game.textSize));
     };
   };
   drawMenuScreen() { // draw the dynamic menu screen
