@@ -42,7 +42,7 @@ const units = [ // list of money units
   "NV",//"Novemvigintillion",
   "TG",//"Trigintillion"
 ];
-const NUMBER_OF_UPGRADES = 23; // total shop upgrades
+const NUMBER_OF_UPGRADES = 24; // total shop upgrades
 const MONEY_PER_CLICK = [0, 2, // index + texture row
   "Quality Baking", "Increase the base money earned for each tap.", // title + description
   30, 0.08, // base cost + cost factor
@@ -97,7 +97,7 @@ const GOLDEN_COOKIE = [9, 2,
 const CONTAINER_LEVEL = [10, 2,
   "Container Improvements", "Increase the level of your containers.",
   15000, 0.2,
-  5, false,
+  4, false,
   19];
 const CONTAINER_SIZE = [11, 2,
   "Smaller Containers", "Decrease the amount of cookies required for your containers.",
@@ -111,12 +111,12 @@ const CONTAINER_PRICE = [12, 2,
    19];
 const CONTAINER_AUTOCLICK = [13, 2,
   "Filling Automation", "Your auto taps will now fill up containers.",
-  15000, 0,
+  10000, 0,
   1, true,
   19];
 const CONTAINER_AUTOSELL = [14, 2,
   "Selling Automation", "Your containers will now auto sell when full.",
-  30000, 0,
+  20000, 0,
   1, true,
   19];
 const EXPLODE_FRENZY = [15, 2,
@@ -146,7 +146,7 @@ const ADD_CONTAINER = [19, 2,
  -1];
 const CONTAINER_FILL = [20, 4,
   "Container Logistics", "Each tap will fill more containers.",
-  50000, 0.15,
+  25000, 0.15,
   5, false,
  ADD_CONTAINER[0]];
 const GOLDEN_COOKIE_TIME = [21, 4,
@@ -155,9 +155,14 @@ const GOLDEN_COOKIE_TIME = [21, 4,
   10, false,
 GOLDEN_COOKIE[0]];
 const GOLDEN_COOKIE_SPEED = [22, 4,
-"Slower Gold Cookies", "Golden cookies will move slower across the screen.",
+"Faster Reflexes", "Golden cookies will move slower across the screen.",
 500000, 0.075,
 15, false,
+GOLDEN_COOKIE[0]];
+const GOLDEN_COOKIE_CHANCE = [23, 4,
+"Better Luck", "Slighty increase the chance a golden cookie will appear.",
+500000, 0.15,
+10, false,
 GOLDEN_COOKIE[0]];
 
 // index + texture row
@@ -187,9 +192,8 @@ class Game {
     // 0 = Start, 1 = Cookie, 2 = Shop, 3 = Prestige, 4 = Menu
     this.states = [0, 1, 2, 3, 4];
     this.state = 0;
-    this.textSize = 45 * (this.height / this.width);
+    this.textSize = 85;
     this.time = new Date();
-    // this.rotation = 0;
   };
   drawBackground() { // draw the background
     ctxS.fillStyle = "hsl(195, 50%, 70%)"; // background
@@ -304,8 +308,6 @@ class Game {
         CONTAINERS[i].update();
       };
     };
-    // if (game.rotation < 0) game.rotation += 0.01;
-    // else game.rotation -= 0.01;
     player.update(now);
   };
   loop(now) {
@@ -322,14 +324,13 @@ class Game {
         game.drawStartScreen();
       } else if (game.state == 1) { // draw the cookie screen
         game.drawBackground();
-        utility.drawDynamic();
-        // draw the cookie
         for (let i = 0; i < explodingCookie.length; i++) {
           explodingCookie[i].draw(explodingCookie[i].x + (explodingCookie[i].r / 3), explodingCookie[i].xV, explodingCookie[i].y + (explodingCookie[i].r / 3), explodingCookie[i].yV, explodingCookie[i].r / 2, explodingCookie[i].pulseCount, explodingCookie[i].color(), 0);
           // move cookies in random direction
           explodingCookie[i].xV += explodingCookie[i].dX * 30;
           explodingCookie[i].yV += explodingCookie[i].dY * 30;
         };
+        utility.drawDynamic();
         cookie.draw(cookie.x, cookie.xV, cookie.y, cookie.yV, cookie.r, cookie.pulseCount, cookie.color(), 0);
         for (let i = 0; i < goldCookie.lenght; i++) {
           goldCookie[i].draw(goldCookie.rX, 0, goldCookie.rY, 0, goldCookie.rR, 0, 3, 0);
@@ -364,7 +365,7 @@ class Game {
         utility.fillContainer();
       };
     };
-    if (player.level[GOLDEN_COOKIE[0]] > 0 && Math.random() > 0.9995) {
+    if (player.level[GOLDEN_COOKIE[0]] > 0 && Math.random() > cookie.goldChance) {
       goldCookie.push(new GoldCookie());
     };
     latestTime = Date.now();
@@ -378,6 +379,7 @@ class InputHandler {
     this.dX = 0;
     this.lastClick = 0;
     this.lastdY = 0;
+    this.dYSmoothing = 0;
     this.tap = false;
     this.holding = [];
     document.addEventListener("click", (e) => {
@@ -471,6 +473,7 @@ class InputHandler {
     if (y > 2 * game.textSize && y < 3 * game.textSize) { // navigation button area
       input.dY = 0;
       if (x > game.width / 3 && x < game.width - (game.width / 3)) { // shop button clicked
+        this.dY = this.lastdY;
         if (game.state == 2) game.state = 1;
         else game.state = 2;
       };
@@ -533,22 +536,20 @@ class InputHandler {
       };
     } else {
       if (yDiff > 0) { // up swipe
-        this.dY += yDiff / 2;
+        this.dYSmoothing = yDiff / 1.5;
         if (utility.upgrading && yDown > game.height - game.textSize) {
           utility.upgrading = false;
-        }
-        // else if (!utility.upgrading && yDown > game.height - (3 * game.textSize) && xDown > game.width - (3 * game.textSize)) {
-        //   container.sell();
-        // };
+        };
         yDown = yUp;
       } else { // down swipe
-        this.dY += yDiff / 2;
+        this.dYSmoothing = yDiff / 1.5;
         if (yDown < game.textSize) {
           utility.upgrading = true;
         };
         yDown = yUp;
       };
     };
+    if (game.state == 2) this.lastdY = this.dY;
   };
   longTouch() {
     let e = touchEvent.touches[0];
@@ -693,8 +694,8 @@ class Player {
       };
     };
     for (let i = 0; i < NUMBER_OF_UPGRADES; i++) {
-      this.cost.push(
-        Math.pow(SHOP_BUTTONS[i].baseCost, 1 + (this.level[i] * SHOP_BUTTONS[i].costFactor)));
+      this.cost.push(Math.pow(SHOP_BUTTONS[i].baseCost, 1 + (this.level[i] * SHOP_BUTTONS[i].costFactor)));
+      //this.cost.push(1); // testing purposes
     };
     this.latestTime = utility.parseFromLocalStorage("playerLatestTime", game.time);
     this.prestige = utility.parseFromLocalStorage("playerPrestige",0);
@@ -907,7 +908,7 @@ class Utility {
     if (player.level[EXPLODE_FRENZY[0]] > 0) this.frenzy = true;
     else this.frenzy = false;
     this.prestigeBonus = utility.round(1 + ((player.prestige) * 0.01));
-    this.prestigeFor = Math.floor(player.earned / (1000000 + player.prestige));
+    this.prestigeFor = Math.floor(player.earned / (1000000000 + player.prestige));
   };
   multiply(number) {
     return Math.round(
@@ -933,32 +934,35 @@ class Utility {
     player.purchased++;
     player.spent += player.cost[index];
     clickEffect.push(new Effects(utility.convert(player.cost[index]), false, "red"));
+    if (index == GOLDEN_COOKIE[0]) { // purchasing golden cookie, give a free gold cookie
+      goldCookie.push(new GoldCookie());
+    };
     game.update();
     player.initPlayer();
     utility.setUgrades();
   };
   convert(number) { // number converter
     if (number < 1e3) return utility.round(number);
-    if (number >= 1e3 && number < 1e6) return +(number / 1e3).toPrecision(4) + units[0];
-    if (number >= 1e6 && number < 1e9) return +(number / 1e6).toPrecision(4) + units[1];
-    if (number >= 1e9 && number < 1e12) return +(number / 1e9).toPrecision(4) + units[2];
-    if (number >= 1e12 && number < 1e15) return +(number / 1e12).toPrecision(4) + units[3];
-    if (number >= 1e15 && number < 1e18) return +(number / 1e15).toPrecision(4) + units[4];
-    if (number >= 1e18 && number < 1e21) return +(number / 1e18).toPrecision(4) + units[5];
-    if (number >= 1e21 && number < 1e24) return +(number / 1e21).toPrecision(4) + units[6];
-    if (number >= 1e24 && number < 1e27) return +(number / 1e24).toPrecision(4) + units[7];
-    if (number >= 1e27 && number < 1e30) return +(number / 1e27).toPrecision(4) + units[8];
-    if (number >= 1e30 && number < 1e33) return +(number / 1e30).toPrecision(4) + units[9];
-    if (number >= 1e33 && number < 1e36) return +(number / 1e33).toPrecision(4) + units[10];
-    if (number >= 1e36 && number < 1e39) return +(number / 1e36).toPrecision(4) + units[11];
-    if (number >= 1e39 && number < 1e42) return +(number / 1e39).toPrecision(4) + units[12];
-    if (number >= 1e42 && number < 1e45) return +(number / 1e42).toPrecision(4) + units[13];
-    if (number >= 1e45 && number < 1e48) return +(number / 1e45).toPrecision(4) + units[14];
-    if (number >= 1e48 && number < 1e51) return +(number / 1e48).toPrecision(4) + units[15];
-    if (number >= 1e51 && number < 1e54) return +(number / 1e51).toPrecision(4) + units[16];
-    if (number >= 1e54 && number < 1e57) return +(number / 1e54).toPrecision(4) + units[17];
-    if (number >= 1e57 && number < 1e60) return +(number / 1e57).toPrecision(4) + units[18];
-    if (number >= 1e60 && number < 1e63) return +(number / 1e60).toPrecision(4) + units[19];
+    if (number >- 1e3 && number < 1e6) return +(number / 1e3).toFixed(3) + units[0];
+    if (number >= 1e6 && number < 1e9) return +(number / 1e6).toFixed(3) + units[1];
+    if (number >= 1e9 && number < 1e12) return +(number / 1e9).toFixed(3) + units[2];
+    if (number >= 1e12 && number < 1e15) return +(number / 1e12).toFixed(3) + units[3];
+    if (number >= 1e15 && number < 1e18) return +(number / 1e15).toFixed(3) + units[4];
+    if (number >= 1e18 && number < 1e21) return +(number / 1e18).toFixed(3) + units[5];
+    if (number >= 1e21 && number < 1e24) return +(number / 1e21).toFixed(3) + units[6];
+    if (number >= 1e24 && number < 1e27) return +(number / 1e24).toFixed(3) + units[7];
+    if (number >= 1e27 && number < 1e30) return +(number / 1e27).toFixed(3) + units[8];
+    if (number >= 1e30 && number < 1e33) return +(number / 1e30).toFixed(3) + units[9];
+    if (number >= 1e33 && number < 1e36) return +(number / 1e33).toFixed(3) + units[10];
+    if (number >= 1e36 && number < 1e39) return +(number / 1e36).toFixed(3) + units[11];
+    if (number >= 1e39 && number < 1e42) return +(number / 1e39).toFixed(3) + units[12];
+    if (number >= 1e42 && number < 1e45) return +(number / 1e42).toFixed(3) + units[13];
+    if (number >= 1e45 && number < 1e48) return +(number / 1e45).toFixed(3) + units[14];
+    if (number >= 1e48 && number < 1e51) return +(number / 1e48).toFixed(3) + units[15];
+    if (number >= 1e51 && number < 1e54) return +(number / 1e51).toFixed(3) + units[16];
+    if (number >= 1e54 && number < 1e57) return +(number / 1e54).toFixed(3) + units[17];
+    if (number >= 1e57 && number < 1e60) return +(number / 1e57).toFixed(3) + units[18];
+    if (number >= 1e60 && number < 1e63) return +(number / 1e60).toFixed(3) + units[19];
     if (number >= 1e63) return "A lot";
   };
   resetScroll (top, bottom) {
@@ -998,6 +1002,12 @@ class Utility {
     utility.containerFills = 1 + player.level[CONTAINER_FILL[0]];
   };
   update() {
+    if (input.dYSmoothing != 0) {
+      input.dY += input.dYSmoothing;
+      if (input.dYSmoothing < 0) input.dYSmoothing += Math.ceil(-input.dYSmoothing / 10);
+      if (input.dYSmoothing > 0) input.dYSmoothing -= (input.dYSmoothing / 10);
+      input.dYSmoothing = Math.floor(input.dYSmoothing);
+    };
     if (utility.frenzyLeft > 0) {
       utility.frenzyLeft--;
     } else {
@@ -1035,13 +1045,14 @@ class Cookie {
   };
   setUgrades() {
     this.pulse = 15 + (player.level[EXPLODE_QUICKER[0]] * 5);
-    this.pulseSlow = 1.05 - (player.level[PULSE_SLOW[0]] / PULSE_SLOW[5]);
-    this.pulseLimit = this.r * (3 - (3 * (player.level[PULSE_LIMIT[0]] / (PULSE_LIMIT[5] + 3))));
+    this.pulseSlow = 1.05 - (player.level[PULSE_SLOW[0]] / PULSE_SLOW[6]);
+    this.pulseLimit = this.r * (3 - (3 * (player.level[PULSE_LIMIT[0]] / (PULSE_LIMIT[6] + 3))));
     this.worth = utility.multiply(1 + (player.level[MONEY_PER_CLICK[0]] / 5));
     //this.worth = 77777777; // testing purposes
     this.bonusWorth = utility.multiply(this.worth * (2 + (player.level[EXPLODE_BONUS[0]] / 2)));
+    this.goldChance = 0.9999 - (player.level[GOLDEN_COOKIE_CHANCE[0]] / 5000);
     this.goldBonus = 50;
-    this.goldenTime = 200 + (player.level[GOLDEN_COOKIE_TIME[0]] * 50);
+    this.goldenTime = 150 + (player.level[GOLDEN_COOKIE_TIME[0]] * 50);
   };
   radius() {
     if (game.width > game.height) {
@@ -1139,9 +1150,9 @@ class Cookie {
       cookie.pulseCount -= cookie.pulseSlow;
     };
     if (this.golden) {
-      this.goldenTimer++;
+      this.goldenTimer--;
     };
-    if (this.goldenTimer > this.goldenTime) this.golden = false;
+    if (this.goldenTimer < 0) this.golden = false;
   };
 };
 
@@ -1151,7 +1162,7 @@ class GoldCookie {
     this.y = Math.random() * game.height;
     this.dX = Math.sin((Math.random() * (2 * Math.PI)));
     this.dY = Math.sin((Math.random() * (2 * Math.PI)));
-    this.speed = 2 - (player.level[GOLDEN_COOKIE_SPEED] / 10);
+    this.speed = 2 - (player.level[GOLDEN_COOKIE_SPEED[0]] / 10);
     this.size = game.frameW;
   };
   draw() {
@@ -1171,7 +1182,7 @@ class GoldCookie {
   };
   click(index) {
     cookie.golden = true;
-    cookie.goldenTimer = 0;
+    cookie.goldenTimer += cookie.goldenTime;
     goldCookie[index] = null;
     goldCookie.splice(index, 1);
   };
@@ -1239,7 +1250,7 @@ class Container {
     ctxD.textBaseline = "bottom";
     ctxD.font = (game.textSize / 1.5) + "px calibri";
     // draw the name and capacity of the container
-    ctxD.fillText(this.filled, this.x + (this.length / 2), this.y - (this.length / 2));
+    ctxD.fillText(this.filled, this.x + (this.length / 2), this.y - game.textSize * 0.8);
     ctxD.fillText("/" + this.capacity, this.x + (this.length / 2), this.y);
   };
   fill() {
@@ -1361,10 +1372,14 @@ class Button {
     ctxD.textBaseline = "bottom";
     ctxD.font = (game.textSize * 0.5) + "px calibri";
     ctxD.fillText(this.level, game.width - this.x - (this.size / 2), (this.y + this.size) - input.dY); // the button level
+    if (SHOP_BUTTONS[this.index].oneTimePurchase && this.level > 0 || SHOP_BUTTONS[this.index].maxLevel == this.level) { // purchased
+      ctxD.fillText(utility.checkMark, game.width - this.x - (this.size / 2), (this.y + (this.size / 2)) - input.dY);
+    } else { // the button price
+      ctxD.fillText("$" + utility.convert(this.price), game.width - this.x - (this.size / 2), (this.y + (this.size / 2)) - input.dY);
+    };
+    ctxD.font = "bold " + (game.textSize * 0.45) + "px calibri";
     ctxD.fillText("Level:", game.width - this.x - (this.size / 2), (this.y + (3 * this.size / 4)) - input.dY); // level text
     ctxD.fillText("Cost:", game.width - this.x - (this.size / 2), (this.y + (this.size / 4)) - input.dY); // price text
-    ctxD.fillText("$" + utility.convert(this.price), game.width - this.x - (this.size / 2), (this.y + (this.size / 2)) - input.dY); // the button price
-    ctxD.font = "bold " + (game.textSize * 0.45) + "px calibri";
     ctxD.textAlign = "left";
     ctxD.fillText(this.title, this.x + (1.1 * this.size), this.y + (this.size / 4) - input.dY);
     ctxD.font = (game.textSize * 0.4) + "px calibri";
@@ -1392,14 +1407,15 @@ const SHOP_BUTTONS = [
   new Button(CONTAINER_PRICE, 8),
   new Button(CONTAINER_AUTOCLICK, 14),
   new Button(CONTAINER_AUTOSELL, 15),
-  new Button(EXPLODE_FRENZY, 22),
+  new Button(EXPLODE_FRENZY, 23),
   new Button(PULSE_SLOW, 4),
   new Button(PULSE_LIMIT, 5),
   new Button(BONUS_INCREASE, 13),
   new Button(ADD_CONTAINER, 6),
   new Button(CONTAINER_FILL, 17),
   new Button(GOLDEN_COOKIE_TIME, 20),
-  new Button(GOLDEN_COOKIE_SPEED, 21)
+  new Button(GOLDEN_COOKIE_SPEED, 21),
+  new Button(GOLDEN_COOKIE_CHANCE, 22)
 ];
 let utility = new Utility;
 let cookie = new Cookie;
