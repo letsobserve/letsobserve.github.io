@@ -61,8 +61,8 @@ const EXPLODE_BONUS = [2, 2,
   COOKIE_EXPLODE[0]];
 const EXPLODE_QUICKER = [3, 2,
   "Explosive Taps", "The cookie will increase in size faster.",
-  200, 0.09,
-  50, false,
+  200, 0.2,
+  15, false,
   COOKIE_EXPLODE[0]];
 const ROLLING_MULTIPLIER = [4, 2,
   "Quick Tap Bonus", "A stacking bonus for quick taps, increasing all profits for a short duration.",
@@ -147,7 +147,7 @@ const ADD_CONTAINER = [19, 2,
 const CONTAINER_FILL = [20, 4,
   "Container Logistics", "Each tap will fill more containers.",
   25000, 0.15,
-  5, false,
+  4, false,
  ADD_CONTAINER[0]];
 const GOLDEN_COOKIE_TIME = [21, 4,
   "Golden Duration", "Increase the time your golden bonus lasts.",
@@ -640,6 +640,7 @@ class Player {
     player.earnedThen = 0;
     player.earnedNow = 0;
     cookie.gold = false;
+    utility.frenzyReset = utility.frenzyResetMax;
     for (let i = 0; i < CONTAINERS.length; i++) {
       CONTAINERS[i].active = false;
       CONTAINERS[i].filled = 0;
@@ -908,7 +909,17 @@ class Utility {
     if (player.level[EXPLODE_FRENZY[0]] > 0) this.frenzy = true;
     else this.frenzy = false;
     this.prestigeBonus = utility.round(1 + ((player.prestige) * 0.01));
-    this.prestigeFor = Math.floor(player.earned / (1000000000 + player.prestige));
+    //this.prestigeFor = Math.floor(player.earned / (1000000000 + player.prestige));
+    this.prestigeFor =
+    Math.floor(this.prestigeAmount(12, -6, 0.15) + this.prestigeAmount(21, 6, 0.16) + this.prestigeAmount(30, 15, 0.17) + this.prestigeAmount(39, 24, 0.18) + this.prestigeAmount(48, 33, 0.19) + this.prestigeAmount(60, 42, 0.2) +
+    Math.max(0, Math.pow(Math.pow(10, -6) * player.earned, 0.21) - Math.pow(Math.pow(10, 54), 0.21)));
+  };
+  prestigeAmount(first, second, power) {
+    let num = Math.max(0,
+      Math.pow(
+        Math.pow(10, -6) * Math.min(player.earned, Math.pow(10, first)), power)
+      - Math.pow(Math.pow(10, -6), power));
+    return num;
   };
   multiply(number) {
     return Math.round(
@@ -1044,7 +1055,7 @@ class Cookie {
     this.dY = Math.cos((Math.random() * (2 * Math.PI))) * 1.5;
   };
   setUgrades() {
-    this.pulse = 15 + (player.level[EXPLODE_QUICKER[0]] * 5);
+    this.pulse = 15 + (player.level[EXPLODE_QUICKER[0]] * 2);
     this.pulseSlow = 1.05 - (player.level[PULSE_SLOW[0]] / PULSE_SLOW[6]);
     this.pulseLimit = this.r * (3 - (3 * (player.level[PULSE_LIMIT[0]] / (PULSE_LIMIT[6] + 3))));
     this.worth = utility.multiply(1 + (player.level[MONEY_PER_CLICK[0]] / 5));
@@ -1075,22 +1086,23 @@ class Cookie {
     cookie.clicked++;
     if (playerInput) { // if player tapped cookie
       utility.fillContainer();
-      if (utility.rolling) {
-        utility.time = utility.rollTime; // start rolling time
+      if (utility.rolling) { // if rolling bonus should activate
+        utility.time = utility.rollTime;
         for (var i = 0; i <= utility.clickRounds; i++) {
           if (utility.round(utility.clickCount) < utility.round(utility.maxClickCount)) utility.clickCount += utility.round(utility.clickIncrease); // increase if less than max rolling bonus
         };
       };
+      if (utility.inFrenzy) { // check if frenzy time should increase
+        if (utility.frenzyLeft < utility.frenzyMax - 1.5) {
+          utility.frenzyLeft += 3;
+        };
+      };
+      if (cookie.r + cookie.pulseCount < cookie.pulseLimit) { // if cookie should expand
+        cookie.pulseCount += cookie.pulse;
+      } else cookie.reset();
       game.rotation = Math.sin((Math.random() * (2 * Math.PI)));
     };
-    if (utility.inFrenzy) { // check if frenzy time should increase
-      if (utility.frenzyLeft < utility.frenzyMax - 1.5) {
-        utility.frenzyLeft += 3;
-      };
-    };
-    if (cookie.r + cookie.pulseCount < cookie.pulseLimit) { // if cookie should expand
-      cookie.pulseCount += cookie.pulse;
-    } else cookie.reset();
+
     let amount = cookie.worth;
     let clr = "green";
     if (this.golden) {
