@@ -43,156 +43,162 @@ const units = [ // list of money units
   "TG",//"Trigintillion"
 ];
 
-// index + texture row
-// title + description
-// base cost + cost factor
-// max level, one time purchase = false
-// requirement = -1
+// 0 = index + 1 = texture column + 2 = texture row
+// 3 = title + 4 = description
+// 5 = base cost + 6 = cost factor
+// 7 = max level, 8 = one time purchase = false
+// 9 = requirement = -1
 
-const NUMBER_OF_UPGRADES = 26; // total shop upgrades
-const MONEY_PER_CLICK = [0, 2,
+const NUMBER_OF_UPGRADES = 27; // total shop upgrades
+const MONEY_PER_CLICK = [0, 0, 2,
   "Quality Baking", "Increase the base money earned for each tap.",
   30, 0.08,
   999, false,
   -1];
-const COOKIE_EXPLODE = [1, 2,
+const COOKIE_EXPLODE = [1, 1, 2,
   "Cookie Explosion", "The cookie will explode at a certain size for bonus money.",
   150, 0,
   1, true,
   -1];
-const EXPLODE_BONUS = [2, 2,
+const EXPLODE_QUICKER = [2, 3, 2,
+  "Explosive Taps", "The cookie will increase in size faster.",
+  200, 0.2,
+  15, false,
+  COOKIE_EXPLODE[0]];
+const EXPLODE_BONUS = [3, 2, 2,
   "Better Explosions", "Increase bonus money when the cookie explodes.",
   200, 0.09,
   999,
   false,
   COOKIE_EXPLODE[0]];
-const EXPLODE_QUICKER = [3, 2,
-  "Explosive Taps", "The cookie will increase in size faster.",
-  200, 0.2,
-  15, false,
-  COOKIE_EXPLODE[0]];
-const ROLLING_MULTIPLIER = [4, 2,
-  "Quick Tap Bonus", "A stacking bonus for quick taps, increasing all profits for a short duration.",
-  10000, 0,
-  1, true,
-  -1];
-const ROLLING_DURATION = [5, 2,
-  "Longer Bonus", "Increase the time before the stacking bonus expires.",
-  8000, 0.03,
-  99, false,
-  ROLLING_MULTIPLIER[0]];
-const ROLLING_BONUS = [6, 2,
-  "Higher Bonus", "Increase max for the stacking bonus.",
-  8000, 0.08,
-  99,  false,
-  ROLLING_MULTIPLIER[0]];
-const OVERALL_MULTIPLIER = [7, 2,
-  "Better Logistics", "An overall multiplier, increasing all profits by a small margin.",
-  10000, 0.1,
-  999, false,
-  -1];
-const AUTOCLICKERS = [8, 2,
-  "Automation", "The cookie will be auto tapped periodically.",
-  8500, 0.03,
-  50, false,
-  -1];
-const GOLDEN_COOKIE = [9, 2,
-  "The Golden Cookie", "Unlock rare golden cookies that travel across the screen, tap for bonus to all earnings for a short time.",
-  5000000, 0,
-  1, true,
-  -1];
-const CONTAINER_LEVEL = [10, 2,
-  "Container Improvements", "Increase the level of your containers.",
-  15000, 0.2,
-  4, false,
-  19];
-const CONTAINER_SIZE = [11, 2,
-  "Smaller Containers", "Decrease the amount of cookies required for your containers.",
-  8000, 0.1,
-  50, false,
-  19];
-const CONTAINER_PRICE = [12, 2,
-   "Quality Containers", "Increase the sell price of each of your containers.",
-   5000, 0.07,
-   999, false,
-   19];
-const CONTAINER_AUTOCLICK = [13, 2,
-  "Filling Automation", "Your auto taps will now fill up containers.",
-  10000, 0,
-  1, true,
-  19];
-const CONTAINER_AUTOSELL = [14, 2,
-  "Selling Automation", "Your containers will now auto sell when full.",
-  20000, 0,
-  1, true,
-  19];
-const EXPLODE_FRENZY = [15, 2,
-  "Cookie Frenzy", "Unlock the cookie frenzy bonus, explosions are more profitable for a short duration. Tap the cookie to increase the duration.",
-  5000000, 0,
-  1, true,
-  -1];
-const PULSE_SLOW = [16, 4,
+const PULSE_SLOW = [4, 3, 2,
   "Stronger Ingredients", "The cookie will shrink at a slower pace.",
   4000, 0.07,
   50, false,
   -1];
-const PULSE_LIMIT = [17, 4,
+const PULSE_LIMIT = [5, 3, 2,
  "Early Explosions", "Reduce the size required before the cookie explodes.",
  5000, 0.09,
  50, false,
  -1];
-const BONUS_INCREASE = [18, 4,
+const ADD_CONTAINER = [6, 0, 4,
+"Purchase Container", "Purchase a container to fill and sell for more profit streams.",
+1500, 0.2,
+5, false,
+-1];
+const CONTAINER_SIZE = [7, 11, 2,
+  "Smaller Containers", "Decrease the amount of cookies required for your containers.",
+  8000, 0.1,
+  50, false,
+  19];
+const CONTAINER_PRICE = [8, 12, 2,
+   "Quality Containers", "Increase the sell price of each of your containers.",
+   5000, 0.07,
+   999, false,
+   19];
+const AUTOCLICKERS = [9, 8, 2,
+ "Automation", "The cookie will be auto tapped periodically.",
+ 8500, 0.03,
+ 50, false,
+ -1];
+const IDLE_EARNING = [10, 5, 4,
+"Passive Income", "Earn money even while away.",
+15000, 0,
+1, true,
+AUTOCLICKERS[0]];
+const ROLLING_MULTIPLIER = [11, 4, 2,
+  "Quick Tap Bonus", "A stacking bonus for quick taps, increasing all profits for a short duration.",
+  10000, 0,
+  1, true,
+  -1];
+const ROLLING_DURATION = [12, 5, 2,
+  "Longer Bonus", "Increase the time before the stacking bonus expires.",
+  8000, 0.03,
+  99, false,
+  ROLLING_MULTIPLIER[0]];
+const ROLLING_BONUS = [13, 6, 2,
+  "Higher Bonus", "Increase max for the stacking bonus.",
+  8000, 0.08,
+  99,  false,
+  ROLLING_MULTIPLIER[0]];
+const BONUS_INCREASE = [14, 6, 2,
   "Better Stacking", "Stacking bonus will increase by a larger amount.",
   25500, 0.06,
   50, false,
  ROLLING_MULTIPLIER[0]];
-const ADD_CONTAINER = [19, 2,
- "Purchase Container", "Purchase a container to fill and sell for more profit streams.",
- 1500, 0.2,
- 5, false,
- -1];
-const CONTAINER_FILL = [20, 4,
-  "Container Logistics", "Each tap will fill more containers.",
-  25000, 0.15,
-  4, false,
- ADD_CONTAINER[0]];
-const GOLDEN_COOKIE_TIME = [21, 4,
-  "Golden Duration", "Increase the time your golden bonus lasts.",
-  500000, 0.05,
-  10, false,
-GOLDEN_COOKIE[0]];
-const GOLDEN_COOKIE_SPEED = [22, 4,
-"Faster Reflexes", "Golden cookies will move slower across the screen.",
-500000, 0.075,
-15, false,
-GOLDEN_COOKIE[0]];
-const GOLDEN_COOKIE_CHANCE = [23, 4,
-"Better Luck", "Slighty increase the chance a golden cookie will appear.",
-500000, 0.15,
-10, false,
-GOLDEN_COOKIE[0]];
-const MULTIPLIER_BONUS = [24, 4,
-"Logistics Overhaul", "Each multiplier increases profits by a larger amount.",
-30000, 0.1,
-99, false,
-OVERALL_MULTIPLIER[0]];
-const EXPLOSION_FILL = [25, 4,
+const CONTAINER_AUTOCLICK = [15, 13, 2,
+ "Filling Automation", "Your auto taps will now fill up containers.",
+ 10000, 0,
+ 1, true,
+ 19];
+const CONTAINER_AUTOSELL = [16, 14, 2,
+ "Selling Automation", "Your containers will now auto sell when full.",
+ 20000, 0,
+ 1, true,
+ 19];
+const CONTAINER_LEVEL = [17, 10, 2,
+ "Container Improvements", "Increase the level of your containers.",
+ 15000, 0.2,
+ 4, false,
+ 19];
+const CONTAINER_FILL = [18, 1, 4,
+ "Container Logistics", "Each tap will fill more containers.",
+ 25000, 0.15,
+ 4, false,
+ADD_CONTAINER[0]];
+const EXPLOSION_FILL = [19, 2, 4,
 "Expert Filling", "Cookie explosions will now fill your containers.",
 100000000, 0,
 1, true,
 ADD_CONTAINER[0]];
+const OVERALL_MULTIPLIER = [20, 7, 2,
+  "Better Logistics", "An overall multiplier, increasing all profits by a small margin.",
+  10000, 0.1,
+  999, false,
+  -1];
+const MULTIPLIER_BONUS = [21, 7, 2,
+"Logistics Overhaul", "Each multiplier increases profits by a larger amount.",
+30000, 0.1,
+99, false,
+OVERALL_MULTIPLIER[0]];
+const GOLDEN_COOKIE = [22, 9, 2,
+  "The Golden Cookie", "Unlock rare golden cookies that travel across the screen, tap for bonus to all earnings for a short time.",
+  5000000, 0,
+  1, true,
+  -1];
+const GOLDEN_COOKIE_TIME = [23, 9, 2,
+  "Golden Duration", "Increase the time your golden bonus lasts.",
+  500000, 0.05,
+  10, false,
+GOLDEN_COOKIE[0]];
+const GOLDEN_COOKIE_SPEED = [24, 9, 2,
+"Faster Reflexes", "Golden cookies will move slower across the screen.",
+500000, 0.075,
+15, false,
+GOLDEN_COOKIE[0]];
+const GOLDEN_COOKIE_CHANCE = [25, 9, 2,
+"Better Luck", "Slighty increase the chance a golden cookie will appear.",
+500000, 0.15,
+10, false,
+GOLDEN_COOKIE[0]];
+const EXPLODE_FRENZY = [26, 15, 2,
+  "Cookie Frenzy", "Unlock the cookie frenzy bonus, explosions are more profitable for a short duration. Tap the cookie to increase the duration.",
+  5000000, 0,
+  1, true,
+  -1];
 
-// index + texture row
-// title + description
-// base cost + cost factor
-// max level, one time purchase = false
-// requirement = -1
+  // 0 = index + 1 = texture column + 2 = texture row
+  // 3 = title + 4 = description
+  // 5 = base cost + 6 = cost factor
+  // 7 = max level, 8 = one time purchase = false
+  // 9 = requirement = -1
 
 let lastTime = 0;
 let now = new Date();
 let time = now.getTime();
 let expireTime = time + (365 * 24 * 60 * 60);
 let latestTime, then, elapsed, timer, touchEvent;
+let order = 0;
 let clickEffect = [];
 let explodingCookie = [];
 let goldCookie = [];
@@ -209,7 +215,8 @@ class Game {
     // 0 = Start, 1 = Cookie, 2 = Shop, 3 = Prestige, 4 = Menu
     this.states = [0, 1, 2, 3, 4];
     this.state = 0;
-    this.textSize = 85;
+    if (this.width < this.height) this.textSize = 85;
+    else this.textSize = 25;
     this.time = new Date();
   };
   drawBackground() { // draw the background
@@ -298,7 +305,7 @@ class Game {
             ctxD.fillText("-$" + clickEffect[i].text, clickEffect[i].x * clickEffect[i].time, clickEffect[i].y);
             ctxD.strokeText("-$" + clickEffect[i].text, clickEffect[i].x * clickEffect[i].time, clickEffect[i].y);
           };
-          clickEffect[i].time += 0.01;
+          clickEffect[i].time += 0.007;
           ctxD.globalAlpha = 1;
         } else {
           clickEffect[0] = null;
@@ -426,7 +433,7 @@ class InputHandler {
     };
     if (game.state == 1) { // player cookie screen
       if (player.returning) player.returning = false;
-      if (!this.tap) { // if player didnt tap the screeen
+      if (this.tap == false) { // if player didnt tap the screeen
         if (Math.pow(x - cookie.x, 2) + Math.pow(y - cookie.y, 2) < Math.pow(cookie.r + cookie.pulseCount, 2)) { // check if in the cookie
           cookie.click();
         };
@@ -501,7 +508,7 @@ class InputHandler {
     };
   };
   touchstart (e) {
-    e.preventDefault();
+    if (e.cancelable) e.preventDefault();
     const firstTouch = e.touches[0];
     const ongoingTouches = [];
     this.tap = true;
@@ -550,36 +557,30 @@ class InputHandler {
     } else {
       if (yDiff > 0) { // up swipe
         this.dYSmoothing = yDiff / 1.5;
-        if (utility.upgrading && yDown > game.height - game.textSize) {
-          utility.upgrading = false;
-        };
-        yDown = yUp;
       } else { // down swipe
         this.dYSmoothing = yDiff / 1.5;
-        if (yDown < game.textSize) {
-          utility.upgrading = true;
-        };
-        yDown = yUp;
       };
     };
+    yDown = yUp;
     if (game.state == 2) this.lastdY = this.dY;
   };
   longTouch() {
-    let e = touchEvent.touches[0];
-    input.click(e.clientX, e.clientY);
+    //this.tap = false;
+    //input.touchstart(touchEvent);
+    //input.click(touchEvent.touches[0].clientX, touchEvent.touches[0].clientY);
   };
 };
 
 class Player {
   constructor() {
     this.initPlayer();
-    this.lastPlaySeconds = (game.time - this.latestTime) / 1000;
+    this.lastPlaySeconds = utility.deltaTime(this.latestTime) / 1000;
     this.playerReturned = false;
     this.earnedThen = this.earned; // previous earned
     this.earnedNow = 0; // earning now
     this.EPS = 0; // player earning per second
     this.returnWorth = Math.ceil(this.level[MONEY_PER_CLICK[0]] * this.lastPlaySeconds);
-    if (this.lastPlaySeconds > (5 * 60)) { // if time since last played is more than 5 minutes
+    if (utility.deltaTime(this.latestTime)  > (60000)) { // > 1 minute
       this.returning = true;
     } else {
       this.returning = false;
@@ -707,10 +708,15 @@ class Player {
         this.level.push(0);
       };
     };
-    for (let i = 0; i < NUMBER_OF_UPGRADES; i++) {
-      this.cost.push(Math.pow(SHOP_BUTTONS[i].baseCost, 1 + (this.level[i] * SHOP_BUTTONS[i].costFactor)));
-      //this.cost.push(1); // testing purposes
-    };
+    SHOP_BUTTONS.forEach((item) => {
+      let temp = Math.pow(item.baseCost, 1 + (this.level[item.index] * item.costFactor));
+      this.cost[item.index] = temp;
+    });
+
+    // for (let i = 0; i < NUMBER_OF_UPGRADES; i++) {
+    //   this.cost.push(Math.pow(SHOP_BUTTONS[i].baseCost, 1 + (this.level[i] * SHOP_BUTTONS[i].costFactor)));
+    //   //this.cost.push(1); // testing purposes
+    // };
     this.latestTime = utility.parseFromLocalStorage("playerLatestTime", game.time);
     this.prestige = utility.parseFromLocalStorage("playerPrestige",0);
     this.cookieClicked = utility.parseFromLocalStorage("playerCookieClicked", 0);
@@ -741,6 +747,7 @@ class Player {
       player.bestEPS = player.EPS;
       localStorage.setItem("playerBestEPS", player.bestEPS);
     };
+    localStorage.setItem("playerFrenzyFinishedTime", utility.frenzyFinish);
   };
 };
 
@@ -754,15 +761,16 @@ class Utility {
     this.clickCountX = 1.25 * game.textSize;
     this.clickCountY = game.textSize * 4.25;
     this.clickCountR = game.textSize;
-    this.canFrenzy = true;
     this.inFrenzy = false;
     this.frenzyX = this.clickCountX + this.clickCountR - 5;
     this.frenzyY = this.clickCountY - (0.5 * this.clickCountR);
     this.frenzyLength = game.width - this.frenzyX - 20;
     this.frenzyMax = 120; // frenzy time in frames per second
     this.frenzyLeft = 0;
-    this.frenzyReset = 0;
-    this.frenzyResetMax = 10 * 60 * 60; // frenzy reset time in milliseconds
+    this.frenzyFinish = this.parseFromLocalStorage("playerFrenzyFinishedTime", 0);
+    this.frenzyReset = 5 * 60000; // frenzy reset time in milliseconds
+    if (this.deltaTime(this.frenzyFinish) >= this.frenzyReset) this.canFrenzy = true;
+    else this.canFrenzy = false;
     this.prestigeUpgrade = 0;
   };
   parseFromLocalStorage(key, defaultValue) {
@@ -777,17 +785,18 @@ class Utility {
     ctxD.font = game.textSize + "px calibri";
     if (this.frenzy) { // draw the frenzy bar
       ctxD.fillStyle = "white";
+      if (this.canFrenzy) ctxD.fillStyle = "green";
       ctxD.textBaseline = "top";
       ctxD.textAlign = "center";
       ctxD.font = game.textSize + "px calibri";
-      if (this.canFrenzy) ctxD.fillStyle = "green";
       ctxD.fillRect(this.frenzyX, this.frenzyY, this.frenzyLength, this.clickCountR); // base frenzy bar
       ctxD.fillStyle = "red";
       if (utility.inFrenzy) { // time left bar if in frenzy
         ctxD.fillRect(this.frenzyX, this.frenzyY, (utility.frenzyLeft / utility.frenzyMax) * this.frenzyLength, game.textSize);
-      } else {
+      };
+      if (!utility.inFrenzy && !utility.canFrenzy) {
         ctxD.globalAlpha = 0.5;
-        ctxD.fillRect(this.frenzyX, this.frenzyY, (utility.frenzyReset / utility.frenzyResetMax) * this.frenzyLength, game.textSize);
+        ctxD.fillRect(this.frenzyX, this.frenzyY, (utility.deltaTime(utility.frenzyFinish) / utility.frenzyReset) * this.frenzyLength, game.textSize);
         ctxD.globalAlpha = 1;
       };
       ctxD.fillStyle = "black";
@@ -836,7 +845,7 @@ class Utility {
     for (let i = 0; i < NUMBER_OF_UPGRADES; i++) {
       SHOP_BUTTONS[i].drawButton();
     };
-    utility.resetScroll(SHOP_BUTTONS[0].y, SHOP_BUTTONS[25].y); // first btn + last btn
+    utility.resetScroll(SHOP_BUTTONS[0].y, SHOP_BUTTONS[NUMBER_OF_UPGRADES - 1].y); // first btn + last btn
   };
   drawPrestigeScreen() { // draw the dynamic prestige screen
     ctxD.fillStyle = "black";
@@ -941,22 +950,23 @@ class Utility {
   round(number) {
     return Math.round((number + Number.EPSILON) * 100) / 100;
   };
-  purchasable(index, requirement) { // check if upgrade purchasable
+  purchasable(index, req) { // check if upgrade purchasable
     let returnValue;
-    if (player.level[requirement] > 0 || requirement == -1) returnValue = true;
+    if (player.level[req] > 0 || req == -1) returnValue = true;
     if (SHOP_BUTTONS[index].oneTimePurchase && player.level[index] > 0) returnValue = false;
     if (player.level[index] >= SHOP_BUTTONS[index].maxLevel) returnValue = false;
     return returnValue;
   };
   upgrade(index) {
-    if (player.money < player.cost[index]) return;
-    if (SHOP_BUTTONS[index].oneTimePurchase && player.level[index] > 0) return;
-    if (player.level[index] >= SHOP_BUTTONS[index].maxLevel) return;
-    player.money -= player.cost[index];
-    player.level[index]++;
+    if (player.level[SHOP_BUTTONS[index].requirement] < 1) return;
+    if (player.money < player.cost[SHOP_BUTTONS[index].index]) return;
+    if (SHOP_BUTTONS[index].oneTimePurchase && player.level[SHOP_BUTTONS[index].index] > 0) return;
+    if (player.level[SHOP_BUTTONS[index].index] >= SHOP_BUTTONS[index].maxLevel) return;
+    player.money -= player.cost[SHOP_BUTTONS[index].index];
+    player.level[SHOP_BUTTONS[index].index]++;
     player.purchased++;
-    player.spent += player.cost[index];
-    clickEffect.push(new Effects(utility.convert(player.cost[index]), false, "red"));
+    player.spent += player.cost[SHOP_BUTTONS[index].index];
+    clickEffect.push(new Effects(utility.convert(player.cost[SHOP_BUTTONS[index].index]), false, "red"));
     if (index == GOLDEN_COOKIE[0]) { // purchasing golden cookie, give a free gold cookie
       goldCookie.push(new GoldCookie());
     };
@@ -1024,6 +1034,12 @@ class Utility {
     } while (utility.containerFills > 0);
     utility.containerFills = 1 + player.level[CONTAINER_FILL[0]];
   };
+  deltaTime(time) {
+    let result;
+    let currentTime = Date.now();
+    result = currentTime - time;
+    return result;
+  };
   update() {
     if (input.dYSmoothing != 0) {
       input.dY += input.dYSmoothing;
@@ -1031,16 +1047,18 @@ class Utility {
       if (input.dYSmoothing > 0) input.dYSmoothing -= (input.dYSmoothing / 10);
       input.dYSmoothing = Math.floor(input.dYSmoothing);
     };
-    if (utility.frenzyLeft > 0) {
-      utility.frenzyLeft--;
-    } else {
-      utility.inFrenzy = false;
-    };
-    if (!utility.canFrenzy && utility.frenzyReset <= utility.frenzyResetMax) {
-      utility.frenzyReset++;
-    } else {
-      utility.canFrenzy = true;
-      utility.frenzyReset = 0;
+    if (utility.inFrenzy) { // if in frenzy mode
+      if (utility.frenzyLeft > 0) { // if frenzy time left
+        utility.frenzyLeft--;
+      } else { // frenzy is finished
+        utility.inFrenzy = false;
+        utility.canFrenzy = false;
+        utility.frenzyFinish = Date.now();
+      };
+    } else { // frenzy mode is on cooldown
+      if (utility.deltaTime(utility.frenzyFinish) >= utility.frenzyReset) {
+        utility.canFrenzy = true;
+      };
     };
     // count time between clicks
     if (utility.time > 0) {
@@ -1068,14 +1086,14 @@ class Cookie {
   };
   setUgrades() {
     this.pulse = 15 + (player.level[EXPLODE_QUICKER[0]] * 2);
-    this.pulseSlow = 1.05 - (player.level[PULSE_SLOW[0]] / PULSE_SLOW[6]);
-    this.pulseLimit = this.r * (3 - (3 * (player.level[PULSE_LIMIT[0]] / (PULSE_LIMIT[6] + 3))));
+    this.pulseSlow = 1.05 - (player.level[PULSE_SLOW[0]] / PULSE_SLOW[7]);
+    this.pulseLimit = this.r * (3 - (3 * (player.level[PULSE_LIMIT[0]] / (PULSE_LIMIT[7] + 3))));
     this.worth = 1 + (player.level[MONEY_PER_CLICK[0]] / 10);
     //this.worth = 77777777777; // testing purposes
     this.bonusWorth = this.worth * (2 + (player.level[EXPLODE_BONUS[0]] / 2));
     this.goldChance = (9999 - player.level[GOLDEN_COOKIE_CHANCE[0]]) / 10000;
     this.goldBonus = 50;
-    this.goldenTime = 150 + (player.level[GOLDEN_COOKIE_TIME[0]] * 50);
+    this.goldenTime = 100 + (player.level[GOLDEN_COOKIE_TIME[0]] * 25);
   };
   radius() {
     if (game.width > game.height) {
@@ -1229,7 +1247,7 @@ class Container {
     this.row = 7;
     this.position = position;
     this.level = player.level[level];
-    this.x = (0.25 * game.frameW) + (this.position * (game.frameW*1.55));
+    this.x = (position * game.width) / 5;
     this.y = game.height - game.textSize - (1.5 * game.frameW);
     this.length = game.frameW * 1.5;
     this.filled = 0;
@@ -1245,7 +1263,7 @@ class Container {
     this.level = 1 + player.level[CONTAINER_LEVEL[0]];
     this.column = this.level - 1;
     this.cap = this.level * (10 * this.level);
-    this.reducedCap = this.cap * (player.level[CONTAINER_SIZE[0]] / (CONTAINER_SIZE[6] + 1));
+    this.reducedCap = this.cap * (player.level[CONTAINER_SIZE[0]] / (CONTAINER_SIZE[7] + 1));
     this.capacity = Math.floor(this.cap - this.reducedCap);
     this.worth = cookie.worth * (this.level + player.level[CONTAINER_PRICE[0]]);
     if (player.level[ADD_CONTAINER[0]] > this.position) this.active = true;
@@ -1304,10 +1322,13 @@ class Container {
   };
   update() {
     this.setUgrades();
-    if (this.filled != this.filling) {
+    if (this.filling != this.filled) {
       if (this.filled < this.filling) {
         this.filling -= Math.ceil(this.capacity / 16);
-      } else this.filling++;
+      } else {
+        this.filling++;
+      };
+
     };
     if (this.filled >= this.capacity) {
       this.full = true;
@@ -1340,15 +1361,16 @@ class Effects {
 };
 
 class Button {
-  constructor(btn, order) {
-      //btn[index, texture row, title, description, base cost, cost factor, max level, one time purchase?, requirement]
+  constructor(btn) {
+      //btn[index, texture column, texture row, title, description, base cost, cost factor, max level, one time purchase?, requirement]
     this.width = game.frameW;
     this.height = game.frameH;
     this.index = btn[0];
-    this.row = btn[1];
-    this.title= btn[2];
+    this.column = btn[1];
+    this.row = btn[2];
+    this.title= btn[3];
     this.description = "";
-    this.splitDesc = btn[3].split(" ");
+    this.splitDesc = btn[4].split(" ");
     this.lineCount = 0;
     for (let i = 0; i < this.splitDesc.length; i++) {
       if (this.lineCount < 5) {
@@ -1360,15 +1382,16 @@ class Button {
       }
     };
     this.description = this.description.split("---");
-    this.baseCost = btn[4];
-    this.costFactor = btn[5];
-    this.maxLevel = btn[6];
-    this.oneTimePurchase = btn[7];
-    this.requirement = btn[8];
+    this.baseCost = btn[5];
+    this.costFactor = btn[6];
+    this.maxLevel = btn[7];
+    this.oneTimePurchase = btn[8];
+    this.requirement = btn[9];
     this.x = game.textSize / 2;
     this.size = game.frameW * 1.5;
     this.length = game.width - (this.x * 2);
     this.y = (1.2 * this.size * order) + (3.5 * game.textSize);
+    order++;
     this.level;
     this.price;
   };
@@ -1388,7 +1411,7 @@ class Button {
     };
     ctxD.drawImage(
       texture, // the texture sheet
-      this.index * game.frameW, newRow * game.frameH, // texture x and y
+      this.column * game.frameW, newRow * game.frameH, // texture x and y
       game.frameW, game.frameH, // width and height
       this.x, this.y - input.dY, // destination x and y
       this.size, this.size // drawn width and height
@@ -1399,7 +1422,7 @@ class Button {
     ctxD.textBaseline = "bottom";
     ctxD.font = (game.textSize * 0.5) + "px calibri";
     ctxD.fillText(this.level, game.width - this.x - (this.size / 2), (this.y + this.size) - input.dY); // the button level
-    if (SHOP_BUTTONS[this.index].oneTimePurchase && this.level > 0 || SHOP_BUTTONS[this.index].maxLevel == this.level) { // purchased
+    if (this.oneTimePurchase && this.level > 0 || this.maxLevel == this.level) { // purchased
       ctxD.fillText(utility.checkMark, game.width - this.x - (this.size / 2), (this.y + (this.size / 2)) - input.dY);
     } else { // the button price
       ctxD.fillText("$" + utility.convert(this.price), game.width - this.x - (this.size / 2), (this.y + (this.size / 2)) - input.dY);
@@ -1419,32 +1442,33 @@ class Button {
 let game = new Game;
 let input = new InputHandler;
 const SHOP_BUTTONS = [
-  new Button(MONEY_PER_CLICK, 0),
-  new Button(COOKIE_EXPLODE, 1),
-  new Button(EXPLODE_BONUS, 3),
-  new Button(EXPLODE_QUICKER, 2),
-  new Button(ROLLING_MULTIPLIER, 10),
-  new Button(ROLLING_DURATION, 11),
-  new Button(ROLLING_BONUS, 12),
-  new Button(OVERALL_MULTIPLIER, 18),
-  new Button(AUTOCLICKERS, 9),
-  new Button(GOLDEN_COOKIE, 20),
-  new Button(CONTAINER_LEVEL, 16),
-  new Button(CONTAINER_SIZE, 7),
-  new Button(CONTAINER_PRICE, 8),
-  new Button(CONTAINER_AUTOCLICK, 14),
-  new Button(CONTAINER_AUTOSELL, 15),
-  new Button(EXPLODE_FRENZY, 24),
-  new Button(PULSE_SLOW, 4),
-  new Button(PULSE_LIMIT, 5),
-  new Button(BONUS_INCREASE, 13),
-  new Button(ADD_CONTAINER, 6),
-  new Button(CONTAINER_FILL, 17),
-  new Button(GOLDEN_COOKIE_TIME, 21),
-  new Button(GOLDEN_COOKIE_SPEED, 22),
-  new Button(GOLDEN_COOKIE_CHANCE, 23),
-  new Button(MULTIPLIER_BONUS, 19),
-  new Button(EXPLOSION_FILL, 25)
+  new Button(MONEY_PER_CLICK),
+  new Button(COOKIE_EXPLODE),
+  new Button(EXPLODE_QUICKER),
+  new Button(EXPLODE_BONUS),
+  new Button(PULSE_SLOW),
+  new Button(PULSE_LIMIT),
+  new Button(ADD_CONTAINER),
+  new Button(CONTAINER_SIZE),
+  new Button(CONTAINER_PRICE),
+  new Button(AUTOCLICKERS),
+  new Button(IDLE_EARNING),
+  new Button(ROLLING_MULTIPLIER),
+  new Button(ROLLING_DURATION),
+  new Button(ROLLING_BONUS),
+  new Button(BONUS_INCREASE),
+  new Button(CONTAINER_AUTOCLICK),
+  new Button(CONTAINER_AUTOSELL),
+  new Button(CONTAINER_LEVEL),
+  new Button(CONTAINER_FILL),
+  new Button(EXPLOSION_FILL),
+  new Button(OVERALL_MULTIPLIER),
+  new Button(MULTIPLIER_BONUS),
+  new Button(GOLDEN_COOKIE),
+  new Button(GOLDEN_COOKIE_TIME),
+  new Button(GOLDEN_COOKIE_SPEED),
+  new Button(GOLDEN_COOKIE_CHANCE),
+  new Button(EXPLODE_FRENZY)
 ];
 let utility = new Utility;
 let cookie = new Cookie;
