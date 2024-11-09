@@ -16,3 +16,31 @@ const CONTAINER_AUTOSELL = 14;
 const EXPLODE_FRENZY = 15;
 const PULSE_SLOW = 16;
 const PULSE_LIMIT = 17;
+
+  new Button(MONEY_PER_CLICK),
+  new Button(COOKIE_EXPLODE),
+  new Button(EXPLODE_QUICKER),
+  new Button(EXPLODE_BONUS),
+  new Button(PULSE_SLOW),
+  new Button(PULSE_LIMIT),
+  new Button(ADD_CONTAINER),
+  new Button(CONTAINER_SIZE),
+  new Button(CONTAINER_PRICE),
+  new Button(AUTOCLICKERS),
+  new Button(IDLE_EARNING),
+  new Button(ROLLING_MULTIPLIER),
+  new Button(ROLLING_DURATION),
+  new Button(ROLLING_BONUS),
+  new Button(BONUS_INCREASE),
+  new Button(CONTAINER_AUTOCLICK),
+  new Button(CONTAINER_AUTOSELL),
+  new Button(CONTAINER_LEVEL),
+  new Button(CONTAINER_FILL),
+  new Button(EXPLOSION_FILL),
+  new Button(OVERALL_MULTIPLIER),
+  new Button(MULTIPLIER_BONUS),
+  new Button(GOLDEN_COOKIE),
+  new Button(GOLDEN_COOKIE_TIME),
+  new Button(GOLDEN_COOKIE_SPEED),
+  new Button(GOLDEN_COOKIE_CHANCE),
+  new Button(EXPLODE_FRENZY)
