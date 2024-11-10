@@ -338,6 +338,11 @@ class Game {
         CONTAINERS[i].update();
       };
     };
+    if (player.level[IDLE_EARNING[0]] > 0 && utility.deltaTime(player.latestTime)  > (60000)) { // > 1 minute
+      player.returning = true;
+    } else {
+      player.returning = false;
+    };
     player.update(now);
   };
   loop(now) {
@@ -367,9 +372,6 @@ class Game {
           goldCookie[i].draw();
           goldCookie[i].update(i);
         };
-        if (player.returning) { // display when player returns
-          player.returns();
-        };
       } else if (game.state == 2) { // draw the shop screen
         game.drawBackground();
         utility.drawShop();
@@ -380,9 +382,12 @@ class Game {
         game.drawBackground();
         utility.drawMenuScreen();
       };
+      if (player.returning) { // display when player returns
+        player.returns();
+      };
       game.drawMenu();
     };
-    if (!lastTime || now - lastTime >= ((1000 - utility.tapRate) / (player.level[AUTOCLICKERS[0]] / 2))) { // auto click occasionally
+    if (!player.returning && (!lastTime || now - lastTime >= utility.tapRate)) { // auto click occasionally
       lastTime = now;
       cookie.click(false);
       if (player.level[CONTAINER_AUTOCLICK[0]] > 0) {
@@ -392,6 +397,7 @@ class Game {
     if (player.level[GOLDEN_COOKIE[0]] > 0 && Math.random() > cookie.goldChance) {
       goldCookie.push(new GoldCookie());
     };
+    if (game.state == 2) input.lastdY = input.dY;
     latestTime = Date.now();
     requestAnimationFrame(game.loop);
   };
@@ -434,9 +440,17 @@ class InputHandler {
           window.history.go(-1);
         };
       };
+    }
+    else {
+      player.latestTime = latestTime;
+      if (player.returning) {
+        player.returning = false;
+        player.money += player.returnWorth;
+        player.earned += player.returnWorth;
+        clickEffect.push(new Effects(utility.convert(player.returnWorth), true, "green", 1.5));
+      };
     };
     if (game.state == 1) { // player cookie screen
-      if (player.returning) player.returning = false;
       if (this.tap == false) { // if player didnt tap the screeen
         if (Math.pow(x - cookie.x, 2) + Math.pow(y - cookie.y, 2) < Math.pow(cookie.r + cookie.pulseCount, 2)) { // check if in the cookie
           cookie.click();
@@ -531,9 +545,9 @@ class InputHandler {
             goldCookie[j].click(j);
           };
         };
-        for (let i = 0; i < CONTAINERS.length; i++) {
-          if (yDown > CONTAINERS[i].y && yDown < CONTAINERS[i].y + CONTAINERS[i].length && xDown > CONTAINERS[i].x && xDown < CONTAINERS[i].x + CONTAINERS[i].length) { //check if container is tapped
-            CONTAINERS[i].sell();
+        for (let j = 0; j < CONTAINERS.length; j++) {
+          if (ongoingTouches[i].clientY > CONTAINERS[j].y && ongoingTouches[i].clientY < CONTAINERS[j].y + CONTAINERS[j].length && ongoingTouches[i].clientX > CONTAINERS[j].x && ongoingTouches[i].clientX < CONTAINERS[j].x + CONTAINERS[j].length) { //check if container is tapped
+            CONTAINERS[j].sell();
           };
         };
       };
@@ -568,7 +582,6 @@ class InputHandler {
       };
     };
     yDown = yUp;
-    if (game.state == 2) this.lastdY = this.dY;
   };
   longTouch() {
     //this.tap = false;
@@ -580,20 +593,14 @@ class InputHandler {
 class Player {
   constructor() {
     this.initPlayer();
-    this.lastPlaySeconds = utility.deltaTime(this.latestTime) / 1000;
-    this.playerReturned = false;
     this.earnedThen = this.earned; // previous earned
     this.earnedNow = 0; // earning now
     this.EPS = 0; // player earning per second
-    this.returnWorth = Math.ceil(this.level[MONEY_PER_CLICK[0]] * this.lastPlaySeconds);
-    if (this.level[IDLE_EARNING[0]] > 0 && utility.deltaTime(this.latestTime)  > (60000)) { // > 1 minute
-      this.returning = true;
-    } else {
-      this.returning = false;
-    };
     setInterval(this.calcEarning.bind(this), 1500);
   };
   returns() {
+    player.lastPlaySeconds = utility.deltaTime(player.latestTime) / 1000;
+    player.returnWorth = utility.multiply(cookie.worth * (player.lastPlaySeconds / (utility.tapRate / 1000)));
     ctxD.fillStyle = "black";
     ctxD.globalAlpha = "0.8";
     ctxD.fillRect(0, 0, game.width, game.height);
@@ -605,7 +612,7 @@ class Player {
     ctxD.textBaseline = "top";
     ctxD.font = game.textSize + "px calibri";
     ctxD.fillText("It's been", (game.width / 2), (game.height / 3.5));
-    ctxD.fillText((player.lastPlaySeconds / 60).toFixed(1), game.width / 2, (game.height / 3.5) + game.textSize);
+    ctxD.fillText(utility.round(player.lastPlaySeconds / 60), game.width / 2, (game.height / 3.5) + game.textSize);
     ctxD.fillText("minutes", game.width / 2, (game.height / 3.5) + (2 * game.textSize));
     ctxD.font = (game.textSize / 0.7) + "px calibri";
     ctxD.fillText("Earning", game.width / 2, (game.height / 3.5) + (3 * game.textSize));
@@ -613,13 +620,6 @@ class Player {
     ctxD.fillText("$" + utility.convert(player.returnWorth), game.width / 2, (game.height / 3.5) + (4.5 * game.textSize));
     ctxD.font = game.textSize / 2 + "px calibri";
     ctxD.fillText("Tap to Continue", game.width / 2, (game.height / 4) + (7 * game.textSize));
-    if (!this.playerReturned) {
-      // add money to the player
-      player.money += this.returnWorth;
-      player.earned += this.returnWorth;
-      clickEffect.push(new Effects(utility.convert(this.returnWorth), true));
-      this.playerReturned = true;
-    }
   };
   calcEarning() {
     this.earnedNow = player.earned; // get how much player has earned
@@ -630,24 +630,24 @@ class Player {
   };
   updateStats() {
     PLAYER_STATS = [
-      "Cookie Worth: " + utility.convert(utility.multiply(cookie.worth)),
-      "Cookie Explode Worth: " + utility.convert(utility.multiply(cookie.bonusWorth)),
-      "Container Worth: " + utility.convert(utility.multiply(CONTAINERS[0].worth)),
-      "Current Multiplier: " + utility.convert(utility.multiply(1)),
-      "Current Earnings: " + utility.convert(player.earned),
+      "Cookie Worth: $" + utility.convert(utility.multiply(cookie.worth)),
+      "Cookie Explode Worth: $" + utility.convert(utility.multiply(cookie.bonusWorth)),
+      "Container Worth: $" + utility.convert(utility.multiply(CONTAINERS[0].worth)),
+      "Current Multiplier: x" + utility.convert(utility.multiply(1)),
+      "Current Earnings: $" + utility.convert(player.earned),
       "Prestige: " + utility.convert(player.prestige),
       "Total Prestiges: " + utility.convert(player.timesPrestiged),
-      "Total Money Spent: " + utility.convert(player.moneySpent),
-      "Total Earnings: " + utility.convert(player.totalEarnings),
-      "Highest Earnings Per Second: " + utility.convert(player.bestEPS),
+      "Total Money Spent: $" + utility.convert(player.moneySpent),
+      "Total Earnings: $" + utility.convert(player.totalEarnings),
+      "Highest Earnings Per Second: $" + utility.convert(player.bestEPS),
       "Clicked Cookie: " + utility.convert(player.cookieClicked),
       "Cookie Exploded: " + utility.convert(player.cookieExploded),
       "Containers sold: " + utility.convert(player.containersSold),
       "Golden Cookies Clicked: " + utility.convert(player.goldCookieClicked),
       "Upgrades Purchased: " + utility.convert(player.upgradesPurchased),
-      "Most Expensive Container Sold: " + utility.convert(player.highestContainer),
+      "Most Expensive Container Sold: $" + utility.convert(player.highestContainer),
       "Most Auto Clickers: " + player.bestAutoclickers,
-      "Highest Stacking Bonus: " + player.bestStackingBonus,
+      "Highest Stacking Bonus: x" + player.bestStackingBonus,
       "Longest Stacking Bonus: " + player.longestStackingBonus + " seconds",
       "Times Activated Frenzy: " + player.frenzyActivated,
       "Longest Frenzy: " + player.longestFrenzy + " seconds",
@@ -742,7 +742,6 @@ class Player {
     this.bestAutoclickers = utility.parseFromLocalStorage("playerBestAutoclickers", 0);
     this.bestStackingBonus = utility.parseFromLocalStorage("playerBestStackingBonus", 0);
     this.longestStackingBonus = utility.parseFromLocalStorage("playerLongestStackingBonus", 0);
-    //this.longestStackingBonus = 0;
     this.frenzyActivated = utility.parseFromLocalStorage("playerFrenzyActivated", 0);
     this.longestFrenzy = utility.parseFromLocalStorage("playerLongestFrenzy", 0);
   };
@@ -958,7 +957,7 @@ class Utility {
     if (player.level[AUTOCLICKERS[0]] > 0) this.autoTap = true;
     else this.autoTap = false;
     if (player.level[AUTOCLICKERS[0]] > player.bestAutoclickers) player.bestAutoclickers = player.level[AUTOCLICKERS[0]];
-    this.tapRate = 0; // future prestige talent
+    this.tapRate = 1000 / (player.level[AUTOCLICKERS[0]] / 2);
     if (player.level[EXPLODE_FRENZY[0]] > 0) this.frenzy = true;
     else this.frenzy = false;
     this.frenzyReset = (10 - player.level[FRENZY_COOLDOWN[0]]) * 60000; // frenzy reset time in milliseconds, starting from 10 minutes
@@ -1090,19 +1089,17 @@ class Utility {
         if (dTime > player.longestFrenzy) player.longestFrenzy = dTime;
       };
     } else { // frenzy mode is on cooldown
-      if (utility.deltaTime(utility.frenzyFinish) >= utility.frenzyReset) {
+      if (!utility.canFrenzy && utility.deltaTime(utility.frenzyFinish) >= utility.frenzyReset) {
         utility.canFrenzy = true;
       };
     };
-
-    if (utility.time > 0) { // count time between clicks
-      utility.time--;
-    } else utility.clickCount = 1;
-    if (utility.clickCount > 1 && utility.time <= 0) {
+    if (utility.time > 0) utility.time--; // bonus time should decrease
+    if (utility.clickCount > 1 && utility.time <= 0) { // bonus should end
       let dTime = utility.deltaTime(utility.runningClickCount) / 1000;
-      if (utility.clickCount > player.bestStackingBonus) player.bestStackingBonus = utility.clickCount;
+      if (utility.clickCount > player.bestStackingBonus) player.bestStackingBonus = utility.round(utility.clickCount);
       if (dTime > player.longestStackingBonus) player.longestStackingBonus = dTime;
       utility.runningClickCount = 0;
+      utility.clickCount = 1;
     };
     if (utility.prestigeScreen) utility.prestigeConfirm = true;
     this.prestigeFor = this.prestigeAmount(12, -6, 0.15) + this.prestigeAmount(21, 6, 0.16) + this.prestigeAmount(30, 15, 0.17) + this.prestigeAmount(39, 24, 0.18) + this.prestigeAmount(48, 33, 0.19) + this.prestigeAmount(60, 42, 0.2) +
