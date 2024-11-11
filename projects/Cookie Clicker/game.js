@@ -1154,7 +1154,7 @@ class Cookie {
     this.pulseSlow = 1.05 - (player.level[PULSE_SLOW[0]] / PULSE_SLOW[7]);
     this.pulseLimit = this.r * (3 - (3 * (player.level[PULSE_LIMIT[0]] / (PULSE_LIMIT[7] + 3))));
     this.worth = 1 + (player.level[MONEY_PER_CLICK[0]] / 10);
-    this.worth = 77777777777; // testing purposes
+    //this.worth = 77777777777; // testing purposes
     this.bonusWorth = this.worth * (2 + (player.level[EXPLODE_BONUS[0]] / 2));
     this.goldChance = (9999 - player.level[GOLDEN_COOKIE_CHANCE[0]]) / 10000;
     this.goldBonus = 50;
