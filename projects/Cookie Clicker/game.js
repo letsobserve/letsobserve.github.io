@@ -275,23 +275,18 @@ class Game {
       ctxD.textBaseline = "middle";
       ctxD.font = this.textSize / 1.5 + "px calibri";
       ctxD.globalAlpha = 0.5;
-      ctxD.fillText("Shop", this.width / 2, 2.5 * this.textSize);
-      ctxD.textAlign = "right";
-      ctxD.fillText("Prestige", this.width - 10, 2.5 * this.textSize);
-      ctxD.textAlign = "left";
-      ctxD.fillText("Menu", 10, 2.5 * this.textSize);
+      ctxD.fillText("Admin", this.width / 6, 2.5 * this.textSize);
+      ctxD.fillText("Stock", this.width / 2, 2.5 * this.textSize);
+      ctxD.fillText("R & D", (5 * this.width) / 6, 2.5 * this.textSize);
       ctxD.globalAlpha = 1;
       if (game.state == 2) { // shop screen
-        ctxD.textAlign = "center";
-        ctxD.fillText("Shop", this.width / 2, 2.5 * this.textSize);
+        ctxD.fillText("Stock", this.width / 2, 2.5 * this.textSize);
       };
       if (game.state == 3) { // prestige screen
-        ctxD.textAlign = "right";
-        ctxD.fillText("Prestige", this.width - 10, 2.5 * this.textSize);
+        ctxD.fillText("R & D", (5 * this.width) / 6, 2.5 * this.textSize);
       };
       if (game.state == 4) { // menu screen
-        ctxD.textAlign = "left";
-        ctxD.fillText("Menu", 10, 2.5 * this.textSize);
+        ctxD.fillText("Admin", this.width / 6, 2.5 * this.textSize);
       };
       ctxD.textAlign = "left";
       ctxD.textBaseline = "top";
@@ -331,6 +326,7 @@ class Game {
     player = new Player;
     utility.setUgrades();
     cookie.setUgrades();
+    game.update();
   };
   update() {
     utility.update();
@@ -351,7 +347,7 @@ class Game {
     } else {
       player.returning = false;
     };
-    player.update(now);
+    player.update();
   };
   loop(now) {
     now = Date.now();
@@ -584,12 +580,12 @@ class InputHandler {
       };
     } else {
       if (yDiff > 0) { // up swipe
-        this.dYSmoothing = yDiff / 1.5;
+        this.dYSmoothing += yDiff / 250;
       } else { // down swipe
-        this.dYSmoothing = yDiff / 1.5;
+        this.dYSmoothing += yDiff / 250;
       };
     };
-    yDown = yUp;
+    //yDown = yUp;
   };
   longTouch() {
     //this.tap = false;
@@ -608,8 +604,8 @@ class Player {
   };
   returns() {
     player.lastPlaySeconds = utility.deltaTime(player.latestTime) / 1000;
-    player.lastPlayMinutes = Math.floor(player.lastPlaySeconds / 60);
-    player.lastPlayHours = Math.floor(player.lastPlayMinutes / 60);
+    player.lastPlayHours = Math.floor(player.lastPlaySeconds / 3600);
+    player.lastPlayMinutes = Math.floor(player.lastPlaySeconds / 60) - (player.lastPlayHours * 3600);
     player.lastPlaySecondsRemainder = (player.lastPlayHours * 3600) + (player.lastPlayMinutes * 60);
     player.lastPlayTime = player.lastPlayHours + "h " + player.lastPlayMinutes + "m " + Math.floor(player.lastPlaySeconds - player.lastPlaySecondsRemainder) + "s";
     player.returnWorth = utility.multiply(cookie.worth * (player.lastPlaySeconds / (utility.tapRate / 1000)));
@@ -687,7 +683,7 @@ class Player {
     if (!everything) {
       this.prestige += Math.floor(utility.prestigeFor);
       player.timesPrestiged++;
-      player.update(now);
+      game.update();
       player.initPlayer();
       utility.setUgrades();
       game.state = 1;
@@ -757,6 +753,8 @@ class Player {
     this.longestStackingBonus = utility.parseFromLocalStorage("playerLongestStackingBonus", 0);
     this.frenzyActivated = utility.parseFromLocalStorage("playerFrenzyActivated", 0);
     this.longestFrenzy = utility.parseFromLocalStorage("playerLongestFrenzy", 0);
+    this.secretIngredients = utility.parseFromLocalStorage("playerSecretIngredients", 0);
+    this.secretIngredientsLeft = utility.parseFromLocalStorage("playerSecretIngredientsLeft", 0);
   };
   update(now) { // set up a save function
     localStorage.setItem("playerMoney", player.money);
@@ -780,6 +778,8 @@ class Player {
     localStorage.setItem("playerLongestStackingBonus", player.longestStackingBonus);
     localStorage.setItem("playerFrenzyActivated", player.frenzyActivated);
     localStorage.setItem("playerLongestFrenzy", player.longestFrenzy);
+    localStorage.setItem("playerSecretIngredients", player.secretIngredients);
+    localStorage.setItem("playerSecretIngredientsLeft", player.secretIngredientsLeft);
   };
 };
 
@@ -842,18 +842,14 @@ class Utility {
       ctxD.fillText("Frenzy", game.width / 2, this.frenzyY);
     };
     if (utility.rolling) { // draw the rolling multiplier
-      // bounding ellipse
       ctxD.fillStyle = "lightgrey";
-      ctxD.beginPath();
-      ctxD.arc(this.clickCountX, this.clickCountY, this.clickCountR * 1.15, 0, 2 * Math.PI);
-      ctxD.fill();
-      ctxD.fillStyle = "white";
       ctxD.beginPath();
       ctxD.arc(this.clickCountX, this.clickCountY, this.clickCountR, 0, 2 * Math.PI);
       ctxD.fill();
       if (this.clickCount > 0) {
-        //ctxD.globalAlpha = 1.05 - (utility.time / utility.rollTime);
-        ctxD.fillStyle = "rgb(0,255,0)";
+        let r = 255 * (1 - (utility.time / utility.rollTime));
+        let g = 255 * (utility.time / utility.rollTime);
+        ctxD.fillStyle = "rgb("+r+","+g+",0)";
         ctxD.beginPath();
         ctxD.translate(this.clickCountX, this.clickCountY);
         ctxD.rotate(-(90 * Math.PI) / 180);
@@ -865,11 +861,15 @@ class Utility {
         ctxD.rotate((90 * Math.PI) / 180);
         ctxD.translate(-this.clickCountX, -this.clickCountY);
       };
+      ctxD.fillStyle = "white";
+      ctxD.beginPath();
+      ctxD.arc(this.clickCountX, this.clickCountY, this.clickCountR * 0.8, 0, 2 * Math.PI);
+      ctxD.fill();
       ctxD.globalAlpha = 1;
       ctxD.fillStyle = "black";
       ctxD.textAlign = "center";
       ctxD.textBaseline = "middle";
-      ctxD.font = 0.6 * game.textSize + "px calibri";
+      ctxD.font = 0.45 * game.textSize + "px calibri";
       // counter
       ctxD.strokeStyle = "darkergrey";
       ctxD.lineWidth = 5;
@@ -1155,7 +1155,7 @@ class Cookie {
     this.pulseLimit = this.r * (3 - (3 * (player.level[PULSE_LIMIT[0]] / (PULSE_LIMIT[7] + 3))));
     this.worth = 1 + (player.level[MONEY_PER_CLICK[0]] / 10);
     //this.worth = 77777777777; // testing purposes
-    this.bonusWorth = this.worth * (2 + (player.level[EXPLODE_BONUS[0]] / 2));
+    this.bonusWorth = this.worth * (2 + (player.level[EXPLODE_BONUS[0]] * 1.5));
     this.goldChance = (9999 - player.level[GOLDEN_COOKIE_CHANCE[0]]) / 10000;
     this.goldBonus = 50;
     this.goldenTime = 100 + (player.level[GOLDEN_COOKIE_TIME[0]] * 25);
@@ -1504,6 +1504,20 @@ class Button {
     for (let i = 0; i < this.description.length; i++) {
       ctxD.fillText(this.description[i], this.x + (1.1 * this.size), this.y + ((2.6 + i) * this.size / 6) - input.dY); // the button description
     };
+  };
+};
+
+class Talent {
+  constructor() {
+    this.width = game.frameW;
+    this.height = game.frameH;
+    this.index = 1;
+    this.level = 1;
+    this.title = "Test";
+    this.description = "Test Description";
+  };
+  drawTalent() {
+
   };
 };
 
