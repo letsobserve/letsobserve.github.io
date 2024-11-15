@@ -343,7 +343,7 @@ class Game {
       };
     };
     if (player.level[IDLE_EARNING[0]] > 0 && utility.deltaTime(player.latestTime)  > (60000)) { // no activity for 1 minute+
-      //player.returning = true;
+      player.returning = true;
     } else {
       player.returning = false;
     };
