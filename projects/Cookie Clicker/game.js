@@ -1096,7 +1096,7 @@ class Utility {
   };
   convert(number) { // number converter
     if (number < 1e3) return utility.round(number);
-    if (number >- 1e3 && number < 1e6) return +(number / 1e3).toFixed(3) + units[0];
+    if (number >= 1e3 && number < 1e6) return +(number / 1e3).toFixed(3) + units[0];
     if (number >= 1e6 && number < 1e9) return +(number / 1e6).toFixed(3) + units[1];
     if (number >= 1e9 && number < 1e12) return +(number / 1e9).toFixed(3) + units[2];
     if (number >= 1e12 && number < 1e15) return +(number / 1e12).toFixed(3) + units[3];
