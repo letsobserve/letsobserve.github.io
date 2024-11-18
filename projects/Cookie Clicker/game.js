@@ -993,7 +993,7 @@ class Utility {
     ctxD.fillText("increasing your earnings by: x" +  utility.convert(utility.prestigeBonus), game.width / 2, this.prestigeButtonY + (2.75 * game.textSize));
     ctxD.fillStyle = "black";
     //ctxD.font  = game.textSize + "px calibri";
-    ctxD.fillText("Prestige to collect: " + utility.convert(Math.floor(utility.prestigeFor)) + " points of prestige.", game.width / 2, this.prestigeButtonY + (2.25 * this.prestigeButtonHeight / 3)); // prestige button text
+    ctxD.fillText("Tap here to collect: " + utility.convert(Math.floor(utility.prestigeFor)) + " prestige", game.width / 2, this.prestigeButtonY + (2.25 * this.prestigeButtonHeight / 3)); // prestige button text
     ctxD.fillRect(8, this.prestigeButtonY + this.prestigeButtonHeight - game.textSize - 2, game.width - 16, (game.textSize / 2) + 4);
     ctxD.fillStyle = "lightgrey";
     ctxD.fillRect(10, this.prestigeButtonY + this.prestigeButtonHeight - game.textSize, game.width - 20, game.textSize / 2);
@@ -1255,7 +1255,7 @@ class Cookie {
     this.pulseSlow = 1.05 - (player.level[PULSE_SLOW[0]] / PULSE_SLOW[7]);
     this.pulseLimit = this.r * (3 - (3 * (player.level[PULSE_LIMIT[0]] / (PULSE_LIMIT[7] + 3))));
     this.worth = 1 + (player.level[MONEY_PER_CLICK[0]] / 10);
-    this.worth = 77777777777; // testing purposes
+    //this.worth = 77777777777; // testing purposes
     this.bonusWorth = this.worth * (2 + (player.level[EXPLODE_BONUS[0]] * 1.5));
     this.goldChance = (9999 - player.level[GOLDEN_COOKIE_CHANCE[0]]) / 10000;
     this.goldBonus = 50;
