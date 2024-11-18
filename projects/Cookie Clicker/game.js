@@ -182,9 +182,10 @@ const DOUBLE_PRESTIGE_BONUS = [1, 0, 8,
 "Double Prestige Bonus", "Double the bonus of each point of prestige."];
 
 const NUMBER_OF_TALENTS = 2; // total talents
+const NUMBER_OF_ACHIEVEMENTS = 7; // total achievements
 
 const units = [ // list of money units
-  "K",//"Thousands",
+  "K",//"Thousand",
   "M",//"Million",
   "B",//"Billion",
   "T",//"Trillion",
@@ -192,18 +193,18 @@ const units = [ // list of money units
   "Q",//"Quintillion",
   "s",//"Sextillion",
   "S",//"Septillion",
-  "o",//"Octillion",
+  "O",//"Octillion",
   "N",//"Nonillion",
-  "d",//"Decillion",
-  "U",//"Undecillion",
-  "D",//"Duodecillion",
-  "Td",//"Tredecillion",
-  "qd",//"Quattuordecillion",
-  "Qd",//"Quindecillion",
-  "sd",//"Sexdecillion",
-  "Sd",//"Septdecillion",
-  "Od",//"Octodecillion",
-  "Nd",//"Novemdecillion",
+  "D",//"Decillion",
+  "uD",//"Undecillion",
+  "dD",//"Duodecillion",
+  "tD",//"Tredecillion",
+  "qD",//"Quattuordecillion",
+  "QD",//"Quindecillion",
+  "sD",//"Sexdecillion",
+  "SD",//"Septdecillion",
+  "oD",//"Octodecillion",
+  "nD",//"Novemdecillion",
   "V",//"Vigintillion",
   "uV",//"Unvigintillion",
   "dV",//"Duovigintillion",
@@ -212,11 +213,12 @@ const units = [ // list of money units
   "QV",//"Quinvigintillion",
   "sV",//"Sexvigintillion",
   "SV",//"Septvigintillion",
-  "OV",//"Octovigintillion",
-  "NV",//"Novemvigintillion",
+  "oV",//"Octovigintillion",
+  "nV",//"Novemvigintillion",
   "TG",//"Trigintillion"
 ];
 let CONTAINERS = [];
+let ACHIEVEMENTS_EARNED = [];
 let PLAYER_STATS = [];
 let lastTime = 0;
 let now = new Date();
@@ -305,7 +307,7 @@ class Game {
       ctxD.fillText("$" + utility.convert(player.money), 5, 5); // draw money
       ctxD.font = game.textSize / 2 + "px calibri";
       ctxD.textAlign = "right";
-      ctxD.fillText("$" + utility.convert(player.EPS) + "/s | Ingredients: " + player.secretIngredients, game.width - 5, 0.25*game.textSize); // draw the money per second
+      ctxD.fillText("$" + player.EPS + "/s | " + player.secretIngredients, game.width - 10, 0.25*game.textSize); // draw the money per second
 
       // for (let i = 0; i < clickEffect.length; i++) { // draw the earned money
       //   ctxD.textAlign = "center";
@@ -762,7 +764,8 @@ class Player {
     this.totalEarnings = utility.parseFromLocalStorage("playerTotalEarnings", 0);
     this.level = [];
     this.cost = [];
-    try { // get the player details
+    this.getLevel = localStorage.getItem("playerUpgrades");
+    if (this.getLevel != null) { // the player has a previous save
       this.getLevel = localStorage.getItem("playerUpgrades").split(",");
       for (let i = 0; i < NUMBER_OF_UPGRADES; i++) {
         let temp = parseInt(this.getLevel[i]);
@@ -771,7 +774,7 @@ class Player {
         };
         this.level.push(temp);
       };
-    } catch { // set new player
+    } else { // the player doesnt have a previous save
       for (let i = 0; i < NUMBER_OF_UPGRADES; i++) {
         this.level.push(0);
       };
@@ -782,7 +785,8 @@ class Player {
       //this.cost[item.index] = 1; // testing purposes
     });
     this.talent = [];
-    try {
+    this.getTalent = localStorage.getItem("playerTalents");
+    if (this.getTalent != null) {
       this.getTalent = localStorage.getItem("playerTalents").split(",");
       for (let i = 0; i < NUMBER_OF_TALENTS; i++) {
         let temp = parseInt(this.getTalent[i]);
@@ -791,9 +795,25 @@ class Player {
         };
         this.talent.push(temp);
       };
-    } catch {
+    } else {
       for (let i = 0; i < NUMBER_OF_TALENTS; i++) {
         this.talent.push(0);
+      };
+    };
+    this.achievementsEarned = [];
+    this.getAchievements = localStorage.getItem("playerAchievements");
+    if (this.getAchievements != null) {
+      this.getAchievements = localStorage.getItem("playerAchievements").split(",");
+      for (let i = 0; i < NUMBER_OF_ACHIEVEMENTS; i++) {
+        let temp = parseInt(this.getAchievements[i]);
+        if (!Number.isInteger(temp)) { // if storage doesnt contain enough upgrades
+          temp = 0;
+        };
+        this.achievementsEarned.push(temp);
+      };
+    } else {
+      for (let i = 0; i < NUMBER_OF_ACHIEVEMENTS; i++) {
+        this.achievementsEarned.push(0);
       };
     };
     this.latestTime = utility.parseFromLocalStorage("playerLatestTime", game.time);
@@ -813,6 +833,13 @@ class Player {
     this.frenzyActivated = utility.parseFromLocalStorage("playerFrenzyActivated", 0);
     this.longestFrenzy = utility.parseFromLocalStorage("playerLongestFrenzy", 0);
     this.secretIngredients = utility.parseFromLocalStorage("playerSecretIngredients", 0);
+    this.cookieWorthAchieve = 1000000;
+    this.autoClickerAchieve = 60;
+    this.stackingBonusAchieve = 99;
+    this.stackingBonusTimeAchieve = 900;
+    this.earningsAchieve = 1e33;
+    this.frenzyTimeAchieve = 300;
+    this.spendAchieve = 1e18;
   };
   update(now) { // set up a save function
     localStorage.setItem("playerMoney", player.money);
@@ -827,7 +854,7 @@ class Player {
     localStorage.setItem("playerGoldCookieClicked", player.goldCookieClicked);
     localStorage.setItem("playerUpgradesPurchased", player.upgradesPurchased);
     localStorage.setItem("playerSpent", player.spent);
-    localStorage.setItem("playerPrestiges", player.prestiges);
+    localStorage.setItem("playerPrestiges", player.timesPrestiged);
     localStorage.setItem("playerBestEPS", player.bestEPS);
     localStorage.setItem("playerFrenzyFinishedTime", utility.frenzyFinish);
     localStorage.setItem("playerHighestContainer", player.highestContainer);
@@ -982,7 +1009,7 @@ class Utility {
     ctxD.font = game.textSize + "px calibri";
     ctxD.fillText("Talents (Coming Soon)", game.width / 2, this.prestigeButtonY + this.prestigeButtonHeight + game.textSize);
     for (let i = 0; i < TALENT_BUTTONS.length; i++) {
-      //TALENT_BUTTONS[i].drawTalent();
+      TALENT_BUTTONS[i].drawTalent();
     };
     if (utility.prestigeConfirm) { // prestige confirm screen
       ctxD.fillStyle = "black";
@@ -1079,14 +1106,14 @@ class Utility {
   };
   upgrade(index) {
     if (player.level[SHOP_BUTTONS[index].requirement] < 1) return;
-    if (player.money < player.cost[SHOP_BUTTONS[index].index]) return;
-    if (SHOP_BUTTONS[index].oneTimePurchase && player.level[SHOP_BUTTONS[index].index] > 0) return;
-    if (player.level[SHOP_BUTTONS[index].index] >= SHOP_BUTTONS[index].maxLevel) return;
-    player.money -= player.cost[SHOP_BUTTONS[index].index];
-    player.level[SHOP_BUTTONS[index].index]++;
+    if (player.money < player.cost[index]) return;
+    if (SHOP_BUTTONS[index].oneTimePurchase && player.level[index] > 0) return;
+    if (player.level[index] >= SHOP_BUTTONS[index].maxLevel) return;
+    player.money -= player.cost[index];
+    player.level[index]++;
     player.purchased++;
-    player.spent += player.cost[SHOP_BUTTONS[index].index];
-    clickEffect.push(new Effects(utility.convert(player.cost[SHOP_BUTTONS[index].index]), false, "red", 1.2));
+    player.spent += player.cost[index];
+    clickEffect.push(new Effects(utility.convert(player.cost[index]), false, "red", 1.2));
     if (index == GOLDEN_COOKIE[0]) { // purchasing golden cookie, give a free gold cookie
       goldCookie.push(new GoldCookie());
     };
@@ -1096,7 +1123,7 @@ class Utility {
   };
   convert(number) { // number converter
     if (number < 1e3) return utility.round(number);
-    if (number >= 1e3 && number < 1e6) return +(number / 1e3).toFixed(3) + units[0];
+    if (number >- 1e3 && number < 1e6) return +(number / 1e3).toFixed(3) + units[0];
     if (number >= 1e6 && number < 1e9) return +(number / 1e6).toFixed(3) + units[1];
     if (number >= 1e9 && number < 1e12) return +(number / 1e9).toFixed(3) + units[2];
     if (number >= 1e12 && number < 1e15) return +(number / 1e12).toFixed(3) + units[3];
@@ -1228,7 +1255,7 @@ class Cookie {
     this.pulseSlow = 1.05 - (player.level[PULSE_SLOW[0]] / PULSE_SLOW[7]);
     this.pulseLimit = this.r * (3 - (3 * (player.level[PULSE_LIMIT[0]] / (PULSE_LIMIT[7] + 3))));
     this.worth = 1 + (player.level[MONEY_PER_CLICK[0]] / 10);
-    //this.worth = 77777777777; // testing purposes
+    this.worth = 77777777777; // testing purposes
     this.bonusWorth = this.worth * (2 + (player.level[EXPLODE_BONUS[0]] * 1.5));
     this.goldChance = (9999 - player.level[GOLDEN_COOKIE_CHANCE[0]]) / 10000;
     this.goldBonus = 50;
