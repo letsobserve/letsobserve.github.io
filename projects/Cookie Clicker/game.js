@@ -377,19 +377,7 @@ class Game {
         game.drawStartScreen();
       } else if (game.state == 1) { // draw the cookie screen
         game.drawBackground();
-        cookie.draw(cookie.x, cookie.xV, cookie.y, cookie.yV, cookie.r, cookie.pulseCount, cookie.color(), 0);
-        for (let i = 0; i < goldCookie.lenght; i++) {
-          goldCookie[i].draw(goldCookie.rX, 0, goldCookie.rY, 0, goldCookie.rR, 0, 3, 0);
-          goldCookie[i].goldCount--;
-        };
-        utility.drawDynamic();
-        for (let i = 0; i < CONTAINERS.length; i++) {
-          CONTAINERS[i].draw();
-        };
-        for (let i = 0; i < goldCookie.length; i++) {
-          goldCookie[i].draw();
-          goldCookie[i].update(i);
-        };
+        utility.drawCookieScreen();
       } else if (game.state == 2) { // draw the shop screen
         game.drawBackground();
         utility.drawShop();
@@ -923,18 +911,19 @@ class Utility {
     const value = parseInt(localStorage.getItem(key));
     return Number.isInteger(value) ? value : defaultValue;
   }
-  drawDynamic() { // draw the dynamic cookie screen
+  drawCookieScreen() { // draw the dynamic cookie screen
     ctxD.textAlign = "center";
     ctxD.fillStyle = "black";
     ctxD.textAlign = "left";
     ctxD.textBaseline = "top";
     ctxD.font = game.textSize + "px calibri";
-    for (let i = 0; i < explodingCookie.length; i++) {
+    for (let i = 0; i < explodingCookie.length; i++) { // draw exploding cookie
       explodingCookie[i].draw(explodingCookie[i].x + (explodingCookie[i].r / 3), explodingCookie[i].xV, explodingCookie[i].y + (explodingCookie[i].r / 3), explodingCookie[i].yV, explodingCookie[i].r / 2, explodingCookie[i].pulseCount, explodingCookie[i].color(), 0);
       // move cookies in random direction
       explodingCookie[i].xV += explodingCookie[i].dX * 30;
       explodingCookie[i].yV += explodingCookie[i].dY * 30;
     };
+    cookie.draw(cookie.x, cookie.xV, cookie.y, cookie.yV, cookie.r, cookie.pulseCount, cookie.color(), 0);
     if (this.frenzy) { // draw the frenzy bar
       ctxD.fillStyle = "white";
       if (this.canFrenzy) ctxD.fillStyle = "green";
@@ -991,6 +980,14 @@ class Utility {
       ctxD.fillText("x " + utility.round(utility.clickCount), this.clickCountX, this.clickCountY);
       ctxD.lineWidth = 1;
     };
+    for (let i = 0; i < goldCookie.lenght; i++) { // draw any golden cookie
+      goldCookie[i].draw(goldCookie.rX, 0, goldCookie.rY, 0, goldCookie.rR, 0, 3, 0);
+      goldCookie[i].goldCount--;
+    };
+    for (let i = 0; i < goldCookie.length; i++) {
+      goldCookie[i].draw();
+      goldCookie[i].update(i);
+    };
     if (player.level[ADD_CONTAINER[0]] > 0) { //  draw the container table
       ctxD.fillStyle = "white";
       ctxD.fillRect(0, this.containerTableY, game.width, game.height);
@@ -1011,6 +1008,9 @@ class Utility {
       };
       ctxD.fillText(txt, 0.5 * game.width, this.containerTableY + (1.15 * game.textSize));
       ctxD.globalAlpha = 1;
+      for (let i = 0; i < CONTAINERS.length; i++) {
+        CONTAINERS[i].draw();
+      };
     };
   };
   drawShop() { // draw the dynamic upgrade screen
@@ -1457,7 +1457,6 @@ class Container {
     this.position = position;
     this.level = player.level[level];
     this.x = (position * game.width) / 5;
-    //this.y = game.height - (2.5 * game.frameW);
     this.y = utility.containerTableY - game.frameH;
     this.length = game.frameW * 1.5;
     this.filled = 0;
@@ -1538,6 +1537,10 @@ class Container {
       if (player.highestContainer < amount) player.highestContainer = amount;
       //clickEffect.push(new Effects(utility.convert(amount), true, clr, 1.5));
     };
+  };
+  upgrade(type) {
+    if (!this.active) return;
+    console.log("check");
   };
   update() {
     this.setUgrades();
