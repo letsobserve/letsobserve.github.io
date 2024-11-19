@@ -377,12 +377,12 @@ class Game {
         game.drawStartScreen();
       } else if (game.state == 1) { // draw the cookie screen
         game.drawBackground();
-        utility.drawDynamic();
         cookie.draw(cookie.x, cookie.xV, cookie.y, cookie.yV, cookie.r, cookie.pulseCount, cookie.color(), 0);
         for (let i = 0; i < goldCookie.lenght; i++) {
           goldCookie[i].draw(goldCookie.rX, 0, goldCookie.rY, 0, goldCookie.rR, 0, 3, 0);
           goldCookie[i].goldCount--;
         };
+        utility.drawDynamic();
         for (let i = 0; i < CONTAINERS.length; i++) {
           CONTAINERS[i].draw();
         };
@@ -494,6 +494,29 @@ class InputHandler {
           utility.canFrenzy = false;
           utility.frenzyStart = Date.now();
           player.frenzyActivated++;
+        };
+      };
+      if (ADD_CONTAINER[0] > 0) { // upgrade containers button is on screen
+        if (y > utility.containerTableY + game.textSize && y < utility.containerTableY + (2 * game.textSize)) { // tapped on upgrade containers
+          if (!utility.containerUpgrading) { // container upgrades active
+            utility.containerTableY -= game.height / 4;
+            utility.containerUpgrading = true;
+          } else { // close the container upgrade screen
+            utility.containerTableY += game.height / 4;
+            utility.containerUpgrading = false;
+            for (let i = 0; i < CONTAINERS.length; i++) { // turn off each focus button
+              CONTAINERS[i].focused = false;
+            };
+          };
+        };
+        if (y > CONTAINERS[0].focusY && y < CONTAINERS[0].focusY + CONTAINERS[0].focusLength) { // tapped in container focus area
+          for (let i = 0; i < CONTAINERS.length; i++) { // check each focus button
+            if (x > CONTAINERS[i].focusX && x < CONTAINERS[i].focusX + CONTAINERS[i].focusLength) { // check x for each focus button
+              if (!CONTAINERS[i].active) return; // container not active
+              if (CONTAINERS[i].focused) CONTAINERS[i].focused = false;
+              else CONTAINERS[i].focused = true;
+            };
+          };
         };
       };
     };
@@ -893,6 +916,8 @@ class Utility {
     this.prestigeButtonY = (game.textSize * 2) + 10;
     this.prestigeButtonWidth = game.width;
     this.prestigeButtonHeight = game.height / 4;
+    this.containerTableY = game.height - (1.5 * game.frameH);
+    this.containerUpgrading = false;
   };
   parseFromLocalStorage(key, defaultValue) {
     const value = parseInt(localStorage.getItem(key));
@@ -968,7 +993,24 @@ class Utility {
     };
     if (player.level[ADD_CONTAINER[0]] > 0) { //  draw the container table
       ctxD.fillStyle = "white";
-      ctxD.fillRect(0, game.height - ((2 * game.frameH) / 3), game.width, (2 * game.frameH) / 3);
+      ctxD.fillRect(0, this.containerTableY, game.width, game.height);
+      ctxD.fillStyle = "lightgrey";
+      ctxD.fillRect(0, this.containerTableY + game.textSize, game.width, game.textSize);
+      ctxD.fillStyle = "black";
+      ctxD.textAlign = "center";
+      ctxD.textBaseline = "top";
+      ctxD.font = game.textSize / 1.5 + "px calibri";
+      let txt = "";
+      if (utility.containerUpgrading) { // container upgrade section
+        txt = "Close Container Upgrades";
+        ctxD.globalAlpha = 1;
+        ctxD.fillText("Select a container to upgrade", 0.5 * game.width, game.height - game.textSize);
+      } else { // container upgrade button
+        txt = "Open Container Upgrades";
+        ctxD.globalAlpha = 0.5;
+      };
+      ctxD.fillText(txt, 0.5 * game.width, this.containerTableY + (1.15 * game.textSize));
+      ctxD.globalAlpha = 1;
     };
   };
   drawShop() { // draw the dynamic upgrade screen
@@ -1415,7 +1457,8 @@ class Container {
     this.position = position;
     this.level = player.level[level];
     this.x = (position * game.width) / 5;
-    this.y = game.height - (1.75 * game.frameW);
+    //this.y = game.height - (2.5 * game.frameW);
+    this.y = utility.containerTableY - game.frameH;
     this.length = game.frameW * 1.5;
     this.filled = 0;
     this.filling = 0;
@@ -1424,6 +1467,10 @@ class Container {
     this.sinSwitch = false;
     this.increasing = false;
     this.selling = false;
+    this.focused = false;
+    this.focusX = this.x + (0.25 * this.length);
+    this.focusY = this.y + this.length + (1.5 * game.textSize);
+    this.focusLength = 0.5 * this.length;
     this.setUgrades();
   };
   setUgrades() {
@@ -1438,6 +1485,8 @@ class Container {
   };
   draw() {
     if (!this.active) return;
+    this.y = utility.containerTableY - game.frameH;
+    this.focusY = this.y + this.length + (1.5 * game.textSize);
     ctxD.globalAlpha = "0.3";
     ctxD.fillStyle = "black";
     ctxD.beginPath();
@@ -1460,12 +1509,11 @@ class Container {
       this.x, this.y + (this.length), // destination x + y
       this.length, this.length  * -(this.filling / this.capacity) // drawn width + height
     );
-     ctxD.globalAlpha = "1";
-     // the container text
-    // ctxD.fillStyle = "black";ctxD.textAlign = "center";ctxD.textBaseline = "bottom";ctxD.font = (game.textSize / 1.5) + "px calibri";
-    // draw the name and capacity of the container
-    // ctxD.fillText(this.filled, this.x + (this.length / 2), game.height - game.textSize * 0.7);
-    // ctxD.fillText("/" + this.capacity, this.x + (this.length / 2), game.height - 10);
+    // container upgrading focus selector
+    ctxD.globalAlpha = "1";
+    if (this.focused) ctxD.fillStyle = "green";
+    else ctxD.fillStyle = "lightgrey";
+    ctxD.fillRect(this.focusX, this.focusY, this.focusLength, this.focusLength);
   };
   fill() {
     if (!this.active) return;
