@@ -56,7 +56,7 @@ const ADD_CONTAINER = [6, 0, 4,
 const AUTOCLICKERS = [7, 8, 2,
  "Automation", "The cookie will be auto tapped periodically.",
  8500, 0.03,
- 50, false,
+ 60, false,
  -1];
 const IDLE_EARNING = [8, 5, 4,
 "Passive Income", "Earn money even while away.",
@@ -146,19 +146,19 @@ EXPLODE_FRENZY[0]];
 const NUMBER_OF_UPGRADES = 24; // total shop upgrades
 
 const CONTAINER_LEVEL = [0, 10, 2,
-  "Level", 15000, 0.2,
+  "Level", 1630.714, 0.3,
   4, false];
 const CONTAINER_SIZE = [1, 11, 2,
-  "Capacity", 8000, 0.1,
+  "Capacity", 8000, 0.05,
   50, false];
 const CONTAINER_PRICE = [2, 12, 2,
-  "Price", 5000, 0.07,
+  "Price", 5000, 0.075,
   999, false];
 const CONTAINER_AUTOCLICK = [3, 13, 2,
   "Auto Fill", 10000, 0,
   1, true];
 const CONTAINER_AUTOSELL = [4, 14, 2,
-  "Auto Sell", 20000, 0,
+  "Auto Sell", 15000, 0,
   1, true];
  // 0 = index + 1 = texture column + 2 = texture row
  // 3 + title + 4 = base cost + 5 = cost factor
@@ -207,7 +207,8 @@ const units = [ // list of money units
   "TG",//"Trigintillion"
 ];
 let CONTAINERS = [];
-let ACHIEVEMENTS_EARNED = [];
+let ACHIEVEMENTS = [];
+let ACHIEVEMENTS_PLAYER = [];
 let PLAYER_STATS = [];
 let lastTime = 0;
 let now = new Date();
@@ -483,6 +484,7 @@ class InputHandler {
           } else { // close the container upgrade screen
             utility.containerTableY += game.height / 4;
             utility.containerUpgrading = false;
+            utility.containerFocused = null;
             for (let i = 0; i < CONTAINERS.length; i++) { // turn off each focus button
               CONTAINERS[i].focused = false;
             };
@@ -527,8 +529,6 @@ class InputHandler {
             };
           };
         };
-
-        ctxD.fillRect(utility.cUpgrade2X, game.height - (1.1 * game.frameH), game.frameW, game.frameH);
       };
     };
     if (game.state == 2) { // shop screen
@@ -707,28 +707,30 @@ class Player {
     PLAYER_STATS = [
       "Player Achievements",
       " ",
-      "Reach a cookie worth of $1M: ",
-      "Have 60 auto clickers at once: ",
-      "Reach a stacking bonus of x99: ",
-      "Keep a stacking bonus going for 15 mins: ",
-      "Earn $1V in one prestige: ",
-      "Keep a cookie frenzy going for 5 mins: ",
-      "Spend $1Q in one purchase: ",
+      "Reach a cookie worth of $1M: " + utility.convert(utility.multiply(cookie.worth)) + "/" + utility.convert(this.cookieWorthAchieve),
+      "Have 60 auto clickers at once: " + this.bestAutoclickers + "/" + this.autoClickerAchieve,
+      "Reach a stacking bonus of x99: " + this.bestStackingBonus + "/" + this.stackingBonusAchieve,
+      "Keep a stacking bonus going for 15 mins: " + this.longestStackingBonus + "/" + this.stackingBonusTimeAchieve,
+      "Earn $1D in one prestige: " + utility.convert(this.bestEarnings) + "/" + utility.convert(this.earningsAchieve),
+      "Keep a cookie frenzy going for 5 mins: " + this.longestFrenzy + "/" + this.frenzyTimeAchieve,
+      "Spend $1Q in one purchase: " + utility.convert(this.highestMoneySpent) + "/" + utility.convert(this.spendAchieve),
       " ",
       "Player Statistics",
       " ",
       "Cookie Worth: $" + utility.convert(utility.multiply(cookie.worth)),
-      "Cookie Explode Worth: $" + utility.convert(utility.multiply(cookie.bonusWorth)),
-      "Container Worth: $" + utility.convert(utility.multiply(CONTAINERS[0].worth)),
+      "Cookie Explode Bonus: $" + utility.convert(utility.multiply(cookie.bonusWorth)),
+      "Average Container Worth: $" + utility.convert(utility.multiply(utility.containerAverage())),
+      "Highest Container Worth: $" + utility.convert(utility.highestContainerWorth),
       "Current Multiplier: x" + utility.convert(utility.multiply(1)),
-      "Current Earnings: $" + utility.convert(player.earned),
+      "Current Prestige Earnings: $" + utility.convert(player.earned),
       "Prestige: " + utility.convert(player.prestige),
       "Total Prestiges: " + utility.convert(player.timesPrestiged),
+      "Most Expensive Purchase: $" + utility.convert(player.highestMoneySpent),
       "Total Money Spent: $" + utility.convert(player.moneySpent),
       "Total Earnings: $" + utility.convert(player.totalEarnings),
       "Highest Earnings Per Second: $" + utility.convert(player.bestEPS),
-      "Clicked Cookie: " + utility.convert(player.cookieClicked),
-      "Cookie Exploded: " + utility.convert(player.cookieExploded),
+      "Cookies Clicked: " + utility.convert(player.cookieClicked),
+      "Cookies Exploded: " + utility.convert(player.cookieExploded),
       "Containers sold: " + utility.convert(player.containersSold),
       "Golden Cookies Clicked: " + utility.convert(player.goldCookieClicked),
       "Upgrades Purchased: " + utility.convert(player.upgradesPurchased),
@@ -738,8 +740,42 @@ class Player {
       "Longest Stacking Bonus: " + player.longestStackingBonus + " seconds",
       "Times Activated Frenzy: " + player.frenzyActivated,
       "Longest Frenzy: " + player.longestFrenzy + " seconds",
-      " "
+      " ",
+      "Units Information",
+      " ",
+      "Thousand= " + units[0] + ", Million= " + units[1],
+      "Billion= " + units[2] + ", Trillion= " + units[3],
+      "Quadrillion= " + units[4] + ", Quintillion= " + units[5],
+      "Sextillion= " + units[6] + ", Septillion= " + units[7],
+      "Octillion= " + units[8] + ", Nonillion= " + units[9],
+      "Decillion= " + units[10] + ", Undecillion= " + units[11],
+      "Duodecillion= " + units[12] + ", Tredecillion= " + units[13],
+      "Quattuordecillion= " + units[14] + ", Quindecillion= " + units[15],
+      "Sexdecillion= " + units[16] + ", Septdecillion= " + units[17],
+      "Octodecillion= " + units[18] + ", Novemdecillion= " + units[19],
+      "Vigintillion= " + units[20] + ", Unvigintillion= " + units[21],
+      "Duovigintillion= " + units[22] + ", Trevigintillion= " + units[23],
+      "Quattuorvigintillion= " + units[24] + ", Quinvigintillion= " + units[25],
+      "Sexvigintillion= " + units[26] + ", Septvigintillion= " + units[27],
+      "Octovigintillion= " + units[28] + ", Novemvigintillion= " + units[29],
+      "Trigintillion= " + units[30]
     ];
+  };
+  updateAchievements() {
+    ACHIEVEMENTS[0] = player.cookieWorthAchieve;
+    ACHIEVEMENTS[1] = this.autoClickerAchieve;
+    ACHIEVEMENTS[2] = this.stackingBonusAchieve;
+    ACHIEVEMENTS[3] = this.stackingBonusTimeAchieve;
+    ACHIEVEMENTS[4] = this.earningsAchieve;
+    ACHIEVEMENTS[5] = this.frenzyTimeAchieve;
+    ACHIEVEMENTS[6] = this.spendAchieve;
+    ACHIEVEMENTS_PLAYER[0] = utility.multiply(cookie.worth);
+    ACHIEVEMENTS_PLAYER[1] = player.bestAutoclickers;
+    ACHIEVEMENTS_PLAYER[2] = player.bestStackingBonus;
+    ACHIEVEMENTS_PLAYER[3] = player.longestStackingBonus;
+    ACHIEVEMENTS_PLAYER[4] = player.bestEarnings;
+    ACHIEVEMENTS_PLAYER[5] = player.longestFrenzy;
+    ACHIEVEMENTS_PLAYER[6] = player.highestMoneySpent;
   };
   reset(everything) {
     player.money = 0;
@@ -749,12 +785,6 @@ class Player {
     player.earnedNow = 0;
     cookie.gold = false;
     utility.frenzyFinish = 0;
-    for (let i = 0; i < CONTAINERS.length; i++) {
-      CONTAINERS[i].active = false;
-      CONTAINERS[i].filled = 0;
-      CONTAINERS[i].filling = 0;
-      CONTAINERS[i].full = false;
-    };
     this.level = [];
     for (let i = 0; i < NUMBER_OF_UPGRADES; i++) {
       this.level.push(0);
@@ -762,6 +792,9 @@ class Player {
     this.containerArray = [];
     for (let i = 0; i < 30; i++) {
       this.containerArray.push(0);
+    };
+    for (let i = 0; i < CONTAINERS.length; i++) {
+      CONTAINERS[i].setUgrades();
     };
     if (!everything) {
       this.prestige += Math.floor(utility.prestigeFor);
@@ -793,6 +826,12 @@ class Player {
     localStorage.setItem("playerLongestStackingBonus", 0);
     localStorage.setItem("playerFrenzyActivated", 0);
     localStorage.setItem("playerLongestFrenzy", 0);
+    localStorage.setItem("playerContainers", 0);
+    localStorage.setItem("playerHighestSpent", 0);
+    localStorage.setItem("playerBestEarnings", 0);
+    localStorage.setItem("playerTalents", 0);
+    localStorage.setItem("playerSecretIngredients", 0);
+    localStorage.setItem("playerAchievements", 0);
     game.start();
     game.state = 0;
   };
@@ -877,6 +916,7 @@ class Player {
     this.goldCookieClicked = utility.parseFromLocalStorage("playerGoldCookieClicked", 0);
     this.upgradesPurchased = utility.parseFromLocalStorage("playerUpgradesPurchased", 0);
     this.moneySpent = utility.parseFromLocalStorage("playerSpent", 0);
+    this.highestMoneySpent = utility.parseFromLocalStorage("playerHighestSpent", 0);
     this.timesPrestiged = utility.parseFromLocalStorage("playerPrestiges", 0);
     this.bestEPS = utility.parseFromLocalStorage("playerBestEPS", 0);
     this.highestContainer = utility.parseFromLocalStorage("playerHighestContainer", 0);
@@ -885,6 +925,7 @@ class Player {
     this.longestStackingBonus = utility.parseFromLocalStorage("playerLongestStackingBonus", 0);
     this.frenzyActivated = utility.parseFromLocalStorage("playerFrenzyActivated", 0);
     this.longestFrenzy = utility.parseFromLocalStorage("playerLongestFrenzy", 0);
+    this.bestEarnings = utility.parseFromLocalStorage("playerBestEarnings", 0);
     this.secretIngredients = utility.parseFromLocalStorage("playerSecretIngredients", 0);
     this.cookieWorthAchieve = 1000000;
     this.autoClickerAchieve = 60;
@@ -907,7 +948,8 @@ class Player {
     localStorage.setItem("playerContainersSold", player.containersSold);
     localStorage.setItem("playerGoldCookieClicked", player.goldCookieClicked);
     localStorage.setItem("playerUpgradesPurchased", player.upgradesPurchased);
-    localStorage.setItem("playerSpent", player.spent);
+    localStorage.setItem("playerSpent", player.moneySpent);
+    localStorage.setItem("playerHighestSpent", player.highestMoneySpent);
     localStorage.setItem("playerPrestiges", player.timesPrestiged);
     localStorage.setItem("playerBestEPS", player.bestEPS);
     localStorage.setItem("playerFrenzyFinishedTime", utility.frenzyFinish);
@@ -917,8 +959,10 @@ class Player {
     localStorage.setItem("playerLongestStackingBonus", player.longestStackingBonus);
     localStorage.setItem("playerFrenzyActivated", player.frenzyActivated);
     localStorage.setItem("playerLongestFrenzy", player.longestFrenzy);
+    localStorage.setItem("playerBestEarnings", player.bestEarnings);
     localStorage.setItem("playerTalents", player.talent);
     localStorage.setItem("playerSecretIngredients", player.secretIngredients);
+    localStorage.setItem("playerAchievements", player.achievementsEarned);
   };
 };
 
@@ -947,6 +991,7 @@ class Utility {
     this.prestigeButtonY = (game.textSize * 2) + 10;
     this.prestigeButtonWidth = game.width;
     this.prestigeButtonHeight = game.height / 4;
+    this.highestContainerWorth = 0;
     this.containerTableY = game.height - (1.5 * game.frameH);
     this.containerUpgrading = false;
     this.containerFocused = null;
@@ -1157,13 +1202,15 @@ class Utility {
     ctxD.fillStyle = "black";
     ctxD.textBaseline = "top";
     ctxD.textAlign = "left";
+    player.updateStats();
     for (let i = 0; i < PLAYER_STATS.length; i++) {
-      if (i == 0 || i == 10) ctxD.font = "bold " + game.textSize + "px calibri";
+      // if stat should be a heading
+      if (i == 0 || i == 10 || i == 36) ctxD.font = "bold " + game.textSize + "px calibri";
       else ctxD.font = game.textSize / 2 + "px calibri";
       ctxD.fillText(PLAYER_STATS[i], 20, (i + 2.5) * game.textSize - input.dY);
     };
     utility.resetScroll(2.5 * game.textSize, (PLAYER_STATS.length + 3.5) * game.textSize);
-    player.updateStats();
+
   };
   setUgrades() {
     this.activeContainers = player.level[ADD_CONTAINER[0]];
@@ -1226,10 +1273,15 @@ class Utility {
     player.money -= player.cost[index];
     player.level[index]++;
     player.purchased++;
-    player.spent += player.cost[index];
+    player.moneySpent += player.cost[index];
+    if (player.cost[index] > player.highestMoneySpent) player.highestMoneySpent = player.cost[index];
     clickEffect.push(new Effects(utility.convert(player.cost[index]), false, "red", 1.2));
     if (index == GOLDEN_COOKIE[0]) { // purchasing golden cookie, give a free gold cookie
       goldCookie.push(new GoldCookie());
+    };
+    if (index == ADD_CONTAINER[0]) { // give 1 level to newly purchased container
+      this.activeContainers = player.level[ADD_CONTAINER[0]];
+      CONTAINERS[this.activeContainers - 1].level++;
     };
     game.update();
     player.initPlayer();
@@ -1287,6 +1339,14 @@ class Utility {
       };
     };
   };
+  containerAverage()  {
+    if (utility.activeContainers == 0) return 0;
+    let result = 0;
+    for (let i = 0; i < utility.activeContainers; i++) {
+      result += CONTAINERS[i].worth;
+    };
+    return result = result / utility.activeContainers;
+  };
   deltaTime(time) {
     let currentTime = Date.now();
     let result = currentTime - time;
@@ -1326,6 +1386,18 @@ class Utility {
     this.prestigeFor = this.prestigeAmount(12, -6, 0.15) + this.prestigeAmount(21, 6, 0.16) + this.prestigeAmount(30, 15, 0.17) + this.prestigeAmount(39, 24, 0.18) + this.prestigeAmount(48, 33, 0.19) + this.prestigeAmount(60, 42, 0.2) +
     Math.max(0, Math.pow(Math.pow(10, -6) * player.earned, 0.21) - Math.pow(Math.pow(10, 54), 0.21));
     this.prestigeForNext = this.prestigeFor - Math.floor(this.prestigeFor);
+    if (player.earned > player.bestEarnings) player.bestEarnings = player.earned;
+    // check for achievements
+    player.updateAchievements();
+    for (let i = 0; i < NUMBER_OF_ACHIEVEMENTS; i++) { // check each achievement
+      if (player.achievementsEarned[i] < 1) { // if not already earned
+        if (ACHIEVEMENTS_PLAYER[i] >= ACHIEVEMENTS[i]) { // achievement earned!
+          player.secretIngredients++;
+          player.achievementsEarned[i]++;
+          player.update();
+        };
+      };
+    };
   };
 };
 
@@ -1350,7 +1422,7 @@ class Cookie {
     this.pulseSlow = 1.05 - (player.level[PULSE_SLOW[0]] / PULSE_SLOW[7]);
     this.pulseLimit = this.r * (3 - (3 * (player.level[PULSE_LIMIT[0]] / (PULSE_LIMIT[7] + 3))));
     this.worth = 1 + (player.level[MONEY_PER_CLICK[0]] / 10);
-    //this.worth = 777; // testing purposes
+    //this.worth = 77777; // testing purposes
     this.bonusWorth = this.worth * (2 + (player.level[EXPLODE_BONUS[0]] * 1.5));
     this.goldChance = (9999 - player.level[GOLDEN_COOKIE_CHANCE[0]]) / 10000;
     this.goldBonus = 50;
@@ -1528,6 +1600,7 @@ class Container {
     this.level = player.containerArray[this.baseIndex];
     this.levelPrice = utility.setPrice(CONTAINER_LEVEL[4], this.level, CONTAINER_LEVEL[5]);
     this.column = this.level - 1;
+    if (this.column > 5) this.column = 5;
     this.cap = this.level * (10 * this.level);
     this.reducedCap = player.containerArray[this.baseIndex + 2];
     this.sizePrice = utility.setPrice(CONTAINER_SIZE[4], this.reducedCap, CONTAINER_SIZE[5]);
@@ -1546,6 +1619,7 @@ class Container {
     else this.autoSellingText = "Off";
     if (player.level[ADD_CONTAINER[0]] > this.position) this.active = true;
     else this.active = false;
+    if (utility.multiply(this.worth) > utility.highestContainerWorth && this.active) utility.highestContainerWorth = utility.multiply(this.worth);
   };
   draw() {
     if (!this.active) return;
@@ -1585,8 +1659,9 @@ class Container {
       else ctxD.fillStyle = "lightgrey";
       ctxD.fillRect(utility.cUpgrade1X, game.height - (1.1 * game.frameH), game.frameW, game.frameH);
       ctxD.fillStyle = "black";
-      ctxD.fillText("Cost:", utility.cUpgrade1X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 1.9);
-      ctxD.fillText(utility.convert(this.levelPrice), utility.cUpgrade1X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 2.2);
+      ctxD.fillText("Cost:", utility.cUpgrade1X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 1.8);
+      ctxD.fillText(utility.convert(this.levelPrice), utility.cUpgrade1X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 2.1);
+      ctxD.fillText(this.level + " -> " + (this.level + 1), utility.cUpgrade1X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 2.4);
       // upgrade capacity
       ctxD.fillText("Capacity:", utility.cUpgrade2X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH);
       ctxD.fillText(this.filled + "/" + this.capacity, utility.cUpgrade2X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 1.3);
@@ -1594,8 +1669,9 @@ class Container {
       else ctxD.fillStyle = "lightgrey";
       ctxD.fillRect(utility.cUpgrade2X, game.height - (1.1 * game.frameH), game.frameW, game.frameH);
       ctxD.fillStyle = "black";
-      ctxD.fillText("Cost:", utility.cUpgrade2X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 1.9);
-      ctxD.fillText(utility.convert(this.sizePrice), utility.cUpgrade2X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 2.2);
+      ctxD.fillText("Cost:", utility.cUpgrade2X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 1.8);
+      ctxD.fillText(utility.convert(this.sizePrice), utility.cUpgrade2X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 2.1);
+      ctxD.fillText(this.reducedCap + " -> " + (this.reducedCap + 1), utility.cUpgrade2X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 2.4);
       // upgrade price
       ctxD.fillText("Price:", utility.cUpgrade3X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH);
       ctxD.fillText("$" + utility.convert(utility.multiply(this.worth)), utility.cUpgrade3X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 1.3);
@@ -1603,13 +1679,14 @@ class Container {
       else ctxD.fillStyle = "lightgrey";
       ctxD.fillRect(utility.cUpgrade3X, game.height - (1.1 * game.frameH), game.frameW, game.frameH);
       ctxD.fillStyle = "black";
-      ctxD.fillText("Cost:", utility.cUpgrade3X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 1.9);
-      ctxD.fillText(utility.convert(this.pricePrice), utility.cUpgrade3X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 2.2);
+      ctxD.fillText("Cost:", utility.cUpgrade3X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 1.8);
+      ctxD.fillText(utility.convert(this.pricePrice), utility.cUpgrade3X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 2.1);
+      ctxD.fillText(this.price + " -> " + (this.price + 1), utility.cUpgrade3X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 2.4);
       // upgrade auto fill
       ctxD.fillText("Auto Fill:", utility.cUpgrade4X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH);
       ctxD.fillText(this.autoFillingText, utility.cUpgrade4X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 1.3);
-      if (player.money > this.autoFillingPrice) ctxD.fillStyle = "green";
-      else ctxD.fillStyle = "lightgrey";
+      if (player.money < this.autoFillingPrice || this.autoFilling > 0) ctxD.fillStyle = "lightgrey";
+      else ctxD.fillStyle = "green";
       ctxD.fillRect(utility.cUpgrade4X, game.height - (1.1 * game.frameH), game.frameW, game.frameH);
       ctxD.fillStyle = "black";
       ctxD.fillText("Cost:", utility.cUpgrade4X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 1.9);
@@ -1617,8 +1694,8 @@ class Container {
       // upgrade auto sell
       ctxD.fillText("Auto Sell:", utility.cUpgrade5X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH);
       ctxD.fillText(this.autoSellingText, utility.cUpgrade5X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 1.3);
-      if (player.money > this.autoSellingPrice) ctxD.fillStyle = "green";
-      else ctxD.fillStyle = "lightgrey";
+      if (player.money < this.autoSellingPrice || this.autoSelling > 0) ctxD.fillStyle = "lightgrey";
+      else ctxD.fillStyle = "green";
       ctxD.fillRect(utility.cUpgrade5X, game.height - (1.1 * game.frameH), game.frameW, game.frameH);
       ctxD.fillStyle = "black";
       ctxD.fillText("Cost:", utility.cUpgrade5X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 1.9);
@@ -1662,7 +1739,8 @@ class Container {
     player.containerArray[this.baseIndex + upgrade]++;
     player.money -= cost;
     player.purchased++;
-    player.spent += cost;
+    player.moneySpent += cost;
+    if (cost > player.highestMoneySpent) player.highestMoneySpent = cost;
     this.setUgrades();
     game.update();
     player.initPlayer();
@@ -1882,9 +1960,6 @@ const SHOP_BUTTONS = [
   new Button(EXPLODE_FRENZY),
   new Button(FRENZY_TIME),
   new Button(FRENZY_COOLDOWN)
-];
-const CONTAINER_BUTTONS = [
-
 ];
 const TALENT_BUTTONS = [
   new Talent(HOLD_TO_TAP),
