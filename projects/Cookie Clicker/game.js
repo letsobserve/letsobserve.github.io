@@ -795,6 +795,8 @@ class Player {
       this.containerArray.push(0);
     };
     for (let i = 0; i < CONTAINERS.length; i++) {
+      CONTAINERS[i].filled = 0;
+      CONTAINERS[i].filling = 0;
       CONTAINERS[i].setUgrades();
     };
     if (!everything) {
@@ -1007,9 +1009,8 @@ class Utility {
   };
   parseFromLocalStorage(key, defaultValue) {
     const value = parseFloat(localStorage.getItem(key));
-    if (Number(value) != NaN) {
-      return Number(value)
-    } else return defaultValue
+    if (isNaN(value)) return defaultValue;
+    else return value;
     //return Number.isInteger(value) ? value : defaultValue;
   }
   drawCookieScreen() { // draw the dynamic cookie screen
