@@ -1008,7 +1008,7 @@ class Utility {
   parseFromLocalStorage(key, defaultValue) {
     const value = parseFloat(localStorage.getItem(key));
     if (Number(value) != NaN) {
-      return value
+      return Number(value)
     } else return defaultValue
     //return Number.isInteger(value) ? value : defaultValue;
   }
