@@ -1263,7 +1263,7 @@ class Utility {
     if (player.level[EXPLODE_FRENZY[0]] > 0) this.frenzy = true;
     else this.frenzy = false;
     this.frenzyReset = (10 - player.level[FRENZY_COOLDOWN[0]]) * 60000; // frenzy reset time in milliseconds, starting from 10 minutes
-    this.frenzyReset = 0; // testing purposes
+    //this.frenzyReset = 0; // testing purposes
     this.frenzyMax = 400 + (50 * player.level[FRENZY_TIME[0]]); // frenzy time in frames per second
     if (this.deltaTime(this.frenzyFinish) >= this.frenzyReset) this.canFrenzy = true;
     else this.canFrenzy = false;
@@ -1488,8 +1488,8 @@ class Cookie {
         };
       };
       if (utility.inFrenzy) { // check if frenzy time should increase
-        utility.frenzyLeft += 50;
-        if (utility.deltaTime(utility.frenzyLeft) > utility.frenzyMax) utility.frenzyLeft = Date.now();
+        utility.frenzyLeft += 10;
+        //if (utility.deltaTime(utility.frenzyLeft) > utility.frenzyMax) utility.frenzyLeft = Date.now();
       };
       if (cookie.r + cookie.pulseCount < cookie.pulseLimit) { // if cookie should expand
         cookie.pulseCount += cookie.pulse;
