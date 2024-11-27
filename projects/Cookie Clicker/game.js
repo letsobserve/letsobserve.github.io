@@ -224,14 +224,14 @@ const units = [ // list of money units
   "nV",//"Novemvigintillion",
   "TG",//"Trigintillion"
 ];
-let CONTAINERS = [];
-let ACHIEVEMENTS = [];
-let ACHIEVEMENTS_PLAYER = [];
-let PLAYER_STATS = [];
+let CONTAINERS = []; // container array
+let ACHIEVEMENTS = []; // achievement goals
+let ACHIEVEMENTS_PLAYER = []; // player progress towards achievements
+let PLAYER_STATS = []; // helpful stats for the player
 let lastTime = 0;
 let now = new Date();
-let time = now.getTime();
-let expireTime = time + (365 * 24 * 60 * 60);
+// let time = now.getTime();
+// let expireTime = time + (365 * 24 * 60 * 60);
 let latestTime, then, elapsed, timer, touchEvent, utility, cookie, player;
 let order = 0;
 let clickEffect = [];
@@ -346,6 +346,7 @@ class Game {
     utility = new Utility;
     cookie = new Cookie;
     player = new Player;
+    player.initPlayer();
     utility.setUgrades();
     cookie.setUgrades();
     game.update();
@@ -413,7 +414,8 @@ class Game {
         goldCookie.push(new GoldCookie());
       };
     };
-    if (game.state == 2) input.lastdY = input.dY;
+    if (utility.achievementScreen) player.achievement();
+    if (game.state == 2 || game.state == 4) input.lastdY = input.dY;
     latestTime = Date.now();
     requestAnimationFrame(game.loop);
   };
@@ -485,7 +487,7 @@ class InputHandler {
           };
         };
       };
-      if (y > utility.frenzyY && y < (utility.frenzyY + game.textSize) && x > utility.frenzyX && x < (utility.frenzyX + utility.frenzyLength)) {
+      if (y > utility.frenzyY && y < (utility.frenzyY + game.textSize) && x > utility.frenzyX && x < (utility.frenzyX + utility.frenzyLength)) { // start frenzy
         if (utility.canFrenzy) {
           utility.frenzyLeft = Date.now();
           utility.inFrenzy = true;
@@ -673,6 +675,7 @@ class InputHandler {
   };
   longTouch() {
     if (player.talent[HOLD_TO_TAP[0]] > 0) {
+      player.latestTime = latestTime;
       input.touchstart(touchEvent);
     };
     //input.click(touchEvent.touches[0].clientX, touchEvent.touches[0].clientY);
@@ -681,7 +684,7 @@ class InputHandler {
 
 class Player {
   constructor() {
-    this.initPlayer();
+    //this.initPlayer();
     this.earnedThen = this.earned; // previous earned
     this.earnedNow = 0; // earning now
     this.EPS = 0; // player earning per second
@@ -723,16 +726,29 @@ class Player {
     if (player.bestEPS < player.EPS) player.bestEPS = player.EPS;
   };
   updateStats() {
+    this.achieve0 = utility.convert(utility.multiply(cookie.worth)) + "/" + utility.convert(this.cookieWorthAchieve);
+    this.achieve1 = this.bestAutoclickers + "/" + this.autoClickerAchieve;
+    this.achieve2 = this.bestStackingBonus + "/" + this.stackingBonusAchieve;
+    this.achieve3 = utility.round(this.longestStackingBonus) + "/" + this.stackingBonusTimeAchieve;
+    this.achieve4 = utility.convert(this.bestEarnings) + "/" + utility.convert(this.earningsAchieve);
+    this.achieve5 = this.longestFrenzy + "/" + this.frenzyTimeAchieve;
+    this.achieve6 = utility.convert(this.highestMoneySpent) + "/" + utility.convert(this.spendAchieve);
+    for (let i = 0; i < NUMBER_OF_ACHIEVEMENTS; i++) {
+      if (player.achievementsEarned[i] > 0) {
+        let txt = "this.achieve" + i;
+        eval(txt + " = 'Completed!'");
+      };
+    };
     PLAYER_STATS = [
       "Player Achievements",
       " ",
-      "Reach a cookie worth of $1M: " + utility.convert(utility.multiply(cookie.worth)) + "/" + utility.convert(this.cookieWorthAchieve),
-      "Have 60 auto clickers at once: " + this.bestAutoclickers + "/" + this.autoClickerAchieve,
-      "Reach a stacking bonus of x100: " + this.bestStackingBonus + "/" + this.stackingBonusAchieve,
-      "Longest stacking bonus of 15 mins: " + utility.round(this.longestStackingBonus) + "/" + this.stackingBonusTimeAchieve,
-      "Earn $1D in one prestige: " + utility.convert(this.bestEarnings) + "/" + utility.convert(this.earningsAchieve),
-      "Longest cookie frenzy of 5 mins: " + this.longestFrenzy + "/" + this.frenzyTimeAchieve,
-      "Spend $1Q in one purchase: " + utility.convert(this.highestMoneySpent) + "/" + utility.convert(this.spendAchieve),
+      "Reach a cookie worth of $1M: " + player.achieve0,
+      "Have 60 auto clickers at once: " + player.achieve1,
+      "Reach a stacking bonus of x100: " + player.achieve2,
+      "Longest stacking bonus of 15 mins: " + player.achieve3,
+      "Earn $1D in one prestige: " + player.achieve4,
+      "Longest cookie frenzy of 5 mins: " + player.achieve5,
+      "Spend $1Q in one purchase: " + player.achieve6,
       " ",
       "Player Statistics",
       " ",
@@ -795,6 +811,24 @@ class Player {
     ACHIEVEMENTS_PLAYER[4] = player.bestEarnings;
     ACHIEVEMENTS_PLAYER[5] = player.longestFrenzy;
     ACHIEVEMENTS_PLAYER[6] = player.highestMoneySpent;
+  };
+  achievement() {
+    ctxD.globalAlpha = "0.5";
+    ctxD.fillStyle = "black";
+    ctxD.fillRect(0, 0, game.width, game.height);
+    ctxD.globalAlpha = "1";
+    ctxD.fillStyle = "white";
+    ctxD.fillRect (game.width / 6, game.height / 4, game.width / 1.5, game.height / 2);
+    ctxD.fillStyle = "black";
+    ctxD.font = game.textSize + "px calibri";
+    ctxD.textAlign = "center";
+    ctxD.textBaseline = "middle";
+    ctxD.fillText("Congrats!", game.width / 2, (game.height / 3));
+    ctxD.fillText("Achievement", game.width / 2, (game.height / 2) - (game.textSize / 2));
+    ctxD.fillText("Earned!", game.width / 2, (game.height / 2) + (game.textSize / 2));
+    ctxD.fillText("+1 Talent Point", game.width / 2, (2 * game.height) / 3);
+    ctxD.font = game.textSize / 2 + "px calibri";
+    //ctxD.fillText("This screen will close in: " + utility.)
   };
   reset(everything) {
     player.money = 0;
@@ -951,7 +985,7 @@ class Player {
     this.longestFrenzy = utility.parseFromLocalStorage("playerLongestFrenzy", 0);
     this.bestEarnings = utility.parseFromLocalStorage("playerBestEarnings", 0);
     this.secretIngredients = utility.parseFromLocalStorage("playerSecretIngredients", 0);
-    this.cookieWorthAchieve = 1000000;
+    this.cookieWorthAchieve = 500000;
     this.autoClickerAchieve = 60;
     this.stackingBonusAchieve = 100;
     this.stackingBonusTimeAchieve = 900;
@@ -1025,6 +1059,7 @@ class Utility {
     this.cUpgrade3X = 2.15 * (game.width / 5);
     this.cUpgrade4X = 3.15 * (game.width / 5);
     this.cUpgrade5X = 4.15 * (game.width / 5);
+    this.achievementScreen = false;
   };
   parseFromLocalStorage(key, defaultValue) {
     const value = parseFloat(localStorage.getItem(key));
@@ -1283,7 +1318,7 @@ class Utility {
   };
   multiply(number) {
     return Math.round(
-      (((number + Number.EPSILON) * utility.clickCount) * utility.multiplier) * utility.prestigeBonus
+      (((number + Number.EPSILON) * player.stackingBonus) * utility.multiplier) * utility.prestigeBonus
      * 100) / 100;
   };
   round(number) {
@@ -1405,7 +1440,6 @@ class Utility {
     };
     if (player.stackingBonus > 1 && utility.deltaTime(player.rollTimeStart) >= utility.rollTimeMax) { // bonus should end
       let dTime = utility.deltaTime(utility.runningClickCount) / 1000;
-      if (player.stackingBonus > player.bestStackingBonus) player.bestStackingBonus = utility.round(player.stackingBonus);
       if (dTime > player.longestStackingBonus) player.longestStackingBonus = dTime;
       utility.runningClickCount = 0;
       player.stackingBonus = 1;
@@ -1425,6 +1459,7 @@ class Utility {
         if (ACHIEVEMENTS_PLAYER[i] >= ACHIEVEMENTS[i]) { // achievement earned!
           player.secretIngredients++;
           player.achievementsEarned[i]++;
+          utility.achievementScreen = true;
           player.update();
         };
       };
@@ -1485,11 +1520,11 @@ class Cookie {
         if (player.stackingBonus == 1) utility.runningClickCount = Date.now();
         for (var i = 0; i <= utility.clickRounds; i++) {
           if (utility.round(player.stackingBonus) < utility.round(utility.maxClickCount)) player.stackingBonus += utility.round(utility.clickIncrease); // increase if less than max rolling bonus
+          if (player.stackingBonus > player.bestStackingBonus) player.bestStackingBonus = utility.round(player.stackingBonus);
         };
       };
       if (utility.inFrenzy) { // check if frenzy time should increase
-        utility.frenzyLeft += 10;
-        //if (utility.deltaTime(utility.frenzyLeft) > utility.frenzyMax) utility.frenzyLeft = Date.now();
+        if (utility.deltaTime(utility.frenzyLeft) > 45) utility.frenzyLeft += 45;
       };
       if (cookie.r + cookie.pulseCount < cookie.pulseLimit) { // if cookie should expand
         cookie.pulseCount += cookie.pulse;
