@@ -180,11 +180,11 @@ const CHEAPER_PRICES = [4, 0, 8,
 "Cheaper Prices", "Decrease the price of all upgrades by 10%. Additional points will decrease by a further 10%. Maximum 9 points.",
 9];
 const INFINITE_BONUS_TIME = [5, 0, 8,
-"Infinite Bonus Time", "The stacking bonus will never expire. Stacking bonus will affect the money earned upon returning to the game. Maximum 1 point.",
+"Infinite Bonus Time", "The stacking bonus will never expire. Maximum 1 point.",
 1];
 const EXPLODE_TO_GOLDEN = [6, 0, 8,
-"Golden Explodes", "The 50th cookie explodes will give a golden cookie. Additional points will reduce the amount of explodes required. Maximum 10 points.",
-10];
+"Golden Explodes", "The 100th cookie explodes will give a golden cookie. Additional points will reduce the amount of explodes required. Maximum 15 points.",
+15];
 // 0 = index + 1 = texture column + 2 = texture row
 // 3 = title + 4 = description
 // 5 = max level
@@ -262,6 +262,29 @@ class Game {
     ctxS.fillRect(0, 0, this.width, this.height); // background
     ctxS.imageSmoothingEnabled = true;
     ctxS.imageSmoothingQuality = "high";
+    for (let i = 0; i < clickEffect.length; i++) { // draw the earned money
+      ctxD.textAlign = "center";
+      ctxD.textBaseline = "middle";
+      ctxD.strokeStyle = "black";
+      ctxD.lineWidth = "1.5";
+      clickEffect[i].time--;
+      if (clickEffect[i].time > 0 && game.state == 1) {
+        ctxD.font = clickEffect[i].font + "px calibri";
+        ctxD.globalAlpha = clickEffect[i].time / 80;
+        ctxD.fillStyle = clickEffect[i].color;
+        if (clickEffect[i].type) { // show earn money or lose money
+          ctxD.fillText("+$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y);
+          ctxD.strokeText("+$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y);
+        } else {
+          ctxD.fillText("-$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y);
+          ctxD.strokeText("-$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y);
+        };
+      } else {
+        clickEffect[0] = null;
+        clickEffect.splice(0, 1);
+      };
+    };
+    ctxD.globalAlpha = "1";
   };
   drawStartScreen() { // game start screen
     game.drawBackground();
@@ -317,29 +340,6 @@ class Game {
       ctxD.font = game.textSize / 2 + "px calibri";
       ctxD.textAlign = "right";
       ctxD.fillText("$" + player.EPS + "/s", game.width - 10, 0.25*game.textSize); // draw the money per second
-
-      // for (let i = 0; i < clickEffect.length; i++) { // draw the earned money
-      //   ctxD.textAlign = "center";
-      //   ctxD.textBaseline = "middle";
-      //   ctxD.strokeStyle = "black";
-      //   ctxD.lineWidth = "1";
-      //   if (clickEffect[i].x < game.width * 1.5) {
-      //     ctxD.font = clickEffect[i].font + "px calibri";
-      //     ctxD.globalAlpha = 1 - (clickEffect[i].x / (game.width * 1.5));
-      //     ctxD.fillStyle = clickEffect[i].color;
-      //     if (clickEffect[i].type) { // show earn money or lose money
-      //       ctxD.fillText("+$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y);
-      //       ctxD.strokeText("+$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y);
-      //     } else {
-      //       ctxD.fillText("-$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y);
-      //       ctxD.strokeText("-$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y);
-      //     };
-      //     clickEffect[i].x += clickEffect[i].speed;
-      //   } else {
-      //     clickEffect[0] = null;
-      //     clickEffect.splice(0, 1);
-      //   };
-      // };
       ctxD.globalAlpha = 1;
     };
   };
@@ -371,7 +371,7 @@ class Game {
     } else {
       player.returning = false;
     };
-    player.update();
+    //player.update();
   };
   loop(now) {
     now = Date.now();
@@ -585,14 +585,14 @@ class InputHandler {
       };
       if (x > TALENT_BUTTONS[0].plusX && x < TALENT_BUTTONS[0].plusX + TALENT_BUTTONS[0].buttonWidth) { // tapped in plus talent area
         for (let i = 0; i < TALENT_BUTTONS.length; i++) {
-          if (y > TALENT_BUTTONS[i].plusY && y < TALENT_BUTTONS[i].plusY + TALENT_BUTTONS[i].buttonHeight) {
+          if (y > (TALENT_BUTTONS[i].plusY - input.dY) && y < (TALENT_BUTTONS[i].plusY + TALENT_BUTTONS[i].buttonHeight - input.dY)) {
             TALENT_BUTTONS[i].changeTalent(true);
           };
         };
       };
       if (x > TALENT_BUTTONS[0].minusX && x < TALENT_BUTTONS[0].minusX + TALENT_BUTTONS[0].buttonWidth) { // tapped in minus talent area
         for (let i = 0; i < TALENT_BUTTONS.length; i++) {
-          if (y > TALENT_BUTTONS[i].minusY && y < TALENT_BUTTONS[i].minusY + TALENT_BUTTONS[i].buttonHeight) {
+          if (y > (TALENT_BUTTONS[i].minusY - input.dY) && y < (TALENT_BUTTONS[i].minusY + TALENT_BUTTONS[i].buttonHeight - input.dY)) {
             TALENT_BUTTONS[i].changeTalent(false);
           };
         };
@@ -750,7 +750,7 @@ class Player {
     };
     PLAYER_STATS = [
       "Player Achievements",
-      " ",
+      "",
       "Reach a cookie worth of $1M: " + player.achieve0,
       "Have 60 auto clickers at once: " + player.achieve1,
       "Reach a stacking bonus of x100: " + player.achieve2,
@@ -764,7 +764,7 @@ class Player {
       "Prestige 999 times: " + player.achieve10,
       " ",
       "Player Statistics",
-      " ",
+      "",
       "Cookie Worth: $" + utility.convert(utility.multiply(cookie.worth)),
       "Cookie Explode Bonus: $" + utility.convert(utility.multiply(cookie.bonusWorth)),
       "Average Container Worth: $" + utility.convert(utility.multiply(utility.containerAverage())),
@@ -790,7 +790,7 @@ class Player {
       "Longest Frenzy: " + utility.round(player.longestFrenzy) + " seconds",
       " ",
       "Units Information",
-      " ",
+      "",
       "Thousand= " + units[0] + ", Million= " + units[1],
       "Billion= " + units[2] + ", Trillion= " + units[3],
       "Quadrillion= " + units[4] + ", Quintillion= " + units[5],
@@ -876,7 +876,7 @@ class Player {
     if (!everything) {
       this.prestige += Math.floor(utility.prestigeFor);
       player.timesPrestiged++;
-      game.update();
+      player.update();
       player.initPlayer();
       utility.setUgrades();
       game.state = 1;
@@ -933,6 +933,22 @@ class Player {
         this.level.push(0);
       };
     };
+    this.talent = [];
+    this.getTalent = localStorage.getItem("playerTalents");
+    if (this.getTalent != null) {
+      this.getTalent = localStorage.getItem("playerTalents").split(",");
+      for (let i = 0; i < NUMBER_OF_TALENTS; i++) {
+        let temp = parseInt(this.getTalent[i]);
+        if (!Number.isInteger(temp)) { // if storage doesnt contain enough upgrades
+          temp = 0;
+        };
+        this.talent.push(temp);
+      };
+    } else {
+      for (let i = 0; i < NUMBER_OF_TALENTS; i++) {
+        this.talent.push(0);
+      };
+    };
     SHOP_BUTTONS.forEach((item) => {
       this.cost[item.index] = utility.setPrice(item.baseCost, this.level[item.index], item.costFactor);
       //this.cost[item.index] = 1; // testing purposes
@@ -951,22 +967,6 @@ class Player {
     } else {
       for (let i = 0; i < (7 * 5); i++) {
         this.containerArray.push(0);
-      };
-    };
-    this.talent = [];
-    this.getTalent = localStorage.getItem("playerTalents");
-    if (this.getTalent != null) {
-      this.getTalent = localStorage.getItem("playerTalents").split(",");
-      for (let i = 0; i < NUMBER_OF_TALENTS; i++) {
-        let temp = parseInt(this.getTalent[i]);
-        if (!Number.isInteger(temp)) { // if storage doesnt contain enough upgrades
-          temp = 0;
-        };
-        this.talent.push(temp);
-      };
-    } else {
-      for (let i = 0; i < NUMBER_OF_TALENTS; i++) {
-        this.talent.push(0);
       };
     };
     this.achievementsEarned = [];
@@ -1018,7 +1018,7 @@ class Player {
     this.cookieExplodesAchieve = 1e9;
     this.timesPrestigedAchieve = 999;
   };
-  update(now) { // set up a save function
+  update() { // set up a save function
     localStorage.setItem("playerMoney", player.money);
     localStorage.setItem("playerMoneyEarned", player.earned);
     localStorage.setItem("playerTotalEarnings", player.totalEarnings);
@@ -1048,6 +1048,7 @@ class Player {
     localStorage.setItem("playerTalents", player.talent);
     localStorage.setItem("playerSecretIngredients", player.secretIngredients);
     localStorage.setItem("playerAchievements", player.achievementsEarned);
+    localStorage.setItem("playerExplodesTilGoldCount", cookie.explodesTilGoldCount);
   };
 };
 
@@ -1128,18 +1129,20 @@ class Utility {
     };
     if (utility.rolling) { // draw the rolling multiplier
       ctxD.fillStyle = "lightgrey";
+      let bonusArc = utility.round(utility.deltaTime(player.rollTimeStart) / utility.rollTimeMax);
+      if (bonusArc == 0) bonusArc = 0.001;
       ctxD.beginPath();
       ctxD.arc(this.clickCountX, this.clickCountY, this.clickCountR, 0, 2 * Math.PI);
       ctxD.fill();
       if (player.stackingBonus > 1) {
-        let g = 255 * (1 - (utility.deltaTime(player.rollTimeStart) / utility.rollTimeMax));
-        let r = 255 * (utility.deltaTime(player.rollTimeStart) / utility.rollTimeMax);
+        let g = 255 * (1 - bonusArc);
+        let r = 255 * (bonusArc);
         ctxD.fillStyle = "rgb("+r+","+g+",0)";
         ctxD.beginPath();
         ctxD.translate(this.clickCountX, this.clickCountY);
         ctxD.rotate(-(90 * Math.PI) / 180);
         //ctxD.moveTo(1.5 * game.textSize, game.textSize * 4.5);
-        ctxD.arc(0, 0, game.textSize, 0, 2 * Math.PI * (utility.deltaTime(player.rollTimeStart) / utility.rollTimeMax), true);
+        ctxD.arc(0, 0, game.textSize, 0, 2 * Math.PI * bonusArc, true);
         ctxD.lineTo(0, 0);
         ctxD.closePath();
         ctxD.fill();
@@ -1162,11 +1165,7 @@ class Utility {
       ctxD.fillText("x" + utility.round(player.stackingBonus), this.clickCountX, this.clickCountY);
       ctxD.lineWidth = 1;
     };
-    for (let i = 0; i < goldCookie.lenght; i++) { // draw any golden cookie
-      goldCookie[i].draw(goldCookie.rX, 0, goldCookie.rY, 0, goldCookie.rR, 0, 3, 0);
-      goldCookie[i].goldCount--;
-    };
-    for (let i = 0; i < goldCookie.length; i++) {
+    for (let i = 0; i < goldCookie.length; i++) { // draw any golden cookies
       goldCookie[i].draw();
       goldCookie[i].update(i);
     };
@@ -1313,6 +1312,7 @@ class Utility {
     if (player.level[ROLLING_MULTIPLIER[0]] > 0) this.rolling = true;
     else this.rolling = false;
     this.rollTimeMax = 1000 + (1000 * player.level[ROLLING_DURATION[0]]);
+    if (player.talent[INFINITE_BONUS_TIME[0]] > 0) this.rollTimeMax = Number.MAX_VALUE;
     if (player.level[GOLDEN_COOKIE[0]] > 0) this.goldable = true;
     else this.goldable = false;
     this.maxClickCount = 2 + player.level[ROLLING_BONUS[0]];
@@ -1320,7 +1320,7 @@ class Utility {
     if (player.level[AUTOCLICKERS[0]] > 0) this.autoTap = true;
     else this.autoTap = false;
     if (player.level[AUTOCLICKERS[0]] > player.bestAutoclickers) player.bestAutoclickers = player.level[AUTOCLICKERS[0]];
-    this.tapRate = 1000 / (player.level[AUTOCLICKERS[0]] / 2);
+    this.tapRate = (1000 - (100 * player.talent[FASTER_AUTOCLICKERS[0]])) / (player.level[AUTOCLICKERS[0]] / 2);
     if (player.level[EXPLODE_FRENZY[0]] > 0) this.frenzy = true;
     else this.frenzy = false;
     this.frenzyReset = (10 - player.level[FRENZY_COOLDOWN[0]]) * 60000; // frenzy reset time in ms, starting from 10 mins
@@ -1333,6 +1333,7 @@ class Utility {
   };
   setPrice(baseCost, level, costFactor) {
     let price = Math.pow(baseCost, 1 + (level * costFactor));
+    price = price - (price * (player.talent[CHEAPER_PRICES[0]] / 10));
     return price;
   };
   prestigeAmount(first, second, power) {
@@ -1375,7 +1376,7 @@ class Utility {
       this.activeContainers = player.level[ADD_CONTAINER[0]];
       CONTAINERS[this.activeContainers - 1].level++;
     };
-    game.update();
+    player.update();
     player.initPlayer();
     utility.setUgrades();
   };
@@ -1521,6 +1522,8 @@ class Cookie {
     this.goldChance = (9999 - player.level[GOLDEN_COOKIE_CHANCE[0]]) / 10000;
     this.goldBonus = 50;
     this.goldenTime = 100 + (player.level[GOLDEN_COOKIE_TIME[0]] * 25);
+    this.explodesTilGold = 105 - (5 * player.talent[EXPLODE_TO_GOLDEN[0]]);
+    this.explodesTilGoldCount = utility.parseFromLocalStorage("playerExplodesTilGoldCount", 0);
   };
   radius() {
     if (game.width > game.height) {
@@ -1566,12 +1569,13 @@ class Cookie {
     let clr = "green";
     if (this.golden) {
       amount *= this.goldBonus;
-      clr = "gold";
+      clr = "orange";
     };
     player.money += amount;
     player.earned += amount;
     player.totalEarnings += amount;
-    //clickEffect.push(new Effects(utility.convert(amount), true, clr));
+    player.update();
+    clickEffect.push(new Effects(utility.convert(amount), true, clr));
   };
   reset() {
     if (utility.explodable) {
@@ -1582,6 +1586,14 @@ class Cookie {
       for (var i = 0; i < 25; i++) {
         if (explodingCookie.length < 150) explodingCookie.push(new Cookie);
         if (player.level[EXPLOSION_FILL[0]] > 0) utility.fillContainer();
+      };
+      if (player.talent[EXPLODE_TO_GOLDEN[0]] > 0) {
+        this.explodesTilGoldCount++;
+        if (this.explodesTilGoldCount >= this.explodesTilGold) {
+          this.golden = true;
+          this.goldenTimer += this.goldenTime;
+          this.explodesTilGoldCount = 0;
+        };
       };
       let amount = utility.multiply(cookie.bonusWorth);
       let clr = "dodgerblue";
@@ -1596,7 +1608,8 @@ class Cookie {
       player.money += amount;
       player.earned += amount;
       player.totalEarnings += amount;
-      //clickEffect.push(new Effects(utility.convert(amount), true, clr, 1.5));
+      player.update();
+      clickEffect.push(new Effects(utility.convert(amount), true, clr, 1.5));
     };
   };
   draw(x, xV, y, yV, r, pC, column, row) {
@@ -1813,13 +1826,14 @@ class Container {
       let clr = "orchid";
       if (cookie.golden) {
         amount *= cookie.goldBonus;
-        clr = "indigo";
+        clr = "darkred";
       };
       player.money += amount;
       player.earned += amount;
       player.totalEarnings += amount;
       if (player.highestContainer < amount) player.highestContainer = amount;
-      //clickEffect.push(new Effects(utility.convert(amount), true, clr, 1.5));
+      player.update();
+      clickEffect.push(new Effects(utility.convert(amount), true, clr, 1.5));
     };
   };
   upgrade(upgrade, cost) {
@@ -1867,12 +1881,14 @@ class Container {
 class Effects {
   constructor(text, type, color, size = 0.8) {
     this.text = text;
-    this.y = 1.5 * game.textSize;
+    //this.y = 1.5 * game.textSize;
+    //this.x = 0;
+    this.y = (Math.random() * (game.height - (4 * game.textSize))) + (3 * game.textSize);
+    this.x = Math.random() * game.width;
     this.font = size * game.textSize;
-    this.x = 0;
     this.type = type;
     this.color = color;
-    this.speed = 25 + clickEffect.length;
+    this.time = 50;
     this.hue = 0;
   };
 };
@@ -2027,7 +2043,9 @@ class Talent {
         player.secretIngredients++;
       };
     };
+    player.update();
     utility.setUgrades();
+    player.initPlayer();
   };
 };
 
