@@ -69,27 +69,23 @@
 	<br />
 	<hr>
 	<br />
+	<p id="comments"></p>
 	<div id="respond">
 		<h3>Leave a Comment</h3>
-		<form action="post_comment.php" method="post" id="commentform">
-			<label for="comment_author" class="required">Your name</label>
+		<form id="commentForm">
+			<label for="commentAuthor" class="required">Your name</label>
+			<input type="text" id="commentAuthor" value="" tabindex="1" required="required">
 			<br />
-			<input type="text" name="comment_author" id="comment_author" value="" tabindex="1" required="required">
+			<label for="commentContent" class="required">Your comment</label>
 			<br />
-			<label for="email" class="required">Your email;</label>
-			<br />
-			<input type="email" name="email" id="email" value="" tabindex="2" required="required">
-			<br />
-			<label for="comment" class="required">Your message</label>
-			<br />
-			<textarea name="comment" id="comment" rows="10" tabindex="4" required="required"></textarea>
+			<textarea id="commentContent" rows="10" tabindex="4" required="required"></textarea>
 			<br />
 			<input type="hidden" name="comment_post_ID" value="1" id="comment_post_ID" />
-			<input name="submit" type="submit" value="Submit comment" />
+			<input type="submit" value="Submit"/>
 		</form>
 	</div>
 	<br>
-	<script src="../js/script.js">
-	</script>
+	<script src="../js/script.js"></script>
+	<script src="../js/blog.js"></script>
 </body>
 </html>

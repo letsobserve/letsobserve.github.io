@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>OBSERVE: Blog</title>
+	<link rel="icon" type="image/x-icon" href="../images/observeeyev2.png">
+	<link rel="stylesheet" href="../css/home.css">
+	<meta name="author" content="Jordan Hewett" />
+	<meta name="keywords" content="Jordan, Hewett, Observe, Nature, Dream, Dreams, Food, Recipes, Stories" />
+</head>
+<body>
+	<div id="site-main">
+		<div class="wrapper-main">
+			<main id="site-content" class="site-main">
+				<div class="site-content-wrapper">
+					<br />
+					<h1  id="blogTitle">Excel Work Macros</h1>
+					<br />
+					<time datetime="2024-12-20">Published 20 December 2024</time>
+					<article class="column-container">
+						<div class="column">
+							<!-- <br />
+							 <figure class="blogFigure">
+								<img class="blogImage" src="../images/placeholder.jpeg">
+								<figcaption>Figcaption</figcaption>
+								<br />
+							</figure>
+							<br /> -->
+							<section class="introduction">
+								<br />
+								<h2>The use of a macro</h2>
+								<br />
+								<p>A macro in excel is a set of instructions and steps the computer can perform to complete a range of tasks quickly and at the click of a button. This can be extremely useful to help complete tasks that would otherwise be quite monotonous.</p>
+								<br />
+								<p>A portion of my work consists of processing large sets of numbers into a form that would be useful to our clients. This type of work can be very boring and losing interest or focus can mean making silly mistakes that can ruin the data for the client and hurt my companies reputation, so we employ the use of many different macros.</p>
+								<br />
+								<p>We use macros to rename many datasets at once, subtract a specific number from all the data and even pull out data that has been given a special name. It makes doing this type of processing faster, simpler and with much less mistakes than painstakingly doing it individually.</p>
+								<br />
+								<p>At this point I'm convinced that if you can imagine a task becoming easier then there's likely a macro that can be made for your specific task.</p>
+								<br />
+							</section>
+							<br />
+							<hr />
+							<br />
+							<section class="middle">
+								<br />
+								<h2>What I created and how...</h2>
+								<br />
+								<p>Some background information first, at my job we have to follow a strict set of rules that is audited by an international governing body. One of the strict rules is that whatever we write down in our methods and procedures has to be followed exactly, or an exception has to be raised and justified.</p>
+								<br />
+								<p>One day I was reading one of our methods, something I was learning for the first time. I came across a section that specified that all changes made in one of our worksheets need to be logged and made available for audit purposes. I asked around and my supervisor told me that they had tried to get this logging to work but it ultimately failed and now it's just a rule we don't follow.</p>
+								<br />
+								<p>I thought this was absolutely crazy, because we get audited regularly, like at least twice a year, and this rule has not been flagged or challenged at all. I set out to create a macro that could accomplish this task for me, as the worksheets we use are in excel I was sure this could be easily fixed. At least I thought it would be.</p>
+								<br />
+								<p>So I begin to create a macro that will log any change that happens on a separate worksheet. Initially I thought of just copying any change that occurred onto another sheet. The changelog sheet had to be locked to avoid removing or adding changes that did not occur, so the macro had to unlock the sheet, write the change, then lock the sheet again. The macro would also undo the users change so it could see the old value was and then put back the new value. This worked great for very minor changes but failed to correctly log changes when filling down cells in excel and failed to work on older computers with outdated versions of excel. I felt like the undo step in my macro was very clunky and wished for a better solution.</p>
+								<br />
+								<p>I had to try again with a different approach. My next thought was to have a copy of the worksheet, hidden from the user, and when a change is made in a range, check all the cells that changed on the hidden copy, paste them into the changelog, then copy the new values into the changelog and hidden copy. This solution worked perfectly, except now the file size is automatically doubled, which took longer to open and the number of operations the macro performed meant a noticable stutter on older computers.</p>
+								<br />
+								<p>In between these two iterations of my macro, there was some tensions and conflicts arising amongst my colleagues. Since it was possible for the same worksheet needed to be open on multiple computers, saving changes led to many "copy of" worksheets. This would boil over one day when a "copy of copy of copy of" worksheet was made and knowing which was the most up to date worksheet became convoluted.</p>
+								<br />
+								<p>Excel has an in-built feature of sharing a file, allowing multiple users to open and edit a file and all the changes are compiled upon saving. The issue I had to solve was having the changelog be protected from deliberate changes by the user, sharing a file meant the macro was unable to unprotect the workbook to write in a change in the log. Thankfully the solution to this was quite simple, just hide the changelog sheet, then I can make the changelog viewable as a pdf at the click of a button.</p>
+								<br />
+								<p>The next issue was when multiple people have the shared file open at the same time, upon saving the file, any changes made by others since you opened the file can overwrite your changes and they would be lost. The way I went about solving this issue was to log all changes into an array as the user fills in the worksheet, then when the save button is clicked the file will update with any changes made by others, logging them into the changelog then logging the changes stored in the array, again saving the file.</p>
+								<br />
+								<p>So the final iteration of my the worksheet ended up having a copy of the main worksheet that was hidden from the user and a changelog that was hidden from the user. It was able to be a shared file, which made everyone happy. Changes would be logged after updating the shared file, so no information was lost when multiple users are making changes.</p>
+							</section>
+							<br />
+							<hr />
+							<br />
+							<section class="conclusion">
+								<br />
+								<h2>What I took away from this...</h2>
+								<br />
+								<p>I couldn't believe that the in-built method excel has to track changes was so lacking. Especially since the 'shared' file feature has now been deprecated, the newer version of sharing does not offer the changelogging feature, which was disappointing to say the least.</p>
+								<br />
+								<p>In order to make excel successfully log changes made in a worksheet, a series of complex issues needed to be solved. I was thankful to have my colleagues test the worksheet, which was a work in progress for many weeks. I also enjoyed the feedback that the users would give me, which forced me to think outside the box and sent me on a learning journey. I absolutely feel much more confident creating macros and many other excel related tasks after this.</p>
+								<br />
+								<p>If you managed to read all the way through this and would like to see my code for this macro, feel free to email me at:</p>
+								<p>garden.observation@gmail.com</p>
+								<p>and I can share the worksheet or code with you to potentially implement into your workplace.</p>
+							</section>
+							<br />
+							<hr />
+							<br />
+						</div>
+					</article>
+				</div>
+			</main>
+			<br />
+			<aside id="site-aside">
+				<div class="site-aside-wrapper">
+					<br />
+					<p>Want to know how I learned to code a macro? Lots of google and stack overflow. I also used the record macro button a lot to learn the syntax that VBA editor follows.</p>
+					<br />
+					<p>Would you like to hire me to create a macro, worksheet or custom ribbon for excel? <a href="https://www.fiverr.com/j_hewett">Find me on fiverr here</a> to get a great deal on your excel needs.</p>
+					<br />
+					<p>Check out some of my other blog posts.</p>
+					<br />
+				</div>
+			</aside>
+		</div>
+	</div>
+	<br />
+	<hr>
+	<br />
+	<p id="comments"></p>
+	<div id="respond">
+		<h3>Leave a Comment</h3>
+		<form id="commentForm">
+			<label for="commentAuthor" class="required">Your name</label>
+			<input type="text" id="commentAuthor" value="" tabindex="1" required="required">
+			<br />
+			<label for="commentContent" class="required">Your comment</label>
+			<br />
+			<textarea id="commentContent" rows="10" tabindex="4" required="required"></textarea>
+			<br />
+			<input type="hidden" name="comment_post_ID" value="1" id="comment_post_ID" />
+			<input type="submit" value="Submit"/>
+		</form>
+	</div>
+	<br>
+	<script src="../js/script.js"></script>
+	<script src="../js/blog.js"></script>
+</body>
+</html>
