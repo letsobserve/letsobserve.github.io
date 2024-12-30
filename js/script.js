@@ -2,9 +2,7 @@ const banner = document.createElement("img");
 const column = document.getElementsByClassName("column");
 const siteMain = document.getElementById("site-main");
 const header = document.createElement("header");
-const title = document.getElementById("pageHeader");
 
-//let initalHeaderFontSize = parseFloat(window.getComputedStyle(title, null).getPropertyValue('font-size'));
 let cookie_consent = getCookie("userCookieConsent");
 let ytFrame = document.getElementById("latest-video");
 if (cookie_consent != "") {
@@ -27,62 +25,54 @@ window.addEventListener("scroll", (e) => {
 		};
     }
 });
-// create the site header
-function createHeader() {
+
+function createA(aText, aClass, aLink, aTitle) { // create an a element
+	var a = document.createElement("a");
+	a.innerHTML = aText;
+	a.setAttribute("class", aClass);
+	a.setAttribute("href", aLink);
+	a.setAttribute("title", aTitle);
+	return a;
+};
+function createHeader() { // create the site header
 	// create elements
 	const nav = document.createElement("nav");
-	const a = document.createElement("a");
-	const a1 = document.createElement("a");
-	const a2 = document.createElement("a");
-	const a3 = document.createElement("a");
 	const h1 = document.createElement("h1");
+	let a, a1, a2, a3;
 	// set up element attributes
 	banner.setAttribute("id", "banner");
-	banner.setAttribute("alt", "Shadows of flowers and leaves over a clear sky with the full moon visible.");
+	banner.setAttribute("alt", "A close-up photo of a delicate purple flower, with light purple around its edges.");
 	banner.setAttribute("data-transition", "true");
 	header.setAttribute("id", "site-header");
 	nav.setAttribute("class", "navbar");
-	a.setAttribute("class", "navheader");
-	h1.setAttribute("class", "header-h1");
-	h1.setAttribute("id", "pageHeader");
-	h1.setAttribute("title", "Return to Homepage");
-	a1.setAttribute("class", "navbutton");
-	a2.setAttribute("class", "navbutton");
-	a3.setAttribute("class", "navbutton");
-	// set the elements content
-	h1.innerHTML = "Jordan Hewett";
-	a1.innerHTML = "Blog";
-	a2.innerHTML = "Projects";
-	a3.innerHTML = "Media";
 	// set the correct href based on current href
 	if (window.location.href.indexOf("/posts/") > -1) {
-		banner.setAttribute("src", "../images/banner-night-scene.png");
-		a.setAttribute("href", "../index.html");
-		a1.setAttribute("href", "../Blog.html");
-		a2.setAttribute("href", "../Projects.html");
-		a3.setAttribute("href", "../Media.html");
+		banner.setAttribute("src", "../images/purple-flowers.jpeg");
+		a = "../index.html";
+		a1 = "../Blog.html";
+		a2 = "../Projects.html";
+		a3 = "../Media.html";
 	} else if (window.location.href.indexOf("/projects/") > -1) {
-		banner.setAttribute("src", "../images/banner-night-scene.png");
-		a.setAttribute("href", "../index.html");
-		a1.setAttribute("href", "../Blog.html");
-		a2.setAttribute("href", "../Projects.html");
-		a3.setAttribute("href", "../Media.html");
+		banner.setAttribute("src", "../images/purple-flowers.jpeg");
+		a = "../index.html";
+		a1 = "../Blog.html";
+		a2 = "../Projects.html";
+		a3 = "../Media.html";
 	} else {
-		banner.setAttribute("src", "images/banner-night-scene.png");
-		a.setAttribute("href", "index.html");
-		a1.setAttribute("href", "Blog.html");
-		a2.setAttribute("href", "Projects.html");
-		a3.setAttribute("href", "Media.html");
+		banner.setAttribute("src", "images/purple-flowers.jpeg");
+		a = "index.html";
+		a1 = "Blog.html";
+		a2 = "Projects.html";
+		a3 = "Media.html";
 	};
 	// insert the elements onto the page
 	document.body.insertBefore(banner, document.body.firstChild);
-	header.appendChild(nav);
 	banner.insertAdjacentElement("afterend", header);
-	nav.appendChild(a);
-	a.appendChild(h1);
-	nav.appendChild(a1);
-	nav.appendChild(a2);
-	nav.appendChild(a3);
+	header.appendChild(nav);
+	nav.appendChild(createA("Jordan Hewett", "navheader", a, "Return to Homepage"));
+	nav.appendChild(createA("Blog", "navbutton", a1, "Blog"));
+	nav.appendChild(createA("Projects", "navbutton", a2, "Projects"));
+	nav.appendChild(createA("Media", "navbutton", a3, "Media"));
 };
 // create breadcrumbs for the page
 function createBreadcrumbs() {
@@ -92,23 +82,15 @@ function createBreadcrumbs() {
 	};
 	// create the elements
 	const ul = document.createElement("ul");
-	const a = document.createElement("a");
-	const a1 = document.createElement("a");
-	const a2 = document.createElement("a");
 	const siteContentWrapper = document.getElementsByClassName("site-content-wrapper");
 	const title = document.getElementById("blogTitle").innerHTML;
 	// set up the elements
 	ul.setAttribute("class", "breadcrumbs");
-	a.setAttribute("href", "../index.html");
-	a.innerHTML = "Home";
-	a1.setAttribute("href", "../Blog.html");
-	a1.innerHTML = "Blog";
-	a2.innerHTML = title;
 	// insert the elements
 	siteContentWrapper[0].insertAdjacentElement("afterbegin", ul);
-	ul.appendChild(a);
-	ul.appendChild(a1);
-	ul.appendChild(a2);
+	ul.appendChild(createA("Home","","../index.html","Return to Homepage"));
+	ul.appendChild(createA("Blog","","../Blog.html","Blog"));
+	ul.appendChild(createA(title,"","","Current Page"));
 };
 // create the site Footer
 function createFooter() {
@@ -119,6 +101,7 @@ function createFooter() {
 	const p1 = document.createElement("p");
 	const p2 = document.createElement("p");
 	const icon = document.createElement("img");
+	const br = document.createElement("br");
 	const wrapperMain = document.getElementsByClassName("wrapper-main");
 	// build the footer section
 	wrapperMain[0].insertAdjacentElement("afterend", footer);
@@ -138,6 +121,7 @@ function createFooter() {
 	p1.setAttribute("class", "footer-credit");
 	p1.innerHTML = "This is a Hewett-Made Website.";
 	div.appendChild(p1);
+	footer.appendChild(br);
 };
 // create a cookie
 function setCookie(cname, cvalue, exdays) {
@@ -181,19 +165,32 @@ function acceptCookieConsent() {
 function closeCookieNotice() {
 	document.getElementById("cookieNotice").style.display = "none";
 };
-// populate media modal
+// create and populate media modal
 function mediaModalFn(element) {
-	var modal = document.getElementById("mediaModal");
-	var modalImg = document.getElementById("mediaModalImg");
-	var alttext = document.getElementById("mediaModalP1");
-	modal.style.display = "flex";
-	modalImg.src = element.src;
-	alttext.innerHTML = element.alt;
+	// create elements and set attributes
+	let modal = document.createElement("modal");
+	modal.setAttribute("id", "mediaModal");
+	let span = document.createElement("span");
+	span.setAttribute("id", "closeMediaModal");
+	span.setAttribute("onclick", "closeMediaModal()");
+	span.innerHTML = "&times;";
+	let img = document.createElement("img");
+	img.setAttribute("id", "mediaModalImg");
+	img.setAttribute("src", element.src);
+	img.setAttribute("alt", element.alt);
+	let p = document.createElement("p");
+	p.setAttribute("id", "mediaModalAlt");
+	p.innerHTML = element.alt;
+	// insert new element into body
+	document.body.insertBefore(modal, document.body.firstChild);
+	modal.appendChild(span);
+	modal.appendChild(img);
+	modal.appendChild(p);
 };
 // close media modal
 function closeMediaModal() {
 	var modal = document.getElementById("mediaModal");
-	modal.style.display = "none";
+	modal.remove();
 };
 // scroll to the top of the page
 function topFunction() {
