@@ -124,14 +124,16 @@ figcaption {
 	width: 100%;
 }
 #site-aside {
+  margin: 0;
+  padding: 0;
 	width: 100%;
 	height: 100%;
-	padding: 3px;
-	border: 1px solid grey;
 }
 .site-aside-wrapper {
 	display: block;
+  padding: 2px;
 	width: 100%;
+  border: 5px solid var(--main-accentcolor);
 }
 .aside-info {
 	margin-bottom: 0;
@@ -249,6 +251,10 @@ figcaption {
 	Contents Group
 ////////////////////////
 */
+/* Hero Section */
+.hero-section {
+  border: 5px solid var(--main-accentcolor);
+}
 /* Blogpost Breadcrumbs */
 .breadcrumbs {
 	display: block;
@@ -273,7 +279,7 @@ figcaption {
 	color: var(--alt-offcolor);
 }
 
-/* Featured Imagge Section */
+/* Featured Image Section */
 .featured-image-wrapper {
   display: block;
 	width: 100%;
@@ -333,10 +339,12 @@ figcaption {
 }
 .blog-title {
   flex: 1 0 100%;
+  text-align: center;
 }
 .blog-item {
   margin: 20px 0;
   flex: 0 1 50%;
+  justify-content: space-between;
 }
 .blog-image-teaser {
   display: block;
@@ -344,20 +352,18 @@ figcaption {
   margin-right: auto;
 	padding: 5px;
   width: 90%;
-  max-height: 50%;
+  max-height: 45%;
   object-fit: contain;
 }
-.blog-image-teaser:hover {
-	opacity: 0.75;
-}
 .blog-link {
-  display: block;
+  display: flex;
+  flex-direction: column;
 	text-decoration: none;
 	text-align: center;
 	color: var(--main-text);
 }
 .blog-link:hover {
-	color: var(--alt-offcolor);
+	opacity: 0.65;
 }
 
 /* YouTube Link Section */
@@ -623,7 +629,7 @@ figcaption {
 	margin-left: auto;
 	margin-right: auto;
 }
-#mediaModalAlt {
+.mediaModalAlt {
 	margin-top: 0;
 	margin-left: auto;
 	margin-right: auto;
@@ -780,7 +786,6 @@ figcaption {
     flex-direction: row;
   }
 	#site-aside {
-		padding: 2px;
 		flex-grow: 1;
 	}
 	.image-of-week {

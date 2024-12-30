@@ -13,8 +13,8 @@ if (cookie_consent != "") {
 createHeader();
 createBreadcrumbs();
 createFooter();
-// hide banner and header on scroll
-window.addEventListener("scroll", (e) => {
+
+window.addEventListener("scroll", (e) => { // hide banner and header on scroll
 	if (window.pageYOffset < 200) {
 		if (banner.dataset.transition == "true") {
 			banner.style.opacity = (120 - Math.floor(window.pageYOffset)) + "%";
@@ -25,7 +25,6 @@ window.addEventListener("scroll", (e) => {
 		};
     }
 });
-
 function createA(aText, aClass, aLink, aTitle) { // create an a element
 	var a = document.createElement("a");
 	a.innerHTML = aText;
@@ -33,6 +32,12 @@ function createA(aText, aClass, aLink, aTitle) { // create an a element
 	a.setAttribute("href", aLink);
 	a.setAttribute("title", aTitle);
 	return a;
+};
+function createP(pText, pClass) { // create a p element
+	var p = document.createElement("p");
+	p.innerHTML = pText;
+	p.setAttribute("class", pClass);
+	return p;
 };
 function createHeader() { // create the site header
 	// create elements
@@ -46,13 +51,7 @@ function createHeader() { // create the site header
 	header.setAttribute("id", "site-header");
 	nav.setAttribute("class", "navbar");
 	// set the correct href based on current href
-	if (window.location.href.indexOf("/posts/") > -1) {
-		banner.setAttribute("src", "../images/purple-flowers.jpeg");
-		a = "../index.html";
-		a1 = "../Blog.html";
-		a2 = "../Projects.html";
-		a3 = "../Media.html";
-	} else if (window.location.href.indexOf("/projects/") > -1) {
+	if (window.location.href.indexOf("/posts/") > -1 || window.location.href.indexOf("/projects/") > -1) {
 		banner.setAttribute("src", "../images/purple-flowers.jpeg");
 		a = "../index.html";
 		a1 = "../Blog.html";
@@ -74,8 +73,7 @@ function createHeader() { // create the site header
 	nav.appendChild(createA("Projects", "navbutton", a2, "Projects"));
 	nav.appendChild(createA("Media", "navbutton", a3, "Media"));
 };
-// create breadcrumbs for the page
-function createBreadcrumbs() {
+function createBreadcrumbs() { // create breadcrumbs for the page
 	// check if page needs breadcrumbs
 	if (window.location.href.indexOf("/posts/") == -1) {
 		return;
@@ -92,54 +90,40 @@ function createBreadcrumbs() {
 	ul.appendChild(createA("Blog","","../Blog.html","Blog"));
 	ul.appendChild(createA(title,"","","Current Page"));
 };
-// create the site Footer
-function createFooter() {
+function createFooter() { // create the site Footer
 	// create all the elements
 	const footer = document.createElement("footer");
 	const div = document.createElement("div");
-	const p = document.createElement("p");
-	const p1 = document.createElement("p");
-	const p2 = document.createElement("p");
 	const icon = document.createElement("img");
-	const br = document.createElement("br");
 	const wrapperMain = document.getElementsByClassName("wrapper-main");
 	// build the footer section
 	wrapperMain[0].insertAdjacentElement("afterend", footer);
 	footer.setAttribute("class", "footer");
 	footer.appendChild(document.createElement("br"));
-	p2.setAttribute("class", "footer-text");
-	p2.innerHTML = "Have any comments or suggestions? Email them to me at garden.observation@gmail.com";
-	footer.appendChild(p2);
+	footer.appendChild(createP("Have any comments or suggestions? Email them to me at garden.observation@gmail.com", "footer-text"));
 	div.setAttribute("class", "footer-credit-wrapper");
 	footer.appendChild(div);
-	p.setAttribute("class", "footer-credit");
-	p.innerHTML = "Observing Since 2019.";
-	div.appendChild(p);
+	div.appendChild(createP("Observing Since 2019.", "footer-credit"));
 	icon.setAttribute("class", "footer-icon");
 	icon.setAttribute("src", "https://jordanhewett.com/images/observeeyev2.png");
 	div.appendChild(icon);
-	p1.setAttribute("class", "footer-credit");
-	p1.innerHTML = "This is a Hewett-Made Website.";
-	div.appendChild(p1);
-	footer.appendChild(br);
+	div.appendChild(createP("This is a Hewett-Made Website.", "footer-credit"));
+	footer.appendChild(document.createElement("br"));
 };
-// create a cookie
-function setCookie(cname, cvalue, exdays) {
+function setCookie(cname, cvalue, exdays) { // create a cookie
 	const d = new Date();
 	d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
 	let expires = "expires=" + d.toUTCString();
 	document.cookie = cname + "=" + cvalue + ";";
 	console.log(document.cookie);
 };
-// delete a cookie
-function deleteCookie(cname) {
+function deleteCookie(cname) { // delete a cookie
 	const d = new Date();
 	d.setTime(d.getTime() + (24 * 60 * 60 * 1000));
 	let expires = "expires=" + d.toUTCString();
 	document.cookie = cname + "=;" + expires + ";path=/";
 };
-// read a cookie
-function getCookie(cname) {
+function getCookie(cname) { // read a cookie
 	let name = cname + "=";
 	let decodedCookie = decodeURIComponent(document.cookie);
 	let ca = decodedCookie.split(";");
@@ -154,19 +138,16 @@ function getCookie(cname) {
 	}
 	return "";
 };
-// check for cookie consent
-function acceptCookieConsent() {
+function acceptCookieConsent() { // check for cookie consent
 	deleteCookie("userCookieConsent");
 	//setCookie("userCookieConsent",1,30);
 	document.cookie = "userCookieConsent=true";
 	document.getElementById("cookieNotice").style.display = "none";
 };
-// close cookie consent notice
-function closeCookieNotice() {
+function closeCookieNotice() { // close cookie consent notice
 	document.getElementById("cookieNotice").style.display = "none";
 };
-// create and populate media modal
-function mediaModalFn(element) {
+function mediaModalFn(element) { // create and populate media modal
 	// create elements and set attributes
 	let modal = document.createElement("modal");
 	modal.setAttribute("id", "mediaModal");
@@ -178,22 +159,17 @@ function mediaModalFn(element) {
 	img.setAttribute("id", "mediaModalImg");
 	img.setAttribute("src", element.src);
 	img.setAttribute("alt", element.alt);
-	let p = document.createElement("p");
-	p.setAttribute("id", "mediaModalAlt");
-	p.innerHTML = element.alt;
 	// insert new element into body
 	document.body.insertBefore(modal, document.body.firstChild);
 	modal.appendChild(span);
 	modal.appendChild(img);
-	modal.appendChild(p);
+	modal.appendChild(createP(element.alt, "mediaModalAlt"));
 };
-// close media modal
-function closeMediaModal() {
+function closeMediaModal() { // close media modal
 	var modal = document.getElementById("mediaModal");
 	modal.remove();
 };
-// scroll to the top of the page
-function topFunction() {
+function topFunction() { // scroll to the top of the page
 	window.scroll({
 		top: 0,
 		behavior: "smooth"
