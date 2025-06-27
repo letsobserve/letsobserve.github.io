@@ -7,18 +7,23 @@
 	<link rel="stylesheet" href="../css/home.css">
 	<meta name="author" content="Jordan Hewett" />
 	<meta name="keywords" content="Jordan, Hewett, Observe, Nature, Dream, Dreams, Food, Recipes, Stories" />
-	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1480924343854494"
-     crossorigin="anonymous"></script>
+	<!--<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1480924343854494"
+		 crossorigin="anonymous"></script>-->
 </head>
 <body>
 	<div id="site-main">
+		<section class="title-section">
+			<div id="breadcrumbs"></div>
+			<br />
+			<h1 id="blogTitle">Blog Post</h1>
+			<br />
+			<time datetime="2022-04-30">Published 30 April 2022</time>
+			<br />
+			<br />
+		</section>
 		<div class="wrapper-main">
 			<main id="site-content" class="site-main">
 				<div class="site-content-wrapper">
-					<br />
-					<h1  id="blogTitle">Blog Post</h1>
-					<br />
-					<time datetime="2022-04-30">Published 30 April 2022</time>
 					<article class="column-container">
 						<div class="column">
 							<br />
@@ -29,33 +34,33 @@
 							</figure>
 							<br />
 							<section class="introduction">
+								<hr />
 								<br>
-								<h2>Introduction</h2>
+								<h2 class="center-text">Introduction</h2>
+								<br />
+								<hr />
 								<br />
 								<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 								<br>
 							</section>
-							<br />
-							<hr />
-							<br />
 							<section class="middle">
+								<hr />
 								<br />
-								<h2>Middle</h2>
+								<h2 class="center-text">Middle</h2>
+								<br />
+								<hr />
 								<br />
 								<p>middle section</p>
 							</section>
-							<br />
-							<hr />
-							<br />
 							<section class="conclusion">
+								<hr />
 								<br />
-								<h2>Conclusion</h2>
+								<h2 class="center-text">Conclusion</h2>
+								<br />
+								<hr />
 								<br />
 								<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 							</section>
-							<br />
-							<hr />
-							<br />
 						</div>
 					</article>
 				</div>
@@ -71,23 +76,24 @@
 	<br />
 	<hr>
 	<br />
-	<p id="comments"></p>
+	<div id="comments"></div>
 	<div id="respond">
-		<h3>Leave a Comment</h3>
-		<form id="commentForm">
-			<label for="commentAuthor" class="required">Your name</label>
-			<input type="text" id="commentAuthor" value="" tabindex="1" required="required">
+		<h3 class="center-text">Leave a Comment</h3>
+		<form id="commentForm" action="comment_handler.php" method="post">
+			<label for="comment_author" class="required">Name:</label>
+    		<input type="text" name="comment_author" id="comment_author" value="" tabindex="1" required="required" autocomplete="username">
 			<br />
-			<label for="commentContent" class="required">Your comment</label>
+    		<label for="email" class="required">Email:</label>
+    		<input type="email" name="email" id="email" value="" tabindex="2" required="required" autocomplete="email">
 			<br />
-			<textarea id="commentContent" rows="10" tabindex="4" required="required"></textarea>
+    		<label for="comment" class="required">Comment:</label>
+    		<textarea name="comment" id="comment" rows="10" tabindex="4"  required="required" autocomplete="off"></textarea>
 			<br />
-			<input type="hidden" name="comment_post_ID" value="1" id="comment_post_ID" />
+			<input type="hidden" name="comment_post_ID" value="1" id="comment_post_ID" /> <!--be sure to change value per post-->
 			<input type="submit" value="Submit"/>
 		</form>
 	</div>
 	<br>
 	<script src="../js/script.js"></script>
-	<script src="../js/blog.js"></script>
 </body>
 </html>

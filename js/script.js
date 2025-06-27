@@ -80,12 +80,12 @@ function createBreadcrumbs() { // create breadcrumbs for the page
 	};
 	// create the elements
 	const ul = document.createElement("ul");
-	const siteContentWrapper = document.getElementsByClassName("site-content-wrapper");
+	const breadcrumbs = document.getElementById("breadcrumbs");
 	const title = document.getElementById("blogTitle").innerHTML;
 	// set up the elements
 	ul.setAttribute("class", "breadcrumbs");
 	// insert the elements
-	siteContentWrapper[0].insertAdjacentElement("afterbegin", ul);
+	breadcrumbs.insertAdjacentElement("afterend", ul);
 	ul.appendChild(createA("Home","","../index.html","Return to Homepage"));
 	ul.appendChild(createA("Blog","","../Blog.html","Blog"));
 	ul.appendChild(createA(title,"","","Current Page"));
@@ -105,7 +105,8 @@ function createFooter() { // create the site Footer
 	footer.appendChild(div);
 	div.appendChild(createP("Observing Since 2019.", "footer-credit"));
 	icon.setAttribute("class", "footer-icon");
-	icon.setAttribute("src", "https://jordanhewett.com/images/observeeyev2.png");
+	icon.setAttribute("src", "../images/observeeyev2.png");
+	icon.setAttribute("alt", "The icon for jordanhewett.com");
 	div.appendChild(icon);
 	div.appendChild(createP("This is a Hewett-Made Website.", "footer-credit"));
 	footer.appendChild(document.createElement("br"));

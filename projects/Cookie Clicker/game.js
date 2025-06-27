@@ -1,15 +1,10 @@
-const canvStat = document.getElementById("gameStatic");
-const canvDyn = document.getElementById("gameDynamic");
-const ctxS = canvStat.getContext("2d");
-const ctxD = canvDyn.getContext("2d");
+const canv = document.getElementById("gameDynamic");
+const ctx = canv.getContext("2d");
 const texture = document.getElementById("textureSheet");
 const dimension = [window.innerWidth, window.innerHeight];
-canvStat.width = dimension[0];
-canvStat.height = dimension[1];
-canvDyn.width = dimension[0];
-canvDyn.height = dimension[1];
-//ctxS.translate(dimension[0] / 2, dimension[1] / 2);
-//ctxD.translate(dimension[0] / 2, dimension[1] / 2);
+canv.width = dimension[0];
+canv.height = dimension[1];
+ctx.translate(dimension[0] / 2, dimension[1] / 2);
 
 // 0 = index + 1 = texture column + 2 = texture row
 // 3 = title + 4 = description
@@ -257,90 +252,127 @@ class Game {
     this.time = new Date();
   };
   drawBackground() { // draw the background
-    ctxS.globalAlpha = "1";
-    ctxS.fillStyle = "hsl(195, 50%, 70%)"; // background
-    ctxS.fillRect(0, 0, this.width, this.height); // background
-    ctxS.imageSmoothingEnabled = true;
-    ctxS.imageSmoothingQuality = "high";
-    for (let i = 0; i < clickEffect.length; i++) { // draw the earned money
-      ctxD.textAlign = "center";
-      ctxD.textBaseline = "middle";
-      ctxD.strokeStyle = "black";
-      ctxD.lineWidth = "1.5";
-      clickEffect[i].time--;
-      if (clickEffect[i].time > 0 && game.state == 1) {
-        ctxD.font = clickEffect[i].font + "px calibri";
-        ctxD.globalAlpha = clickEffect[i].time / 80;
-        ctxD.fillStyle = clickEffect[i].color;
-        if (clickEffect[i].type) { // show earn money or lose money
-          ctxD.fillText("+$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y);
-          ctxD.strokeText("+$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y);
-        } else {
-          ctxD.fillText("-$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y);
-          ctxD.strokeText("-$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y);
-        };
-      } else {
-        clickEffect[0] = null;
-        clickEffect.splice(0, 1);
-      };
-    };
-    ctxD.globalAlpha = "1";
+    ctx.globalAlpha = "1";
+    ctx.fillStyle = "hsl(195, 50%, 70%)"; // background
+    ctx.fillRect(-this.width / 2, -this.height / 2, this.width, this.height); // background
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    // for (let i = 0; i < clickEffect.length; i++) { // draw the earned money
+    //   ctx.textAlign = "center";
+    //   ctx.textBaseline = "middle";
+    //   ctx.strokeStyle = "black";
+    //   ctx.lineWidth = "1.5";
+    //   clickEffect[i].time--;
+    //   if (clickEffect[i].time > 0 && game.state == 1) {
+    //     ctx.font = clickEffect[i].font + "px calibri";
+    //     ctx.globalAlpha = clickEffect[i].time / 80;
+    //     ctx.fillStyle = clickEffect[i].color;
+    //     if (clickEffect[i].type) { // show earn money or lose money
+    //       ctx.fillText("+$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y);
+    //       ctx.strokeText("+$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y);
+    //     } else {
+    //       ctx.fillText("-$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y);
+    //       ctx.strokeText("-$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y);
+    //     };
+    //   } else {
+    //     clickEffect[0] = null;
+    //     clickEffect.splice(0, 1);
+    //   };
+    // };
+    ctx.globalAlpha = "1";
   };
   drawStartScreen() { // game start screen
     game.drawBackground();
-    ctxS.drawImage( // the cookie
+    ctx.drawImage( // the cookie
       texture, // the texture sheet
       0 * game.frameW, 0 * game.frameH, // texture x + y
       game.frameW, game.frameH, // texture width + height
-      (game.width / 2) - cookie.r, (game.height / 4) - cookie.r, // destination x + y
+      //(game.width / 2) - cookie.r, (game.height / 4) - cookie.r, // destination x + y
+      -cookie.r, -cookie.r,
       2 * cookie.r, 2 * cookie.r // drawn width + height
     );
-    ctxS.fillStyle = "white"; // button color
-    ctxS.fillRect(game.width / 4, game.height / 2, game.width / 2, game.textSize * 2); // play button
-    ctxS.fillRect(game.width / 4, (game.height / 2) + game.textSize * 2.5, game.width / 2, game.textSize * 2); // exit button
-    ctxS.fillStyle = "black"; // game title color
-    ctxS.textAlign = "center"; // game title alignment
-    ctxS.textBaseline = "middle"; // game title alignment
-    ctxS.font = "small-caps bolder " + 2 * this.textSize + "px calibri"; // game title
-    ctxS.fillText("Cookie", game.width / 2, game.height / 4.5); // game title
-    ctxS.fillText("Frenzy", game.width / 2, game.height / 3.5); // game title
-    ctxS.font = this.textSize + "px calibri";
-    ctxS.fillText("Play", game.width / 2, (game.height / 2) + game.textSize);
-    ctxS.fillText("Exit", game.width / 2, (game.height / 2) + (3.5 * game.textSize));
+    ctx.fillStyle = "black"; // game title color
+    ctx.strokeStyle = "green";
+    ctx.lineWidth = "2";
+    ctx.textAlign = "center"; // game title alignment
+    ctx.textBaseline = "middle"; // game title alignment
+    ctx.font = "small-caps bolder " + 2.5 * this.textSize + "px calibri"; // game title
+    ctx.fillText("Cookie", 0, -game.height / 3); // game title
+    ctx.strokeText("Cookie", 0, -game.height / 3); // game title
+    ctx.fillText("Frenzy", 0, -game.height / 4); // game title
+    ctx.strokeText("Frenzy", 0, -game.height / 4); // game title
+    ctx.fillText("Exit", 0, (game.height / 3));
+    ctx.fillStyle = "white";
+    ctx.strokeStyle = "black";
+    ctx.font = "bold " + 2 * this.textSize + "px calibri";
+    ctx.fillText("Tap to Play", 0, 0);
+    ctx.strokeText("Tap to Play", 0, 0);
   };
   drawMenu() { // draw the top menu bar
     if (game.state > 0) { // if not on start screen
       // money area
-      ctxD.fillStyle = "white";
-      ctxD.fillRect(0, 0, this.width, 2 * this.textSize);
-      ctxD.fillStyle = "lightgrey";
-      ctxD.fillRect(0, this.textSize, this.width, 1 * this.textSize);
-      ctxD.fillStyle = "black";
-      ctxD.textAlign = "center";
-      ctxD.textBaseline = "middle";
-      ctxD.font = this.textSize / 1.5 + "px calibri";
-      ctxD.globalAlpha = 0.5;
-      ctxD.fillText("Admin", this.width / 6, 1.5 * this.textSize);
-      ctxD.fillText("Stock", this.width / 2, 1.5 * this.textSize);
-      ctxD.fillText("R & D", (5 * this.width) / 6, 1.5 * this.textSize);
-      ctxD.globalAlpha = 1;
-      if (game.state == 2) { // shop screen
-        ctxD.fillText("Stock", this.width / 2, 1.5 * this.textSize);
+      ctx.fillStyle = "white";
+      ctx.fillRect(-game.width / 2, -game.height / 2, this.width, game.height / 10);
+      ctx.fillStyle = "black";
+      ctx.fillRect(-game.width / 2, (-game.height / 2) + (game.height / 20) - 1, this.width, (game.height / 20) + 2);
+      ctx.fillStyle = "lightgrey";
+      ctx.fillRect(-game.width / 2, (-game.height / 2) + (game.height / 20), this.width, game.height / 20);
+      ctx.fillStyle = "black";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.font = this.textSize / 1.5 + "px calibri";
+      if (game.state == 2) ctx.globalAlpha = 1;
+      else ctx.globalAlpha = 0.5;
+      ctx.fillText("Stock", 0, (-game.height / 2) + (1.5 * game.height / 20));
+      if (game.state == 3) ctx.globalAlpha = 1;
+      else ctx.globalAlpha = 0.5;
+      ctx.fillText("R & D", game.width / 3, (-game.height / 2) + (1.5 * game.height / 20));
+      if (game.state == 4) ctx.globalAlpha = 1;
+      else ctx.globalAlpha = 0.5;
+      ctx.fillText("Admin", -game.width / 3, (-game.height / 2) + (1.5 * game.height / 20));
+      ctx.globalAlpha = 1;
+      ctx.font = game.textSize + "px calibri";
+      ctx.fillText("$" + utility.convert(player.money), 0, (-game.height / 2) + (game.height / 40)); // draw money
+      ctx.font = game.textSize / 2 + "px calibri";
+      ctx.textAlign = "right";
+      ctx.fillText("$" + player.EPS + "/s", game.width / 2.05, (-game.height / 2) + (game.height / 40)); // draw the money per second
+      if (utility.rolling) { // draw the rolling multiplier
+        ctx.fillStyle = "lightgrey";
+        let bonusArc = utility.round(utility.deltaTime(player.rollTimeStart) / utility.rollTimeMax);
+        if (bonusArc == 0) bonusArc = 0.001;
+        ctx.beginPath();
+        ctx.arc(utility.clickCountX, utility.clickCountY, utility.clickCountR, 0, 2 * Math.PI);
+        ctx.fill();
+        if (player.stackingBonus > 1) {
+          let g = 255 * (1 - bonusArc);
+          let r = 255 * (bonusArc);
+          ctx.fillStyle = "rgb("+r+","+g+",0)";
+          ctx.beginPath();
+          ctx.translate(utility.clickCountX, utility.clickCountY);
+          ctx.rotate(-(90 * Math.PI) / 180);
+          ctx.arc(0, 0, utility.clickCountR, 0, 2 * Math.PI * bonusArc, true);
+          ctx.lineTo(0, 0);
+          ctx.closePath();
+          ctx.fill();
+          ctx.rotate((90 * Math.PI) / 180);
+          ctx.translate(-utility.clickCountX, -utility.clickCountY);
+        };
+        ctx.fillStyle = "white";
+        ctx.beginPath();
+        ctx.arc(utility.clickCountX, utility.clickCountY, utility.clickCountR * 0.8, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = "black";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.font = 0.45 * game.textSize + "px calibri";
+        // counter
+        ctx.strokeStyle = "darkergrey";
+        ctx.lineWidth = 1;
+        ctx.strokeText("x" + utility.round(player.stackingBonus), utility.clickCountX, utility.clickCountY);
+        ctx.fillText("x" + utility.round(player.stackingBonus), utility.clickCountX, utility.clickCountY);
+        ctx.lineWidth = 1;
       };
-      if (game.state == 3) { // prestige screen
-        ctxD.fillText("R & D", (5 * this.width) / 6, 1.5 * this.textSize);
-      };
-      if (game.state == 4) { // menu screen
-        ctxD.fillText("Admin", this.width / 6, 1.5 * this.textSize);
-      };
-      ctxD.textAlign = "left";
-      ctxD.textBaseline = "top";
-      ctxD.font = game.textSize + "px calibri";
-      ctxD.fillText("$" + utility.convert(player.money), 5, 5); // draw money
-      ctxD.font = game.textSize / 2 + "px calibri";
-      ctxD.textAlign = "right";
-      ctxD.fillText("$" + player.EPS + "/s", game.width - 10, 0.25*game.textSize); // draw the money per second
-      ctxD.globalAlpha = 1;
     };
   };
   start() {
@@ -356,7 +388,7 @@ class Game {
     utility.update();
     cookie.update();
     for (let i = 0; i < explodingCookie.length; i++) {
-      if (explodingCookie[i].x + explodingCookie[i].xV < -explodingCookie[i].r || explodingCookie[i].x + explodingCookie[i].xV > game.width + explodingCookie[i].r || explodingCookie[i].y + explodingCookie[i].yV < -explodingCookie[i].r || explodingCookie[i].y + explodingCookie[i].yV > game.height + explodingCookie[i].r) {
+      if (explodingCookie[i].x + explodingCookie[i].xV < (-game.width / 2) - explodingCookie[i].r || explodingCookie[i].x + explodingCookie[i].xV > (game.width / 2) + explodingCookie[i].r || explodingCookie[i].y + explodingCookie[i].yV < (-game.height / 2) - explodingCookie[i].r || explodingCookie[i].y + explodingCookie[i].yV > (game.height / 2) + explodingCookie[i].r) {
         explodingCookie[i] = null;
         explodingCookie.splice(i,1);
       };
@@ -378,10 +410,7 @@ class Game {
     elapsed = now - then;
     if (elapsed > 1000 / game.FPS) { // throttle based on FPS
       then = now - (elapsed % (1000 / game.FPS));
-      ctxS.clearRect(0, 0, game.width, game.height);
-      ctxD.clearRect(0, 0, game.width, game.height);
-      // console.log(game.rotation);
-      // ctxD.rotate(game.rotation);
+      ctx.clearRect(0, 0, game.width, game.height);
       if (game.state > 0) game.update(); // update the game parameters
       if (game.state == 0) { // draw the start menu
         game.drawStartScreen();
@@ -453,11 +482,12 @@ class InputHandler {
   };
   click (x, y) {
     if (game.state == 0) { // game start screen
+      if (Math.pow(x - game.width / 2, 2) + Math.pow(y - game.height / 2, 2) < Math.pow(cookie.r + cookie.pulseCount, 2)) {
+        game.state = 1;
+        return;
+      };
       if (x > (game.width / 4) && x < 3 * (game.width / 4)) {
-        if (y > (game.height / 2) && y < (game.height / 2) + (2 * game.textSize)) {
-          game.state = 1;
-          return;
-        };
+
         if (y > (game.height / 2) + (2.5 * game.textSize) && y < (game.height / 2) + (4.5 * game.textSize)) {
           window.history.go(-1);
         };
@@ -556,9 +586,9 @@ class InputHandler {
       };
     };
     if (game.state == 2) { // shop screen
-      if (x > SHOP_BUTTONS[0].length - SHOP_BUTTONS[0].size && x < SHOP_BUTTONS[0].length && y > 2.5 * game.textSize) { // check if in upgrade button area
+      if (x > SHOP_BUTTONS[0].length - SHOP_BUTTONS[0].size && x < SHOP_BUTTONS[0].length) { // check if in upgrade button area
         for (let i = 0; i < NUMBER_OF_UPGRADES; i++) { // check each button
-          if (y > SHOP_BUTTONS[i].y - input.dY && y < SHOP_BUTTONS[i].y + SHOP_BUTTONS[i].size - input.dY) {
+          if (y - (game.height / 2) > SHOP_BUTTONS[i].y - input.dY && y - (game.height / 2) < SHOP_BUTTONS[i].y + SHOP_BUTTONS[i].size - input.dY) {
             utility.upgrade(i);
             break;
           };
@@ -630,7 +660,7 @@ class InputHandler {
     for (let i = 0; i < e.touches.length; i++) {
       ongoingTouches.push(e.targetTouches[i]);
       if (game.state == 1) { // if on cookie screen
-        if ((Math.pow(ongoingTouches[i].clientX - cookie.x, 2) + Math.pow(ongoingTouches[i].clientY - cookie.y, 2)) < Math.pow(cookie.r + cookie.pulseCount, 2)) { // check if in the cookie
+        if ((Math.pow(ongoingTouches[i].clientX - game.width / 2, 2) + Math.pow(ongoingTouches[i].clientY - game.height / 2, 2)) < Math.pow(cookie.r + cookie.pulseCount, 2)) { // check if in the cookie
           cookie.click();
         };
         for (let j = 0; j < goldCookie.length; j++) {
@@ -702,25 +732,25 @@ class Player {
     player.lastPlayMinutesRemainder = player.lastPlayHoursRemainder % 60;
     player.lastPlayTime = Math.floor(player.lastPlayHours) + "h " + Math.floor(player.lastPlayMinutes) + "m " + Math.floor(player.lastPlayMinutesRemainder) + "s";
     player.returnWorth = utility.multiply(cookie.worth * (player.lastPlaySeconds / (utility.tapRate / 1000)));
-    ctxD.fillStyle = "black";
-    ctxD.globalAlpha = "0.8";
-    ctxD.fillRect(0, 0, game.width, game.height);
-    ctxD.fillStyle = "white";
-    ctxD.globalAlpha = "1";
-    ctxD.fillRect((game.width / 2) - (game.width / 3), (game.height / 2) - (game.height / 4), game.width / 1.5, game.height / 2);
-    ctxD.fillStyle = "black";
-    ctxD.textAlign = "center";
-    ctxD.textBaseline = "top";
-    ctxD.font = game.textSize + "px calibri";
-    ctxD.fillText("Welcome Back!", (game.width / 2), (game.height / 3.5));
-    ctxD.fillText("It's been:", (game.width / 2), (game.height / 3.5) + (2 * game.textSize));
-    ctxD.fillText(player.lastPlayTime, game.width / 2, (game.height / 3.5) + (3 * game.textSize));
-    ctxD.font = (game.textSize / 0.7) + "px calibri";
-    ctxD.fillText("Earning", game.width / 2, game.height / 2);
-    ctxD.font = game.textSize + "px calibri";
-    ctxD.fillText("$" + utility.convert(player.returnWorth), game.width / 2, (game.height / 2) + (2 * game.textSize));
-    ctxD.font = game.textSize / 2 + "px calibri";
-    ctxD.fillText("Tap to Continue", game.width / 2, (2.8 * game.height) / 4);
+    ctx.fillStyle = "black";
+    ctx.globalAlpha = "0.8";
+    ctx.fillRect(0, 0, game.width, game.height);
+    ctx.fillStyle = "white";
+    ctx.globalAlpha = "1";
+    ctx.fillRect((game.width / 2) - (game.width / 3), (game.height / 2) - (game.height / 4), game.width / 1.5, game.height / 2);
+    ctx.fillStyle = "black";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    ctx.font = game.textSize + "px calibri";
+    ctx.fillText("Welcome Back!", (game.width / 2), (game.height / 3.5));
+    ctx.fillText("It's been:", (game.width / 2), (game.height / 3.5) + (2 * game.textSize));
+    ctx.fillText(player.lastPlayTime, game.width / 2, (game.height / 3.5) + (3 * game.textSize));
+    ctx.font = (game.textSize / 0.7) + "px calibri";
+    ctx.fillText("Earning", game.width / 2, game.height / 2);
+    ctx.font = game.textSize + "px calibri";
+    ctx.fillText("$" + utility.convert(player.returnWorth), game.width / 2, (game.height / 2) + (2 * game.textSize));
+    ctx.font = game.textSize / 2 + "px calibri";
+    ctx.fillText("Tap to Continue", game.width / 2, (2.8 * game.height) / 4);
   };
   calcEarning() {
     this.earnedNow = player.earned; // get how much player has earned
@@ -806,7 +836,12 @@ class Player {
       "Quattuorvigintillion= " + units[24] + ", Quinvigintillion= " + units[25],
       "Sexvigintillion= " + units[26] + ", Septvigintillion= " + units[27],
       "Octovigintillion= " + units[28] + ", Novemvigintillion= " + units[29],
-      "Trigintillion= " + units[30]
+      "Trigintillion= " + units[30],
+      "",
+      "Game Settings",
+      "",
+      "Text Size: " + game.textSize,
+      "Effects: On"
     ];
   };
   updateAchievements() {
@@ -834,22 +869,22 @@ class Player {
     ACHIEVEMENTS_PLAYER[10] = player.timesPrestiged;
   };
   achievement() {
-    ctxD.globalAlpha = "0.5";
-    ctxD.fillStyle = "black";
-    ctxD.fillRect(0, 0, game.width, game.height);
-    ctxD.globalAlpha = "1";
-    ctxD.fillStyle = "white";
-    ctxD.fillRect (game.width / 6, game.height / 4, game.width / 1.5, game.height / 2);
-    ctxD.fillStyle = "black";
-    ctxD.font = game.textSize + "px calibri";
-    ctxD.textAlign = "center";
-    ctxD.textBaseline = "middle";
-    ctxD.fillText("Congrats!", game.width / 2, (game.height / 3));
-    ctxD.fillText("Achievement", game.width / 2, (game.height / 2) - (game.textSize / 2));
-    ctxD.fillText("Earned!", game.width / 2, (game.height / 2) + (game.textSize / 2));
-    ctxD.fillText("+1 Talent Point", game.width / 2, (2 * game.height) / 3);
-    ctxD.font = game.textSize / 2 + "px calibri";
-    ctxD.fillText("This screen will close in: " + utility.achievementCounter + " taps.", game.width / 2, (2.15 * game.height) / 3);
+    ctx.globalAlpha = "0.5";
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, game.width, game.height);
+    ctx.globalAlpha = "1";
+    ctx.fillStyle = "white";
+    ctx.fillRect (game.width / 6, game.height / 4, game.width / 1.5, game.height / 2);
+    ctx.fillStyle = "black";
+    ctx.font = game.textSize + "px calibri";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("Congrats!", game.width / 2, (game.height / 3));
+    ctx.fillText("Achievement", game.width / 2, (game.height / 2) - (game.textSize / 2));
+    ctx.fillText("Earned!", game.width / 2, (game.height / 2) + (game.textSize / 2));
+    ctx.fillText("+1 Talent Point", game.width / 2, (2 * game.height) / 3);
+    ctx.font = game.textSize / 2 + "px calibri";
+    ctx.fillText("This screen will close in: " + utility.achievementCounter + " taps.", game.width / 2, (2.15 * game.height) / 3);
   };
   reset(everything) {
     player.money = 0;
@@ -1059,9 +1094,9 @@ class Utility {
     this.currentlyFilling = 0;
     this.switch = false;
     this.clickCount = 1; // current click count
-    this.clickCountX = 1.25 * game.textSize;
-    this.clickCountY = game.textSize * 3.25;
-    this.clickCountR = game.textSize;
+    this.clickCountR = game.height / 40;
+    this.clickCountX = (-game.width / 2) + (this.clickCountR);
+    this.clickCountY = (-game.height / 2) + (this.clickCountR);
     this.runningClickCount = 0;
     this.inFrenzy = false;
     this.frenzyX = this.clickCountX + this.clickCountR - 5;
@@ -1095,11 +1130,11 @@ class Utility {
     //return Number.isInteger(value) ? value : defaultValue;
   }
   drawCookieScreen() { // draw the dynamic cookie screen
-    ctxD.textAlign = "center";
-    ctxD.fillStyle = "black";
-    ctxD.textAlign = "left";
-    ctxD.textBaseline = "top";
-    ctxD.font = game.textSize + "px calibri";
+    ctx.textAlign = "center";
+    ctx.fillStyle = "black";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.font = game.textSize + "px calibri";
     for (let i = 0; i < explodingCookie.length; i++) { // draw exploding cookie
       explodingCookie[i].draw(explodingCookie[i].x + (explodingCookie[i].r / 3), explodingCookie[i].xV, explodingCookie[i].y + (explodingCookie[i].r / 3), explodingCookie[i].yV, explodingCookie[i].r / 2, explodingCookie[i].pulseCount, explodingCookie[i].color(), 0);
       // move cookies in random direction
@@ -1108,105 +1143,68 @@ class Utility {
     };
     cookie.draw(cookie.x, cookie.xV, cookie.y, cookie.yV, cookie.r, cookie.pulseCount, cookie.color(), 0);
     if (this.frenzy) { // draw the frenzy bar
-      ctxD.fillStyle = "white";
-      if (this.canFrenzy) ctxD.fillStyle = "green";
-      ctxD.textBaseline = "top";
-      ctxD.textAlign = "center";
-      ctxD.font = game.textSize + "px calibri";
-      ctxD.fillRect(this.frenzyX, this.frenzyY, this.frenzyLength, this.clickCountR); // base frenzy bar
-      ctxD.fillStyle = "red";
+      ctx.fillStyle = "white";
+      if (this.canFrenzy) ctx.fillStyle = "green";
+      ctx.textBaseline = "top";
+      ctx.textAlign = "center";
+      ctx.font = game.textSize + "px calibri";
+      ctx.fillRect(this.frenzyX, this.frenzyY, this.frenzyLength, this.clickCountR); // base frenzy bar
+      ctx.fillStyle = "red";
       if (utility.inFrenzy) { // time left bar if in frenzy
-        ctxD.fillRect(this.frenzyX, this.frenzyY, (1 - (utility.deltaTime(utility.frenzyLeft) / utility.frenzyMax)) * this.frenzyLength, game.textSize);
+        ctx.fillRect(this.frenzyX, this.frenzyY, (1 - (utility.deltaTime(utility.frenzyLeft) / utility.frenzyMax)) * this.frenzyLength, game.textSize);
       };
       if (!utility.inFrenzy && !utility.canFrenzy) {
-        ctxD.globalAlpha = 0.5;
-        ctxD.fillRect(this.frenzyX, this.frenzyY, (utility.deltaTime(utility.frenzyFinish) / utility.frenzyReset) * this.frenzyLength, game.textSize);
-        ctxD.globalAlpha = 1;
+        ctx.globalAlpha = 0.5;
+        ctx.fillRect(this.frenzyX, this.frenzyY, (utility.deltaTime(utility.frenzyFinish) / utility.frenzyReset) * this.frenzyLength, game.textSize);
+        ctx.globalAlpha = 1;
       };
-      ctxD.fillStyle = "black";
-      ctxD.textBaseline = "top";
-      ctxD.fillText("Frenzy", game.width / 2, this.frenzyY);
+      ctx.fillStyle = "black";
+      ctx.textBaseline = "top";
+      ctx.fillText("Frenzy", 0, this.frenzyY);
     };
-    if (utility.rolling) { // draw the rolling multiplier
-      ctxD.fillStyle = "lightgrey";
-      let bonusArc = utility.round(utility.deltaTime(player.rollTimeStart) / utility.rollTimeMax);
-      if (bonusArc == 0) bonusArc = 0.001;
-      ctxD.beginPath();
-      ctxD.arc(this.clickCountX, this.clickCountY, this.clickCountR, 0, 2 * Math.PI);
-      ctxD.fill();
-      if (player.stackingBonus > 1) {
-        let g = 255 * (1 - bonusArc);
-        let r = 255 * (bonusArc);
-        ctxD.fillStyle = "rgb("+r+","+g+",0)";
-        ctxD.beginPath();
-        ctxD.translate(this.clickCountX, this.clickCountY);
-        ctxD.rotate(-(90 * Math.PI) / 180);
-        //ctxD.moveTo(1.5 * game.textSize, game.textSize * 4.5);
-        ctxD.arc(0, 0, game.textSize, 0, 2 * Math.PI * bonusArc, true);
-        ctxD.lineTo(0, 0);
-        ctxD.closePath();
-        ctxD.fill();
-        ctxD.rotate((90 * Math.PI) / 180);
-        ctxD.translate(-this.clickCountX, -this.clickCountY);
-      };
-      ctxD.fillStyle = "white";
-      ctxD.beginPath();
-      ctxD.arc(this.clickCountX, this.clickCountY, this.clickCountR * 0.7, 0, 2 * Math.PI);
-      ctxD.fill();
-      ctxD.globalAlpha = 1;
-      ctxD.fillStyle = "black";
-      ctxD.textAlign = "center";
-      ctxD.textBaseline = "middle";
-      ctxD.font = 0.45 * game.textSize + "px calibri";
-      // counter
-      ctxD.strokeStyle = "darkergrey";
-      ctxD.lineWidth = 2;
-      ctxD.strokeText("x" + utility.round(player.stackingBonus), this.clickCountX, this.clickCountY);
-      ctxD.fillText("x" + utility.round(player.stackingBonus), this.clickCountX, this.clickCountY);
-      ctxD.lineWidth = 1;
-    };
+
     for (let i = 0; i < goldCookie.length; i++) { // draw any golden cookies
       goldCookie[i].draw();
       goldCookie[i].update(i);
     };
     if (player.level[ADD_CONTAINER[0]] > 0) { //  draw the container table
-      ctxD.fillStyle = "white";
-      ctxD.fillRect(0, this.containerTableY, game.width, game.height);
-      ctxD.fillStyle = "lightgrey";
-      ctxD.fillRect(0, this.containerTableY + game.textSize, game.width, game.textSize);
-      ctxD.fillStyle = "black";
-      ctxD.textAlign = "center";
-      ctxD.textBaseline = "top";
-      ctxD.font = game.textSize / 1.5 + "px calibri";
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, this.containerTableY, game.width, game.height);
+      ctx.fillStyle = "lightgrey";
+      ctx.fillRect(0, this.containerTableY + game.textSize, game.width, game.textSize);
+      ctx.fillStyle = "black";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      ctx.font = game.textSize / 1.5 + "px calibri";
       let txt = "";
       if (utility.containerUpgrading) { // container upgrade section
         txt = "Close Container Upgrades";
-        ctxD.globalAlpha = 1;
+        ctx.globalAlpha = 1;
         if (utility.containerFocused == null) { // no container focused
-          ctxD.fillText("Select a container to upgrade", 0.5 * game.width, 0.875 * game.height);
+          ctx.fillText("Select a container to upgrade", 0.5 * game.width, 0.875 * game.height);
         } else { // a container is focused
-          ctxD.drawImage(texture, 10 * game.frameW, 2 * game.frameH, game.frameW, game.frameH,
+          ctx.drawImage(texture, 10 * game.frameW, 2 * game.frameH, game.frameW, game.frameH,
             this.cUpgrade1X, this.containerTableY * 1.25, // destination x + y
             game.frameW, game.frameH);
-          ctxD.drawImage(texture, 11 * game.frameW, 2 * game.frameH, game.frameW, game.frameH,
+          ctx.drawImage(texture, 11 * game.frameW, 2 * game.frameH, game.frameW, game.frameH,
             this.cUpgrade2X, this.containerTableY * 1.25, // destination x + y
             game.frameW, game.frameH);
-          ctxD.drawImage(texture, 12 * game.frameW, 2 * game.frameH, game.frameW, game.frameH,
+          ctx.drawImage(texture, 12 * game.frameW, 2 * game.frameH, game.frameW, game.frameH,
             this.cUpgrade3X, this.containerTableY * 1.25, // destination x + y
             game.frameW, game.frameH);
-          ctxD.drawImage(texture, 13 * game.frameW, 2 * game.frameH, game.frameW, game.frameH,
+          ctx.drawImage(texture, 13 * game.frameW, 2 * game.frameH, game.frameW, game.frameH,
             this.cUpgrade4X, this.containerTableY * 1.25, // destination x + y
             game.frameW, game.frameH);
-          ctxD.drawImage(texture, 14 * game.frameW, 2 * game.frameH, game.frameW, game.frameH,
+          ctx.drawImage(texture, 14 * game.frameW, 2 * game.frameH, game.frameW, game.frameH,
             this.cUpgrade5X, this.containerTableY * 1.25, // destination x + y
             game.frameW, game.frameH);
         };
       } else { // container upgrade button
         txt = "Open Container Upgrades";
-        ctxD.globalAlpha = 0.5;
+        ctx.globalAlpha = 0.5;
       };
-      ctxD.fillText(txt, 0.5 * game.width, this.containerTableY + (1.15 * game.textSize));
-      ctxD.globalAlpha = 1;
+      ctx.fillText(txt, 0.5 * game.width, this.containerTableY + (1.15 * game.textSize));
+      ctx.globalAlpha = 1;
       for (let i = 0; i < CONTAINERS.length; i++) {
         CONTAINERS[i].draw();
       };
@@ -1216,90 +1214,90 @@ class Utility {
     for (let i = 0; i < NUMBER_OF_UPGRADES; i++) {
       SHOP_BUTTONS[i].drawButton();
     };
-    utility.resetScroll(SHOP_BUTTONS[0].y, SHOP_BUTTONS[NUMBER_OF_UPGRADES - 1].y); // first btn + last btn
+    utility.resetScroll(SHOP_BUTTONS[0].y, SHOP_BUTTONS[NUMBER_OF_UPGRADES - 1].y + (SHOP_BUTTONS[NUMBER_OF_UPGRADES - 1].size * 1.25)); // first btn + last btn
   };
   drawPrestigeScreen() { // draw the dynamic prestige / R & D screen
     for (let i = 0; i < TALENT_BUTTONS.length; i++) {
       TALENT_BUTTONS[i].drawTalent();
     };
-    ctxD.textAlign = "center";
-    ctxD.textBaseline = "middle";
-    ctxD.font = game.textSize * 0.85 + "px calibri";
-    ctxD.fillStyle = "black";
-    ctxD.fillRect(this.prestigeButtonX - 10, this.prestigeButtonY - 10, this.prestigeButtonWidth + 20, this.prestigeButtonHeight + 20); // the prestige button
-    ctxD.fillStyle = "white";
-    ctxD.fillRect(this.prestigeButtonX, this.prestigeButtonY, this.prestigeButtonWidth, this.prestigeButtonHeight); // the prestige button
-    ctxD.fillRect(0, this.prestigeButtonY + this.prestigeButtonHeight + 10, game.width, 1.65 * game.textSize); // the talent point background
-    ctxD.fillStyle = "black";
-    ctxD.fillText("Current Earnings: " + utility.convert(player.earned), game.width / 2, this.prestigeButtonY + game.textSize);
-    ctxD.font = game.textSize * 0.75 + "px calibri";
-    ctxD.fillText("You have: " + utility.convert(player.prestige) + " prestige", game.width / 2, this.prestigeButtonY + (2 * game.textSize));
-    ctxD.font = game.textSize * 0.5 + "px calibri";
-    ctxD.fillText("increasing your earnings by: x" +  utility.convert(utility.prestigeBonus), game.width / 2, this.prestigeButtonY + (2.75 * game.textSize));
-    ctxD.fillStyle = "black";
-    //ctxD.font  = game.textSize + "px calibri";
-    ctxD.fillText("Tap here to collect: " + utility.convert(Math.floor(utility.prestigeFor)) + " prestige", game.width / 2, this.prestigeButtonY + (2.25 * this.prestigeButtonHeight / 3)); // prestige button text
-    ctxD.fillRect(8, this.prestigeButtonY + this.prestigeButtonHeight - game.textSize - 2, game.width - 16, (game.textSize / 2) + 4);
-    ctxD.fillStyle = "lightgrey";
-    ctxD.fillRect(10, this.prestigeButtonY + this.prestigeButtonHeight - game.textSize, game.width - 20, game.textSize / 2);
-    ctxD.fillStyle = "green";
-    ctxD.fillRect(10, this.prestigeButtonY + this.prestigeButtonHeight - game.textSize, (game.width - 20) * utility.prestigeForNext, game.textSize / 2);
-    ctxD.fillStyle = "black";
-    ctxD.textAlign = "right";
-    ctxD.textBaseline = "top";
-    ctxD.font = game.textSize / 1.8 + "px calibri";
-    ctxD.fillText("+ ", game.width - 10, this.prestigeButtonY + this.prestigeButtonHeight - game.textSize);
-    ctxD.textAlign = "center";
-    ctxD.textBaseline = "middle";
-    ctxD.font = game.textSize + "px calibri";
-    ctxD.fillText("Talent Points: " + player.secretIngredients, game.width / 2, this.prestigeButtonY + this.prestigeButtonHeight + game.textSize);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font = game.textSize * 0.85 + "px calibri";
+    ctx.fillStyle = "black";
+    ctx.fillRect(this.prestigeButtonX - 10, this.prestigeButtonY - 10, this.prestigeButtonWidth + 20, this.prestigeButtonHeight + 20); // the prestige button
+    ctx.fillStyle = "white";
+    ctx.fillRect(this.prestigeButtonX, this.prestigeButtonY, this.prestigeButtonWidth, this.prestigeButtonHeight); // the prestige button
+    ctx.fillRect(0, this.prestigeButtonY + this.prestigeButtonHeight + 10, game.width, 1.65 * game.textSize); // the talent point background
+    ctx.fillStyle = "black";
+    ctx.fillText("Current Earnings: " + utility.convert(player.earned), game.width / 2, this.prestigeButtonY + game.textSize);
+    ctx.font = game.textSize * 0.75 + "px calibri";
+    ctx.fillText("You have: " + utility.convert(player.prestige) + " prestige", game.width / 2, this.prestigeButtonY + (2 * game.textSize));
+    ctx.font = game.textSize * 0.5 + "px calibri";
+    ctx.fillText("increasing your earnings by: x" +  utility.convert(utility.prestigeBonus), game.width / 2, this.prestigeButtonY + (2.75 * game.textSize));
+    ctx.fillStyle = "black";
+    //ctx.font  = game.textSize + "px calibri";
+    ctx.fillText("Tap here to collect: " + utility.convert(Math.floor(utility.prestigeFor)) + " prestige", game.width / 2, this.prestigeButtonY + (2.25 * this.prestigeButtonHeight / 3)); // prestige button text
+    ctx.fillRect(8, this.prestigeButtonY + this.prestigeButtonHeight - game.textSize - 2, game.width - 16, (game.textSize / 2) + 4);
+    ctx.fillStyle = "lightgrey";
+    ctx.fillRect(10, this.prestigeButtonY + this.prestigeButtonHeight - game.textSize, game.width - 20, game.textSize / 2);
+    ctx.fillStyle = "green";
+    ctx.fillRect(10, this.prestigeButtonY + this.prestigeButtonHeight - game.textSize, (game.width - 20) * utility.prestigeForNext, game.textSize / 2);
+    ctx.fillStyle = "black";
+    ctx.textAlign = "right";
+    ctx.textBaseline = "top";
+    ctx.font = game.textSize / 1.8 + "px calibri";
+    ctx.fillText("+ ", game.width - 10, this.prestigeButtonY + this.prestigeButtonHeight - game.textSize);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font = game.textSize + "px calibri";
+    ctx.fillText("Talent Points: " + player.secretIngredients, game.width / 2, this.prestigeButtonY + this.prestigeButtonHeight + game.textSize);
 
     if (utility.prestigeConfirm) { // prestige confirm screen
-      ctxD.fillStyle = "black";
-      ctxD.textAlign = "center";
-      ctxD.textBaseline = "middle";
-      ctxD.globalAlpha = "0.5";
-      ctxD.fillRect(0, 0, game.width, game.height);
-      ctxD.globalAlpha = "1";
-      ctxD.fillStyle = "white";
-      ctxD.fillRect(game.width / 2 - ((game.width / 1.25) / 2), game.height / 2 - ((game.height / 5) / 1.5), game.width / 1.25, game.height / 5);
-      ctxD.fillStyle = "green";
-      ctxD.fillRect(game.width / 2 - (2 * game.textSize), game.height / 2, game.textSize, game.textSize);
-      ctxD.fillStyle = "red";
-      ctxD.fillRect(game.width / 2 + (game.textSize), game.height / 2, game.textSize, game.textSize);
-      ctxD.fillStyle = "black";
-      ctxD.fillText("Are you sure?", game.width / 2, game.height / 2 - (2.15 * game.textSize));
-      ctxD.font  = game.textSize / 2 + "px calibri";
-      ctxD.fillText("You will lose your current progress", game.width / 2, game.height / 2 - (1.25 * game.textSize));
-      ctxD.fillText("and gain " + utility.convert(Math.floor(utility.prestigeFor)) + " prestige.", game.width / 2, game.height / 2 - (0.8 * game.textSize));
-      ctxD.fillStyle = "white";
-      ctxD.fillText("\u2713", game.width / 2 - (1.5 * game.textSize), game.height / 2 + (0.5 * game.textSize));
-      ctxD.fillText("\u2715", game.width / 2 + (1.5 * game.textSize), game.height / 2 + (0.5 * game.textSize));
+      ctx.fillStyle = "black";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.globalAlpha = "0.5";
+      ctx.fillRect(0, 0, game.width, game.height);
+      ctx.globalAlpha = "1";
+      ctx.fillStyle = "white";
+      ctx.fillRect(game.width / 2 - ((game.width / 1.25) / 2), game.height / 2 - ((game.height / 5) / 1.5), game.width / 1.25, game.height / 5);
+      ctx.fillStyle = "green";
+      ctx.fillRect(game.width / 2 - (2 * game.textSize), game.height / 2, game.textSize, game.textSize);
+      ctx.fillStyle = "red";
+      ctx.fillRect(game.width / 2 + (game.textSize), game.height / 2, game.textSize, game.textSize);
+      ctx.fillStyle = "black";
+      ctx.fillText("Are you sure?", game.width / 2, game.height / 2 - (2.15 * game.textSize));
+      ctx.font  = game.textSize / 2 + "px calibri";
+      ctx.fillText("You will lose your current progress", game.width / 2, game.height / 2 - (1.25 * game.textSize));
+      ctx.fillText("and gain " + utility.convert(Math.floor(utility.prestigeFor)) + " prestige.", game.width / 2, game.height / 2 - (0.8 * game.textSize));
+      ctx.fillStyle = "white";
+      ctx.fillText("\u2713", game.width / 2 - (1.5 * game.textSize), game.height / 2 + (0.5 * game.textSize));
+      ctx.fillText("\u2715", game.width / 2 + (1.5 * game.textSize), game.height / 2 + (0.5 * game.textSize));
     };
     utility.resetScroll(TALENT_BUTTONS[0].y, TALENT_BUTTONS[NUMBER_OF_TALENTS - 1].y);
   };
   drawMenuScreen() { // draw the dynamic menu screen
-    ctxD.font = game.textSize / 2 + "px calibri";
-    ctxD.fillStyle = "red";
-    ctxD.fillRect( // reset ALL button
-      5, (PLAYER_STATS.length + 3.5) * game.textSize - input.dY,// x + y
+    ctx.font = game.textSize / 2 + "px calibri";
+    ctx.fillStyle = "red";
+    ctx.fillRect( // reset ALL button
+      (-game.width / 2) + 5, (-game.height / 2) + (PLAYER_STATS.length + 3.5) * game.textSize - input.dY,// x + y
       game.width - 10, game.textSize // width + height
     );
-    ctxD.fillStyle = "white";
-    ctxD.textAlign = "center";
-    ctxD.textBaseline = "middle";
-    ctxD.fillText("Reset all! WARNING: you will lose everything!", game.width / 2, (PLAYER_STATS.length + 4) * game.textSize - input.dY);
-    ctxD.fillStyle = "black";
-    ctxD.textBaseline = "top";
-    ctxD.textAlign = "left";
+    ctx.fillStyle = "white";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("Reset all! WARNING: you will lose everything!", 0, (-game.height / 2) + (PLAYER_STATS.length + 4) * game.textSize - input.dY);
+    ctx.fillStyle = "black";
+    ctx.textBaseline = "top";
+    ctx.textAlign = "left";
     player.updateStats();
     for (let i = 0; i < PLAYER_STATS.length; i++) {
       // if stat should be a heading
-      if (i == 0 || i == (NUMBER_OF_ACHIEVEMENTS + 3) || i == (PLAYER_STATS.length - 18)) ctxD.font = "bold " + game.textSize + "px calibri";
-      else ctxD.font = game.textSize / 2 + "px calibri";
-      ctxD.fillText(PLAYER_STATS[i], 20, (i + 2.5) * game.textSize - input.dY);
+      if (i == 0 || i == (NUMBER_OF_ACHIEVEMENTS + 3) || i == (PLAYER_STATS.length - 23) || i == (PLAYER_STATS.length - 4)) ctx.font = "bold " + game.textSize + "px calibri";
+      else ctx.font = game.textSize / 2 + "px calibri";
+      ctx.fillText(PLAYER_STATS[i], (-game.width / 2) + 20, (-game.height / 2) + (i + 2.5) * game.textSize - input.dY);
     };
-    utility.resetScroll(2.5 * game.textSize, (PLAYER_STATS.length + 3.5) * game.textSize);
+    utility.resetScroll(game.height / 10, (-game.height / 2) + (PLAYER_STATS.length + 5) * game.textSize);
 
   };
   setUgrades() {
@@ -1368,7 +1366,7 @@ class Utility {
     player.upgradesPurchased++;
     player.moneySpent += player.cost[index];
     if (player.cost[index] > player.highestMoneySpent) player.highestMoneySpent = player.cost[index];
-    clickEffect.push(new Effects(utility.convert(player.cost[index]), false, "red", 1.2));
+    //clickEffect.push(new Effects(utility.convert(player.cost[index]), false, "red", 1.2));
     if (index == GOLDEN_COOKIE[0]) { // purchasing golden cookie, give a free gold cookie
       goldCookie.push(new GoldCookie());
     };
@@ -1406,23 +1404,24 @@ class Utility {
   };
   resetScroll (top, bottom) {
     if (top - input.dY > top) { // keep first button from scrolling too far
-      input.dY += 5;
+      input.dY += 1;
       if (top - input.dY > (1.2 * top)) {
-        input.dY += 10;
+        input.dY += 20;
       };
       if (top - input.dY > game.height / 2) {
-        input.dY += 50;
+        input.dY += 100;
       };
     };
-    if (bottom - input.dY < (game.height - (3 * game.textSize))) { // keep last button from scrolling too far
-      input.dY -= 5;
-      if (bottom - input.dY < (game.height - (3.5 * game.textSize))) {
-        input.dY -= 10;
+    if (bottom - input.dY < game.height / 2) { // keep last button from scrolling too far
+      input.dY -= 1;
+      if (bottom - input.dY < game.height / 1.5) {
+        input.dY -= 20;
       };
-      if (bottom - input.dY < game.height / 2) {
-        input.dY -= 50;
+      if (bottom - input.dY < 0) {
+        input.dY -= 100;
       };
     };
+    input.dYSmoothing = 0;
   };
   fillContainer() {
     if (utility.activeContainers == 0) return;
@@ -1498,8 +1497,8 @@ class Utility {
 
 class Cookie {
   constructor() {
-    this.x = game.width / 2;
-    this.y = game.height / 2;
+    this.x = 0;
+    this.y = 0;
     this.r = this.radius();
     this.pulseCount = 0;
     this.golden = false;
@@ -1513,9 +1512,9 @@ class Cookie {
     this.dY = Math.cos((Math.random() * (2 * Math.PI))) * 2.5;
   };
   setUgrades() {
-    this.pulse = 15 + (player.level[EXPLODE_QUICKER[0]] * 2);
-    this.pulseSlow = 1.05 - (player.level[PULSE_SLOW[0]] / PULSE_SLOW[7]);
-    this.pulseLimit = this.r * (3 - (3 * (player.level[PULSE_LIMIT[0]] / (PULSE_LIMIT[7] + 3))));
+    this.pulse = 1 + (player.level[EXPLODE_QUICKER[0]] * 2);
+    this.pulseSlow = 0.1 - (0.1 * (player.level[PULSE_SLOW[0]] / PULSE_SLOW[7]));
+    this.pulseLimit = 200 - (190 * (player.level[PULSE_LIMIT[0]] / PULSE_LIMIT[7]));
     this.worth = 1 + (player.level[MONEY_PER_CLICK[0]] / 10);
     //this.worth = 7777777777777; // testing purposes
     this.bonusWorth = this.worth * (2 + (player.level[EXPLODE_BONUS[0]] * player.level[EXPLODE_BONUS[0]]));
@@ -1529,18 +1528,19 @@ class Cookie {
     if (game.width > game.height) {
       return game.height / 8;
     } else {
-      return game.width / 4;
+      return game.width / 3;
     };
   };
   color() {
-    if (cookie.golden) return 3;
-    if (this.r + this.pulseCount > this.pulseLimit * 0.95) {
-      return 2;
-    } else if (this.r + this.pulseCount > this.pulseLimit * 0.75) {
-      return 1;
-    } else {
-      return 0;
-    }
+    let clr = 0;
+    if (this.pulseCount > this.pulseLimit * 0.05) clr = 1;
+    if (this.pulseCount > this.pulseLimit * 0.2) clr = 2;
+    if (this.pulseCount > this.pulseLimit * 0.35) clr = 3;
+    if (this.pulseCount > this.pulseLimit * 0.55) clr = 4;
+    if (this.pulseCount > this.pulseLimit * 0.75) clr = 5;
+    if (this.pulseCount > this.pulseLimit * 0.9) clr = 6;
+    if (cookie.golden) clr += 7;
+    return clr;
   };
   click(playerInput = true) {
     player.cookieClicked++;
@@ -1557,12 +1557,12 @@ class Cookie {
       if (utility.inFrenzy) { // check if frenzy time should increase
         if (utility.deltaTime(utility.frenzyLeft) > 45) utility.frenzyLeft += 45;
       };
-      if (cookie.r + cookie.pulseCount < cookie.pulseLimit) { // if cookie should expand
+      if (cookie.pulseCount < cookie.pulseLimit) { // if cookie should expand
         cookie.pulseCount += cookie.pulse;
       } else cookie.reset();
       //game.rotation = Math.sin((Math.random() * (2 * Math.PI)));
     };
-    if (cookie.r + cookie.pulseCount < cookie.pulseLimit) {
+    if (cookie.pulseCount < cookie.pulseLimit) {
       cookie.pulseCount += (cookie.pulse / 10);
     };
     let amount = utility.multiply(cookie.worth);
@@ -1575,7 +1575,7 @@ class Cookie {
     player.earned += amount;
     player.totalEarnings += amount;
     player.update();
-    clickEffect.push(new Effects(utility.convert(amount), true, clr));
+    //clickEffect.push(new Effects(utility.convert(amount), true, clr));
   };
   reset() {
     if (utility.explodable) {
@@ -1609,22 +1609,22 @@ class Cookie {
       player.earned += amount;
       player.totalEarnings += amount;
       player.update();
-      clickEffect.push(new Effects(utility.convert(amount), true, clr, 1.5));
+      //clickEffect.push(new Effects(utility.convert(amount), true, clr, 1.5));
     };
   };
   draw(x, xV, y, yV, r, pC, column, row) {
-    ctxD.imageSmoothingEnabled = true;
-    ctxD.imageSmoothingQuality = "high";
-    ctxD.drawImage(
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(
       texture, // the texture sheet
       column * game.frameW, // starting x
       row * game.frameH, // starting y
       game.frameW, // width
       game.frameH, // height
-      x + xV - r - pC / 2, // destination x
-      y + yV - r - pC / 2, // destination y
-      (2 * r) + pC, // drawn width
-      (2 * r) + pC // drawn height
+      (x + xV) - r, // destination x
+      (y + yV) - r, // destination y
+      2 * r, // drawn width
+      2 * r // drawn height
     );
   };
   update() {
@@ -1651,9 +1651,9 @@ class GoldCookie {
     this.size = game.frameW;
   };
   draw() {
-    ctxD.imageSmoothingEnabled = true;
-    ctxD.imageSmoothingQuality = "high";
-    ctxD.drawImage(
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(
       texture, // the texture sheet
       3 * game.frameW, // starting x
       0 * game.frameH, // starting y
@@ -1732,22 +1732,22 @@ class Container {
     if (!this.active) return;
     this.y = utility.containerTableY - game.frameH;
     this.focusY = this.y + this.length + (1.5 * game.textSize);
-    ctxD.globalAlpha = "0.3";
-    ctxD.fillStyle = "black";
-    ctxD.beginPath();
-    ctxD.ellipse(this.x + (this.length * 0.5), this.y + (this.length * 0.95), this.length * 0.5, this.length * 0.15, 0, 0, 2 * Math.PI); // container shadow
-    ctxD.fill();
-    ctxD.globalAlpha = "0.3";
-    ctxD.drawImage( // the container image
+    ctx.globalAlpha = "0.3";
+    ctx.fillStyle = "black";
+    ctx.beginPath();
+    ctx.ellipse(this.x + (this.length * 0.5), this.y + (this.length * 0.95), this.length * 0.5, this.length * 0.15, 0, 0, 2 * Math.PI); // container shadow
+    ctx.fill();
+    ctx.globalAlpha = "0.3";
+    ctx.drawImage( // the container image
       texture, // the texture sheet
       this.column * game.frameW, this.row * game.frameH, // starting x + y
       game.frameW, game.frameH, // width + height
       this.x, this.y, // destination x + y
       this.length, this.length // drawn width + height
     );
-    if (this.full) ctxD.globalAlpha = this.sin;
-    else ctxD.globalAlpha = "1";
-    ctxD.drawImage( // the overlay container image
+    if (this.full) ctx.globalAlpha = this.sin;
+    else ctx.globalAlpha = "1";
+    ctx.drawImage( // the overlay container image
       texture, // the texture sheet
       this.column * game.frameW, (1 + this.row) * game.frameH, // starting x + y
       game.frameW, game.frameH  * -(this.filling / this.capacity), // width + height
@@ -1755,61 +1755,61 @@ class Container {
       this.length, this.length  * -(this.filling / this.capacity) // drawn width + height
     );
     // container upgrading focus selector
-    ctxD.globalAlpha = "1";
+    ctx.globalAlpha = "1";
     if (this.focused) {
-      ctxD.font = 0.5 * game.textSize + "px calibri";
-      ctxD.textAlign = "center";
+      ctx.font = 0.5 * game.textSize + "px calibri";
+      ctx.textAlign = "center";
       // upgrade level
-      ctxD.fillText("Level:", utility.cUpgrade1X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH);
-      ctxD.fillText(this.level, utility.cUpgrade1X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 1.3);
-      if (player.money > this.levelPrice) ctxD.fillStyle = "green";
-      else ctxD.fillStyle = "lightgrey";
-      ctxD.fillRect(utility.cUpgrade1X, game.height - (1.1 * game.frameH), game.frameW, game.frameH);
-      ctxD.fillStyle = "black";
-      ctxD.fillText("Cost:", utility.cUpgrade1X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 1.8);
-      ctxD.fillText(utility.convert(this.levelPrice), utility.cUpgrade1X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 2.1);
-      ctxD.fillText(this.level + " -> " + (this.level + 1), utility.cUpgrade1X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 2.4);
+      ctx.fillText("Level:", utility.cUpgrade1X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH);
+      ctx.fillText(this.level, utility.cUpgrade1X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 1.3);
+      if (player.money > this.levelPrice) ctx.fillStyle = "green";
+      else ctx.fillStyle = "lightgrey";
+      ctx.fillRect(utility.cUpgrade1X, game.height - (1.1 * game.frameH), game.frameW, game.frameH);
+      ctx.fillStyle = "black";
+      ctx.fillText("Cost:", utility.cUpgrade1X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 1.8);
+      ctx.fillText(utility.convert(this.levelPrice), utility.cUpgrade1X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 2.1);
+      ctx.fillText(this.level + " -> " + (this.level + 1), utility.cUpgrade1X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 2.4);
       // upgrade capacity
-      ctxD.fillText("Capacity:", utility.cUpgrade2X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH);
-      ctxD.fillText(this.filled + "/" + this.capacity, utility.cUpgrade2X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 1.3);
-      if (player.money > this.sizePrice) ctxD.fillStyle = "green";
-      else ctxD.fillStyle = "lightgrey";
-      ctxD.fillRect(utility.cUpgrade2X, game.height - (1.1 * game.frameH), game.frameW, game.frameH);
-      ctxD.fillStyle = "black";
-      ctxD.fillText("Cost:", utility.cUpgrade2X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 1.8);
-      ctxD.fillText(utility.convert(this.sizePrice), utility.cUpgrade2X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 2.1);
-      ctxD.fillText(this.reducedCap + " -> " + (this.reducedCap + 1), utility.cUpgrade2X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 2.4);
+      ctx.fillText("Capacity:", utility.cUpgrade2X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH);
+      ctx.fillText(this.filled + "/" + this.capacity, utility.cUpgrade2X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 1.3);
+      if (player.money > this.sizePrice) ctx.fillStyle = "green";
+      else ctx.fillStyle = "lightgrey";
+      ctx.fillRect(utility.cUpgrade2X, game.height - (1.1 * game.frameH), game.frameW, game.frameH);
+      ctx.fillStyle = "black";
+      ctx.fillText("Cost:", utility.cUpgrade2X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 1.8);
+      ctx.fillText(utility.convert(this.sizePrice), utility.cUpgrade2X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 2.1);
+      ctx.fillText(this.reducedCap + " -> " + (this.reducedCap + 1), utility.cUpgrade2X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 2.4);
       // upgrade price
-      ctxD.fillText("Price:", utility.cUpgrade3X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH);
-      ctxD.fillText("$" + utility.convert(utility.multiply(this.worth)), utility.cUpgrade3X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 1.3);
-      if (player.money > this.pricePrice) ctxD.fillStyle = "green";
-      else ctxD.fillStyle = "lightgrey";
-      ctxD.fillRect(utility.cUpgrade3X, game.height - (1.1 * game.frameH), game.frameW, game.frameH);
-      ctxD.fillStyle = "black";
-      ctxD.fillText("Cost:", utility.cUpgrade3X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 1.8);
-      ctxD.fillText(utility.convert(this.pricePrice), utility.cUpgrade3X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 2.1);
-      ctxD.fillText(this.price + " -> " + (this.price + 1), utility.cUpgrade3X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 2.4);
+      ctx.fillText("Price:", utility.cUpgrade3X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH);
+      ctx.fillText("$" + utility.convert(utility.multiply(this.worth)), utility.cUpgrade3X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 1.3);
+      if (player.money > this.pricePrice) ctx.fillStyle = "green";
+      else ctx.fillStyle = "lightgrey";
+      ctx.fillRect(utility.cUpgrade3X, game.height - (1.1 * game.frameH), game.frameW, game.frameH);
+      ctx.fillStyle = "black";
+      ctx.fillText("Cost:", utility.cUpgrade3X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 1.8);
+      ctx.fillText(utility.convert(this.pricePrice), utility.cUpgrade3X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 2.1);
+      ctx.fillText(this.price + " -> " + (this.price + 1), utility.cUpgrade3X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 2.4);
       // upgrade auto fill
-      ctxD.fillText("Auto Fill:", utility.cUpgrade4X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH);
-      ctxD.fillText(this.autoFillingText, utility.cUpgrade4X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 1.3);
-      if (player.money < this.autoFillingPrice || this.autoFilling > 0) ctxD.fillStyle = "lightgrey";
-      else ctxD.fillStyle = "green";
-      ctxD.fillRect(utility.cUpgrade4X, game.height - (1.1 * game.frameH), game.frameW, game.frameH);
-      ctxD.fillStyle = "black";
-      ctxD.fillText("Cost:", utility.cUpgrade4X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 1.9);
-      ctxD.fillText(utility.convert(this.autoFillingPrice), utility.cUpgrade4X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 2.2);
+      ctx.fillText("Auto Fill:", utility.cUpgrade4X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH);
+      ctx.fillText(this.autoFillingText, utility.cUpgrade4X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 1.3);
+      if (player.money < this.autoFillingPrice || this.autoFilling > 0) ctx.fillStyle = "lightgrey";
+      else ctx.fillStyle = "green";
+      ctx.fillRect(utility.cUpgrade4X, game.height - (1.1 * game.frameH), game.frameW, game.frameH);
+      ctx.fillStyle = "black";
+      ctx.fillText("Cost:", utility.cUpgrade4X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 1.9);
+      ctx.fillText(utility.convert(this.autoFillingPrice), utility.cUpgrade4X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 2.2);
       // upgrade auto sell
-      ctxD.fillText("Auto Sell:", utility.cUpgrade5X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH);
-      ctxD.fillText(this.autoSellingText, utility.cUpgrade5X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 1.3);
-      if (player.money < this.autoSellingPrice || this.autoSelling > 0) ctxD.fillStyle = "lightgrey";
-      else ctxD.fillStyle = "green";
-      ctxD.fillRect(utility.cUpgrade5X, game.height - (1.1 * game.frameH), game.frameW, game.frameH);
-      ctxD.fillStyle = "black";
-      ctxD.fillText("Cost:", utility.cUpgrade5X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 1.9);
-      ctxD.fillText(utility.convert(this.autoSellingPrice), utility.cUpgrade5X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 2.2);
-      ctxD.fillStyle = "green"; // set color for focus box
-    } else ctxD.fillStyle = "lightgrey";
-    ctxD.fillRect(this.focusX, this.focusY, this.focusLength, this.focusLength);
+      ctx.fillText("Auto Sell:", utility.cUpgrade5X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH);
+      ctx.fillText(this.autoSellingText, utility.cUpgrade5X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 1.3);
+      if (player.money < this.autoSellingPrice || this.autoSelling > 0) ctx.fillStyle = "lightgrey";
+      else ctx.fillStyle = "green";
+      ctx.fillRect(utility.cUpgrade5X, game.height - (1.1 * game.frameH), game.frameW, game.frameH);
+      ctx.fillStyle = "black";
+      ctx.fillText("Cost:", utility.cUpgrade5X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 1.9);
+      ctx.fillText(utility.convert(this.autoSellingPrice), utility.cUpgrade5X + (0.5 * game.frameW), utility.containerTableY * 1.25 + game.frameH * 2.2);
+      ctx.fillStyle = "green"; // set color for focus box
+    } else ctx.fillStyle = "lightgrey";
+    ctx.fillRect(this.focusX, this.focusY, this.focusLength, this.focusLength);
   };
   fill() {
     if (!this.active) return;
@@ -1833,7 +1833,7 @@ class Container {
       player.totalEarnings += amount;
       if (player.highestContainer < amount) player.highestContainer = amount;
       player.update();
-      clickEffect.push(new Effects(utility.convert(amount), true, clr, 1.5));
+      //clickEffect.push(new Effects(utility.convert(amount), true, clr, 1.5));
     };
   };
   upgrade(upgrade, cost) {
@@ -1920,10 +1920,10 @@ class Button {
     this.maxLevel = btn[7];
     this.oneTimePurchase = btn[8];
     this.requirement = btn[9];
-    this.x = game.textSize / 2;
+    this.x = (-game.width / 2) + 15;
     this.size = game.frameW * 1.5;
-    this.length = game.width - (this.x * 2);
-    this.y = (1.2 * this.size * order) + (2.5 * game.textSize);
+    this.length = game.width - 30;
+    this.y = (-game.height / 2) + (1.2 * game.height / 10) + (1.2 * this.size * order);
     order++;
     this.level;
     this.price;
@@ -1931,43 +1931,43 @@ class Button {
   drawButton() {
     this.level = player.level[this.index];
     this.price = player.cost[this.index];
-    ctxD.imageSmoothingEnabled = true;
-    ctxD.imageSmoothingQuality = "high";
-    ctxD.fillStyle = "white";
-    ctxD.fillRect(this.x, this.y - input.dY, this.length, this.size);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.fillStyle = "white";
+    ctx.fillRect(this.x, this.y - input.dY, this.length, this.size);
     let newRow = this.row;
     if (this.price <= player.money && utility.purchasable(this.index, this.requirement)) { // the button background
-      ctxD.fillStyle = "hsl(105, 100%, 50%)";
+      ctx.fillStyle = "hsl(105, 100%, 50%)";
     } else {
-      ctxD.fillStyle = "lightgrey";
+      ctx.fillStyle = "lightgrey";
       newRow = this.row - 1;
     };
-    ctxD.drawImage(
+    ctx.drawImage(
       texture, // the texture sheet
       this.column * game.frameW, newRow * game.frameH, // texture x and y
       game.frameW, game.frameH, // width and height
       this.x, this.y - input.dY, // destination x and y
       this.size, this.size // drawn width and height
     );
-    ctxD.fillRect(game.width - this.x - this.size, this.y - input.dY, this.size, this.size); // level box
-    ctxD.fillStyle = "black";
-    ctxD.textAlign = "center";
-    ctxD.textBaseline = "bottom";
-    ctxD.font = (game.textSize * 0.5) + "px calibri";
-    ctxD.fillText(this.level, game.width - this.x - (this.size / 2), (this.y + this.size) - input.dY); // the button level
+    ctx.fillRect(this.x + this.length - this.size, this.y - input.dY, this.size, this.size); // level box
+    ctx.fillStyle = "black";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "bottom";
+    ctx.font = (game.textSize * 0.5) + "px calibri";
+    ctx.fillText(this.level, this.x  + this.length - (this.size / 2), (this.y + this.size) - input.dY); // the button level
     if (this.oneTimePurchase && this.level > 0 || this.maxLevel == this.level) { // purchased
-      ctxD.fillText(utility.checkMark, game.width - this.x - (this.size / 2), (this.y + (this.size / 2)) - input.dY);
+      ctx.fillText(utility.checkMark, this.x + this.length - (this.size / 2), (this.y + (this.size / 2)) - input.dY);
     } else { // the button price
-      ctxD.fillText("$" + utility.convert(this.price), game.width - this.x - (this.size / 2), (this.y + (this.size / 2)) - input.dY);
+      ctx.fillText("$" + utility.convert(this.price), this.x + this.length - (this.size / 2), (this.y + (this.size / 2)) - input.dY);
     };
-    ctxD.font = "bold " + (game.textSize * 0.45) + "px calibri";
-    ctxD.fillText("Level:", game.width - this.x - (this.size / 2), (this.y + (3 * this.size / 4)) - input.dY); // level text
-    ctxD.fillText("Cost:", game.width - this.x - (this.size / 2), (this.y + (this.size / 4)) - input.dY); // price text
-    ctxD.textAlign = "left";
-    ctxD.fillText(this.title, this.x + (1.1 * this.size), this.y + (this.size / 4) - input.dY);
-    ctxD.font = (game.textSize * 0.4) + "px calibri";
+    ctx.font = "bold " + (game.textSize * 0.45) + "px calibri";
+    ctx.fillText("Level:", this.x + this.length - (this.size / 2), (this.y + (3 * this.size / 4)) - input.dY); // level text
+    ctx.fillText("Cost:", this.x + this.length - (this.size / 2), (this.y + (this.size / 4)) - input.dY); // price text
+    ctx.textAlign = "left";
+    ctx.fillText(this.title, this.x + (1.1 * this.size), this.y + (this.size / 4) - input.dY);
+    ctx.font = (game.textSize * 0.4) + "px calibri";
     for (let i = 0; i < this.description.length; i++) {
-      ctxD.fillText(this.description[i], this.x + (1.1 * this.size), this.y + ((2.6 + i) * this.size / 6) - input.dY); // the button description
+      ctx.fillText(this.description[i], this.x + (1.1 * this.size), this.y + ((2.6 + i) * this.size / 6) - input.dY); // the button description
     };
   };
 };
@@ -2006,29 +2006,29 @@ class Talent {
   };
   drawTalent() {
     this.level = player.talent[this.index];
-    ctxD.textAlign = "center";
-    ctxD.textBaseline = "middle";
-    ctxD.fillStyle = "white";
-    ctxD.fillRect(this.x, this.y - input.dY, this.width, this.height); // talent background
-    ctxD.fillStyle = "red";
-    ctxD.fillRect(this.minusX, this.minusY - input.dY, this.buttonWidth, this.buttonHeight); // minus talent
-    ctxD.fillStyle = "green";
-    ctxD.fillRect(this.plusX, this.plusY - input.dY, this.buttonWidth, this.buttonHeight); // plus talent
-    ctxD.fillStyle = "white";
-    ctxD.font = game.textSize + "px calibri";
-    ctxD.fillText(" - ", this.x + this.width - (0.5 * game.frameW), this.y + (3 * this.height / 4) - input.dY);
-    ctxD.fillText(" + ", this.x + this.width - (1.5 * game.frameW), this.y + (3 * this.height / 4) - input.dY);
-    ctxD.fillStyle = "lightgrey";
-    ctxD.fillRect(this.x + this.width - (2 * game.frameW), this.y - input.dY, (2 * game.frameW), 0.5 * this.height);
-    ctxD.fillStyle = "black";
-    //ctxD.textAlign = "right";
-    ctxD.fillText(player.talent[this.index], this.x + this.width - game.frameW, this.y + (this.height / 4) - input.dY);
-    ctxD.textAlign = "left";
-    ctxD.font = "bold " + game.textSize / 1.5 + "px calibri";
-    ctxD.fillText(this.title, this.x, this.y + (this.height / 6) - input.dY);
-    ctxD.font = game.textSize / 2 + "px calibri";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = "white";
+    ctx.fillRect(this.x, this.y - input.dY, this.width, this.height); // talent background
+    ctx.fillStyle = "red";
+    ctx.fillRect(this.minusX, this.minusY - input.dY, this.buttonWidth, this.buttonHeight); // minus talent
+    ctx.fillStyle = "green";
+    ctx.fillRect(this.plusX, this.plusY - input.dY, this.buttonWidth, this.buttonHeight); // plus talent
+    ctx.fillStyle = "white";
+    ctx.font = game.textSize + "px calibri";
+    ctx.fillText(" - ", this.x + this.width - (0.5 * game.frameW), this.y + (3 * this.height / 4) - input.dY);
+    ctx.fillText(" + ", this.x + this.width - (1.5 * game.frameW), this.y + (3 * this.height / 4) - input.dY);
+    ctx.fillStyle = "lightgrey";
+    ctx.fillRect(this.x + this.width - (2 * game.frameW), this.y - input.dY, (2 * game.frameW), 0.5 * this.height);
+    ctx.fillStyle = "black";
+    //ctx.textAlign = "right";
+    ctx.fillText(player.talent[this.index], this.x + this.width - game.frameW, this.y + (this.height / 4) - input.dY);
+    ctx.textAlign = "left";
+    ctx.font = "bold " + game.textSize / 1.5 + "px calibri";
+    ctx.fillText(this.title, this.x, this.y + (this.height / 6) - input.dY);
+    ctx.font = game.textSize / 2 + "px calibri";
     for (let i = 0; i < this.description.length; i++) {
-      ctxD.fillText(this.description[i], this.x, this.y + (this.height / 3) + (i * (game.textSize / 2)) - input.dY);
+      ctx.fillText(this.description[i], this.x, this.y + (this.height / 3) + (i * (game.textSize / 2)) - input.dY);
     };
   };
   changeTalent(type) {
