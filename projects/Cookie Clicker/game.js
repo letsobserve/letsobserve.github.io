@@ -388,15 +388,15 @@ class Game {
         ctx.lineWidth = 1;
         ctx.strokeText("x" + utility.round(player.stackingBonus), utility.clickCountX, utility.clickCountY);
         ctx.fillText("x" + utility.round(player.stackingBonus), utility.clickCountX, utility.clickCountY);
-        ctx.lineWidth = 1;
-        ctx.fillStyle = "black";
-        ctx.font = game.textSize + "px calibri";
-        ctx.fillText("$" + utility.convert(player.money), 0, (-game.height / 2) + (game.height / 40)); // money
-        ctx.font = game.textSize / 2 + "px calibri";
-        ctx.textAlign = "right";
-        ctx.fillText("$" + player.EPS + "/s", game.width / 2.05, (-game.height / 2) + (0.5 * game.height / 40)); // money per second
-        ctx.fillText("Talents: " + player.talentPoints, game.width / 2.05, (-game.height / 2) + (1.5 * game.height / 40)); // talent points
       };
+      ctx.lineWidth = 1;
+      ctx.fillStyle = "black";
+      ctx.font = game.textSize + "px calibri";
+      ctx.fillText("$" + utility.convert(player.money), 0, (-game.height / 2) + (game.height / 40)); // money
+      ctx.font = game.textSize / 2 + "px calibri";
+      ctx.textAlign = "right";
+      ctx.fillText("$" + player.EPS + "/s", game.width / 2.05, (-game.height / 2) + (0.5 * game.height / 40)); // money per second
+      ctx.fillText("Talents: " + player.talentPoints, game.width / 2.05, (-game.height / 2) + (1.5 * game.height / 40)); // talent points
     };
   };
   start() {
@@ -2010,19 +2010,7 @@ class Talent {
     this.row = talent[2];
     this.title = talent[3];
     this.description = talent[4];
-    //this.splitDesc = talent[4].split(" ");
     this.maxLevel = talent[5];
-    // this.lineCount = 0;
-    // for (let i = 0; i < this.splitDesc.length; i++) {
-    //   if (this.lineCount < 5) {
-    //       this.description += this.splitDesc[i] + " ";
-    //       this.lineCount++;
-    //   } else {
-    //     this.description += "---" + this.splitDesc[i] + " ";
-    //     this.lineCount = 1;
-    //   }
-    // };
-    // this.description = this.description.split("---");
     this.width = game.width * 0.9;
     this.height = 2 * game.frameH;
     this.x = (-game.width/2) + (game.width/20);
