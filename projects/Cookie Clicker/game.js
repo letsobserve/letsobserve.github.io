@@ -249,6 +249,7 @@ class Game {
     this.state = 0;
     if (this.width < this.height) this.textSize = 85;
     else this.textSize = 25;
+    this.menuHeight = this.height / 10;
     this.time = new Date();
   };
   drawBackground() { // draw the background
@@ -257,28 +258,28 @@ class Game {
     ctx.fillRect(-this.width / 2, -this.height / 2, this.width, this.height); // background
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = "high";
-    // for (let i = 0; i < clickEffect.length; i++) { // draw the earned money
-    //   ctx.textAlign = "center";
-    //   ctx.textBaseline = "middle";
-    //   ctx.strokeStyle = "black";
-    //   ctx.lineWidth = "1.5";
-    //   clickEffect[i].time--;
-    //   if (clickEffect[i].time > 0 && game.state == 1) {
-    //     ctx.font = clickEffect[i].font + "px calibri";
-    //     ctx.globalAlpha = clickEffect[i].time / 80;
-    //     ctx.fillStyle = clickEffect[i].color;
-    //     if (clickEffect[i].type) { // show earn money or lose money
-    //       ctx.fillText("+$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y);
-    //       ctx.strokeText("+$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y);
-    //     } else {
-    //       ctx.fillText("-$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y);
-    //       ctx.strokeText("-$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y);
-    //     };
-    //   } else {
-    //     clickEffect[0] = null;
-    //     clickEffect.splice(0, 1);
-    //   };
-    // };
+    for (let i = 0; i < clickEffect.length; i++) { // clickEffects
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.strokeStyle = "black";
+      ctx.lineWidth = "1.5";
+      clickEffect[i].time--;
+      if (clickEffect[i].time > 0 && game.state == 1) {
+        ctx.font = clickEffect[i].font + "px calibri";
+        ctx.globalAlpha = clickEffect[i].time / 80;
+        ctx.fillStyle = clickEffect[i].color;
+        if (clickEffect[i].type) { // show earn money or lose money
+          ctx.fillText("+$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y);
+          ctx.strokeText("+$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y);
+        } else {
+          ctx.fillText("-$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y);
+          ctx.strokeText("-$" + clickEffect[i].text, clickEffect[i].x, clickEffect[i].y);
+        };
+      } else {
+        clickEffect[0] = null;
+        clickEffect.splice(0, 1);
+      };
+    };
     ctx.globalAlpha = "1";
   };
   drawStartScreen() { // game start screen
@@ -315,9 +316,9 @@ class Game {
   drawMenu() { // draw the top menu bar
     if (game.state > 0) { // if not on start screen
       ctx.fillStyle = "white";
-      ctx.fillRect(-game.width / 2, -game.height / 2, this.width, game.height / 10); // money area
+      ctx.fillRect(-game.width / 2, -game.height / 2, this.width, this.menuHeight); // money area
       ctx.fillStyle = "lightgrey";
-      ctx.fillRect(-game.width / 2, (-game.height / 2) + (game.height / 20), this.width, game.height / 20);// button area
+      ctx.fillRect(-game.width / 2, (-game.height / 2) + (this.menuHeight / 2), this.width, this.menuHeight / 2);// button area
       ctx.lineWidth = 1;
       ctx.strokeStyle = "black";
       ctx.strokeRect(0 - (game.width / 6), (-game.height / 2) + (game.height / 20), (game.width / 3), (game.height / 20)); // Stock button stroke
@@ -327,7 +328,6 @@ class Game {
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.font = this.textSize / 1.5 + "px calibri";
-
       ctx.globalAlpha = 0.5; // initial button text
       ctx.fillText("Stock", 0, (-game.height / 2) + (1.5 * game.height / 20));
       ctx.fillText("R & D", game.width / 3, (-game.height / 2) + (1.5 * game.height / 20));
@@ -389,14 +389,40 @@ class Game {
         ctx.strokeText("x" + utility.round(player.stackingBonus), utility.clickCountX, utility.clickCountY);
         ctx.fillText("x" + utility.round(player.stackingBonus), utility.clickCountX, utility.clickCountY);
       };
-      ctx.lineWidth = 1;
-      ctx.fillStyle = "black";
-      ctx.font = game.textSize + "px calibri";
-      ctx.fillText("$" + utility.convert(player.money), 0, (-game.height / 2) + (game.height / 40)); // money
-      ctx.font = game.textSize / 2 + "px calibri";
-      ctx.textAlign = "right";
-      ctx.fillText("$" + player.EPS + "/s", game.width / 2.05, (-game.height / 2) + (0.5 * game.height / 40)); // money per second
-      ctx.fillText("Talents: " + player.talentPoints, game.width / 2.05, (-game.height / 2) + (1.5 * game.height / 40)); // talent points
+      if (player.level[EXPLODE_FRENZY[0]] > 0) { // draw the frenzy bar
+        if (utility.canFrenzy) ctx.fillStyle = "green";
+        else ctx.fillStyle = "grey";
+        ctx.textBaseline = "middle";
+        ctx.textAlign = "left";
+        ctx.font = game.textSize + "px calibri";
+        ctx.fillRect((-game.width/2) + utility.frenzyX,(-game.height/2) + utility.frenzyY, utility.frenzyWidth, utility.frenzyHeight); // base frenzy bar
+        ctx.fillStyle = "red";
+        if (utility.inFrenzy) { // time left bar if in frenzy
+          ctx.fillRect((-game.width/2) + utility.frenzyX, (-game.height/2) + utility.frenzyY, (1 - (utility.deltaTime(utility.frenzyLeft) / utility.frenzyMax)) * utility.frenzyWidth, utility.frenzyHeight);
+        };
+        if (!utility.inFrenzy && !utility.canFrenzy) {
+          ctx.globalAlpha = 0.5;
+          ctx.fillRect((-game.width/2) + utility.frenzyX, (-game.height/2) + utility.frenzyY, (utility.deltaTime(utility.frenzyFinish) / utility.frenzyReset) * utility.frenzyWidth, utility.frenzyHeight);
+          ctx.globalAlpha = 1;
+        };
+        ctx.fillStyle = "white";
+        ctx.textBaseline = "top";
+        ctx.font = 0.4 * game.textSize + "px calibri";
+        let frenzyState;
+        if (utility.canFrenzy) frenzyState = "Ready";
+        else frenzyState = "On Cooldown";
+        ctx.fillText("Frenzy: " + frenzyState, (-game.width/2) + utility.frenzyX, (-game.height/2) + utility.frenzyY);
+    };
+    ctx.fillStyle = "black";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.lineWidth = 1;
+    ctx.font = game.textSize + "px calibri";
+    ctx.fillText("$" + utility.convert(player.money), 0, (-game.height / 2) + (game.height / 40)); // money
+    ctx.font = game.textSize / 2 + "px calibri";
+    ctx.textAlign = "right";
+    ctx.fillText("$" + player.EPS + "/s", game.width / 2.05, (-game.height / 2) + (0.5 * game.height / 40)); // money per second
+    ctx.fillText("Talents: " + player.talentPoints, game.width / 2.05, (-game.height / 2) + (1.5 * game.height / 40)); // talent points
     };
   };
   start() {
@@ -427,7 +453,6 @@ class Game {
     } else {
       player.returning = false;
     };
-    //player.update();
   };
   loop(now) {
     now = Date.now();
@@ -588,7 +613,6 @@ class InputHandler {
         if (utility.containerFocused != null) { // a container is focused
           if (y > game.height - (1.1 * game.frameH) && y < game.height - (0.1 * game.frameH)) {
             let cntr = CONTAINERS[utility.containerFocused];
-            // upgrades: 0 - level, 2 - capacity, 3 - price, 4 - auto fill, 5 - auto sell
             for (let i = 0; i < utility.cUpgradeX.length; i++) {
               if (x > utility.cUpgradeX[i] && x < utility.cUpgradeX[i] + game.frameW) { // check each btn
                 cntr.upgrade(i, cntr.cUpgradePrice[i]);
@@ -710,12 +734,14 @@ class InputHandler {
       return;
     } else {
       if (yDiff > 0) { // up swipe
-        this.dYSmoothing = yDiff / 25;
+        //this.dYSmoothing += yDiff / 25;
+        this.dY += 25;
       } else { // down swipe
-        this.dYSmoothing = yDiff / 25;
+        //this.dYSmoothing -= yDiff / 25;
+        this.dY -= 25;
       };
     };
-    //yDown = yUp;
+    yDown = yUp;
   };
   scroll (e) {
     input.dY += e.deltaY;
@@ -1007,9 +1033,10 @@ class Player {
     });
     this.containerArray = [];
     this.getContainerArray = localStorage.getItem("playerContainers");
+
     if (this.getContainerArray != null) {
       this.getContainerArray = localStorage.getItem("playerContainers").split(",");
-      for (let i = 0; i < 30; i++) {
+      for (let i = 0; i < this.getContainerArray.length; i++) {
         let temp = parseInt(this.getContainerArray[i]);
         if (!Number.isInteger(temp)) { // if storage doesnt contain enough upgrades
           temp = 0;
@@ -1111,13 +1138,15 @@ class Utility {
     this.currentlyFilling = 0;
     this.switch = false;
     this.clickCount = 1; // current click count
-    this.clickCountR = game.height / 40;
+    this.clickCountR = game.menuHeight / 4;
     this.clickCountX = (-game.width / 2) + (this.clickCountR);
     this.clickCountY = (-game.height / 2) + (this.clickCountR);
     this.runningClickCount = 0;
     this.inFrenzy = false;
-    this.frenzyX = this.clickCountX + this.clickCountR - 5;
-    this.frenzyY = this.clickCountY - (0.5 * this.clickCountR);
+    this.frenzyX = 0;
+    this.frenzyY = game.menuHeight;
+    this.frenzyWidth = game.width;
+    this.frenzyHeight = game.menuHeight / 5;
     this.frenzyLength = game.width - this.frenzyX - 20;
     this.frenzyLeft = 0;
     this.frenzyStart = 0;
@@ -1171,26 +1200,6 @@ class Utility {
       explodingCookie[i].yV += explodingCookie[i].dY * 30;
     };
     cookie.draw(cookie.x, cookie.xV, cookie.y, cookie.yV, cookie.r, cookie.pulseCount, cookie.color(), 0);
-    if (this.frenzy) { // draw the frenzy bar
-      ctx.fillStyle = "white";
-      if (this.canFrenzy) ctx.fillStyle = "green";
-      ctx.textBaseline = "top";
-      ctx.textAlign = "center";
-      ctx.font = game.textSize + "px calibri";
-      ctx.fillRect((-game.width/2) + this.frenzyX, (-game.height/2) + this.frenzyY, this.frenzyLength, this.clickCountR); // base frenzy bar
-      ctx.fillStyle = "red";
-      if (utility.inFrenzy) { // time left bar if in frenzy
-        ctx.fillRect(this.frenzyX, this.frenzyY, (1 - (utility.deltaTime(utility.frenzyLeft) / utility.frenzyMax)) * this.frenzyLength, game.textSize);
-      };
-      if (!utility.inFrenzy && !utility.canFrenzy) {
-        ctx.globalAlpha = 0.5;
-        ctx.fillRect(this.frenzyX, this.frenzyY, (utility.deltaTime(utility.frenzyFinish) / utility.frenzyReset) * this.frenzyLength, game.textSize);
-        ctx.globalAlpha = 1;
-      };
-      ctx.fillStyle = "black";
-      ctx.textBaseline = "top";
-      ctx.fillText("Frenzy", 0, this.frenzyY);
-    };
     for (let i = 0; i < goldCookie.length; i++) { // draw any golden cookies
       goldCookie[i].draw();
       goldCookie[i].update(i);
@@ -1199,7 +1208,7 @@ class Utility {
       ctx.fillStyle = "white";
       ctx.fillRect((-game.width/2),(-game.height/2) + this.containerTableY, game.width, game.height);
       ctx.fillStyle = "lightgrey";
-      ctx.fillRect((-game.width/2),(-game.height/2) +  this.containerTableY + game.textSize, game.width, game.textSize);
+      ctx.fillRect((-game.width/2),(-game.height/2) + this.containerTableY + game.textSize, game.width, game.textSize);
       ctx.fillStyle = "black";
       ctx.textAlign = "center";
       ctx.textBaseline = "top";
@@ -1388,7 +1397,7 @@ class Utility {
     player.upgradesPurchased++;
     player.moneySpent += player.cost[index];
     if (player.cost[index] > player.highestMoneySpent) player.highestMoneySpent = player.cost[index];
-    //clickEffect.push(new Effects(utility.convert(player.cost[index]), false, "red", 1.2));
+    clickEffect.push(new Effects(utility.convert(player.cost[index]), false, "red", 1.2));
     if (index == GOLDEN_COOKIE[0]) { // purchasing golden cookie, give a free gold cookie
       goldCookie.push(new GoldCookie());
     };
@@ -1396,6 +1405,9 @@ class Utility {
       this.activeContainers = player.level[ADD_CONTAINER[0]];
       CONTAINERS[this.activeContainers - 1].level++;
     };
+    if (index == EXPLODE_FRENZY[0]) {
+      utility.canFrenzy = true;
+    }
     player.update();
     player.initPlayer();
     utility.setUgrades();
@@ -1485,12 +1497,12 @@ class Utility {
     return lines;
   };
   update() {
-    if (input.dYSmoothing != 0) {
-      input.dY += input.dYSmoothing;
-      if (input.dYSmoothing < 0) input.dYSmoothing += Math.ceil(-input.dYSmoothing / 10);
-      if (input.dYSmoothing > 0) input.dYSmoothing -= (input.dYSmoothing / 10);
-      input.dYSmoothing = Math.floor(input.dYSmoothing);
-    };
+    // if (input.dYSmoothing != 0) {
+    //   input.dY += input.dYSmoothing;
+    //   if (input.dYSmoothing < 0) input.dYSmoothing += Math.ceil(-input.dYSmoothing / 10);
+    //   if (input.dYSmoothing > 0) input.dYSmoothing -= (input.dYSmoothing / 10);
+    //   input.dYSmoothing = Math.floor(input.dYSmoothing);
+    // };
     if (utility.inFrenzy) { // if in frenzy mode
       if (utility.deltaTime(utility.frenzyLeft) > utility.frenzyMax) { // if frenzy time left
         utility.inFrenzy = false;
@@ -1544,6 +1556,7 @@ class Cookie {
     this.x = 0;
     this.y = 0;
     this.r = this.radius();
+    this.rotation = 0;
     this.pulseCount = 0;
     this.golden = false;
     this.goldenTimer = 0;
@@ -1560,7 +1573,7 @@ class Cookie {
     this.pulseSlow = 0.1 - (0.1 * (player.level[PULSE_SLOW[0]] / PULSE_SLOW[7]));
     this.pulseLimit = 200 - (190 * (player.level[PULSE_LIMIT[0]] / PULSE_LIMIT[7]));
     this.worth = 1 + (player.level[MONEY_PER_CLICK[0]] / 10);
-    //this.worth = 7777777777777; // testing purposes
+    //this.worth = 777777; // testing purposes
     this.bonusWorth = this.worth * (2 + (player.level[EXPLODE_BONUS[0]] * player.level[EXPLODE_BONUS[0]]));
     this.goldChance = (9999 - player.level[GOLDEN_COOKIE_CHANCE[0]]) / 10000;
     this.goldBonus = 50;
@@ -1604,7 +1617,10 @@ class Cookie {
       if (cookie.pulseCount < cookie.pulseLimit) { // if cookie should expand
         cookie.pulseCount += cookie.pulse;
       } else cookie.reset();
-      //game.rotation = Math.sin((Math.random() * (2 * Math.PI)));
+      // assign a random rotation
+      let rt = Math.random() * (Math.PI / 25);
+      if (Math.random() > 0.5) rt *= -1;
+      this.rotation += rt;
     };
     if (cookie.pulseCount < cookie.pulseLimit) {
       cookie.pulseCount += (cookie.pulse / 10);
@@ -1619,7 +1635,7 @@ class Cookie {
     player.earned += amount;
     player.totalEarnings += amount;
     player.update();
-    //clickEffect.push(new Effects(utility.convert(amount), true, clr));
+    clickEffect.push(new Effects(utility.convert(amount), true, clr));
   };
   reset() {
     if (utility.explodable) {
@@ -1653,12 +1669,13 @@ class Cookie {
       player.earned += amount;
       player.totalEarnings += amount;
       player.update();
-      //clickEffect.push(new Effects(utility.convert(amount), true, clr, 1.5));
+      clickEffect.push(new Effects(utility.convert(amount), true, clr, 1.5));
     };
   };
   draw(x, xV, y, yV, r, pC, column, row) {
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = "high";
+    ctx.rotate(this.rotation); // rotate ctx
     ctx.drawImage(
       texture, // the texture sheet
       column * game.frameW, // starting x
@@ -1670,6 +1687,7 @@ class Cookie {
       2 * r, // drawn width
       2 * r // drawn height
     );
+    ctx.rotate(-this.rotation); // unrotate ctx
   };
   update() {
     // update cookie worth
@@ -1699,7 +1717,7 @@ class GoldCookie {
     ctx.imageSmoothingQuality = "high";
     ctx.drawImage(
       texture, // the texture sheet
-      3 * game.frameW, // starting x
+      7 * game.frameW, // starting x
       0 * game.frameH, // starting y
       game.frameW, // width
       game.frameH, // height
@@ -1799,7 +1817,7 @@ class Container {
     ctx.globalAlpha = "0.3";
     ctx.fillStyle = "black";
     ctx.beginPath();
-    ctx.ellipse(this.x + (this.length * 0.5), this.y + (this.length * 0.95), this.length * 0.5, this.length * 0.15, 0, 0, 2 * Math.PI); // container shadow
+    ctx.ellipse((-game.width/2) + this.x + (this.length * 0.5), (-game.height/2) + this.y + (this.length * 0.9), this.length * 0.5, this.length * 0.15, 0, 0, 2 * Math.PI); // container shadow
     ctx.fill();
     ctx.globalAlpha = "0.3";
     ctx.drawImage( // the container image
@@ -1864,25 +1882,20 @@ class Container {
       player.totalEarnings += amount;
       if (player.highestContainer < amount) player.highestContainer = amount;
       player.update();
-      //clickEffect.push(new Effects(utility.convert(amount), true, clr, 1.5));
+      clickEffect.push(new Effects(utility.convert(amount), true, clr, 1.5));
     };
   };
   upgrade(upgrade, cost) {
     if (player.money < cost) return;
-    if (upgrade == 3 || upgrade == 4) {
-      if (player.containerArray[this.baseIndex + upgrade] > 0) return;
-    };
-    if (upgrade == 1) {
-      if (this.capacity < 6) return;
-    };
+    if (upgrade >= 3 && player.containerArray[this.baseIndex + upgrade] > 0) return;
+    if (upgrade == 1 && this.capacity < 6) return;
     player.containerArray[this.baseIndex + upgrade]++;
     player.money -= cost;
     player.upgradesPurchased++;
     player.moneySpent += cost;
     if (cost > player.highestMoneySpent) player.highestMoneySpent = cost;
     this.setUgrades();
-    game.update();
-    player.initPlayer();
+    player.update();
   };
   update() {
     if (this.filling != this.filled) {
@@ -1910,12 +1923,12 @@ class Container {
 };
 
 class Effects {
-  constructor(text, type, color, size = 0.8) {
+  constructor(text, type, color, size = 0.5) {
     this.text = text;
     //this.y = 1.5 * game.textSize;
     //this.x = 0;
-    this.y = (Math.random() * (game.height - (4 * game.textSize))) + (3 * game.textSize);
-    this.x = (Math.random() * game.width);
+    this.y = (-game.height / 2) + (Math.random() * (game.height - (4 * game.textSize))) + (3 * game.textSize);
+    this.x = (-game.width / 2) + (Math.random() * game.width);
     this.font = size * game.textSize;
     this.type = type;
     this.color = color;
@@ -1933,19 +1946,7 @@ class Button {
     this.column = btn[1];
     this.row = btn[2];
     this.title= btn[3];
-    this.description = "";
-    this.splitDesc = btn[4].split(" ");
-    this.lineCount = 0;
-    for (let i = 0; i < this.splitDesc.length; i++) {
-      if (this.lineCount < 5) {
-          this.description += this.splitDesc[i] + " ";
-          this.lineCount++;
-      } else {
-        this.description += "---" + this.splitDesc[i] + " ";
-        this.lineCount = 1;
-      }
-    };
-    this.description = this.description.split("---");
+    this.description = btn[4];
     this.baseCost = btn[5];
     this.costFactor = btn[6];
     this.maxLevel = btn[7];
@@ -1954,7 +1955,7 @@ class Button {
     this.x = (-game.width / 2) + 15;
     this.size = game.frameW * 1.5;
     this.length = game.width - 30;
-    this.y = (-game.height / 2) + (1.2 * game.height / 10) + (1.2 * this.size * order);
+    this.y = (-game.height / 2) + (game.menuHeight * 1.3) + (1.1 * this.size * order);
     order++;
     this.level;
     this.price;
@@ -1984,21 +1985,22 @@ class Button {
     ctx.fillStyle = "black";
     ctx.textAlign = "center";
     ctx.textBaseline = "bottom";
-    ctx.font = (game.textSize * 0.5) + "px calibri";
-    ctx.fillText(this.level, this.x  + this.length - (this.size / 2), (this.y + this.size) - input.dY); // the button level
+    ctx.font = 0.45 * game.textSize + "px calibri";
     if (this.oneTimePurchase && this.level > 0 || this.maxLevel == this.level) { // purchased
       ctx.fillText(utility.checkMark, this.x + this.length - (this.size / 2), (this.y + (this.size / 2)) - input.dY);
     } else { // the button price
       ctx.fillText("$" + utility.convert(this.price), this.x + this.length - (this.size / 2), (this.y + (this.size / 2)) - input.dY);
     };
+    ctx.fillText(this.level, this.x  + this.length - (this.size / 2), (this.y + this.size) - input.dY); // the button level
     ctx.font = "bold " + (game.textSize * 0.45) + "px calibri";
     ctx.fillText("Level:", this.x + this.length - (this.size / 2), (this.y + (3 * this.size / 4)) - input.dY); // level text
     ctx.fillText("Cost:", this.x + this.length - (this.size / 2), (this.y + (this.size / 4)) - input.dY); // price text
     ctx.textAlign = "left";
     ctx.fillText(this.title, this.x + (1.1 * this.size), this.y + (this.size / 4) - input.dY);
     ctx.font = (game.textSize * 0.4) + "px calibri";
-    for (let i = 0; i < this.description.length; i++) {
-      ctx.fillText(this.description[i], this.x + (1.1 * this.size), this.y + ((2.6 + i) * this.size / 6) - input.dY); // the button description
+    let txt = utility.wrapText(this.description, (this.length - (2 * this.size)) * 0.95);
+    for (let i = 0; i < txt.length; i++) {
+      ctx.fillText(txt[i], this.x + (1.1 * this.size), this.y + ((2.6 + i) * this.size / 6) - input.dY);
     };
   };
 };
@@ -2046,15 +2048,10 @@ class Talent {
     ctx.font = "bold " + game.textSize / 1.5 + "px calibri";
     ctx.fillText(this.title, this.x, this.y + (this.height / 6) - input.dY);
     ctx.font = game.textSize / 2 + "px calibri";
-
     let txt = utility.wrapText(this.description, this.width - 2 * this.buttonWidth);
     for (let i = 0; i < txt.length; i++) {
       ctx.fillText(txt[i], this.x, this.y + (this.height / 3) + (i * (game.textSize / 2)) - input.dY);
     };
-
-    // for (let i = 0; i < this.description.length; i++) {
-    //   ctx.fillText(this.description[i], this.x, this.y + (this.height / 3) + (i * (game.textSize / 2)) - input.dY);
-    // };
   };
   changeTalent(type) {
     if (type) {
