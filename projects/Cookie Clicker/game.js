@@ -234,6 +234,7 @@ let explodingCookie = [];
 let goldCookie = [];
 let xDown = null;
 let yDown = null;
+let yUp = null;
 
 class Game {
   constructor() {
@@ -506,7 +507,6 @@ class InputHandler {
     this.dX = 0;
     this.lastClick = 0;
     this.lastdY = 0;
-    this.dYSmoothing = 0;
     this.tap = false;
     this.holding = [];
     document.addEventListener("click", (e) => {
@@ -687,13 +687,15 @@ class InputHandler {
       };
     };
   };
-  touchstart (e) {
-    if (e.cancelable) e.preventDefault();
+  touchstart (e, passed = false) {
+    if (!passed) e.preventDefault();
     const firstTouch = e.touches[0];
     const ongoingTouches = [];
     this.tap = true;
-    xDown = firstTouch.clientX;
-    yDown = firstTouch.clientY;
+    if (!passed) {
+      xDown = firstTouch.clientX;
+      yDown = firstTouch.clientY;
+    };
     for (let i = 0; i < e.touches.length; i++) {
       ongoingTouches.push(e.targetTouches[i]);
       if (game.state == 1) { // if on cookie screen
@@ -723,24 +725,9 @@ class InputHandler {
     if (!xDown || !yDown) {
       return;
     };
-    var xUp = e.touches[0].clientX;
-    var yUp = e.touches[0].clientY;
-    var xDiff = xDown - xUp;
+    yUp = e.touches[0].clientY;
     var yDiff = yDown - yUp;
-    // determine the direction of swipe
-    if (Math.abs(xDiff) > Math.abs(yDiff)) {
-      if (xDiff > 0) {} // left swipe
-      else {}; // right swipe
-      return;
-    } else {
-      if (yDiff > 0) { // up swipe
-        //this.dYSmoothing += yDiff / 25;
-        this.dY += 25;
-      } else { // down swipe
-        //this.dYSmoothing -= yDiff / 25;
-        this.dY -= 25;
-      };
-    };
+    input.dY += yDiff;
     yDown = yUp;
   };
   scroll (e) {
@@ -749,18 +736,29 @@ class InputHandler {
   longTouch() {
     if (player.talent[HOLD_TO_TAP[0]] > 0) {
       player.latestTime = latestTime;
-      input.touchstart(touchEvent);
+      input.touchstart(touchEvent, true);
     };
-    //input.click(touchEvent.touches[0].clientX, touchEvent.touches[0].clientY);
   };
 };
 
 class Player {
   constructor() {
-    //this.initPlayer();
     this.earnedThen = this.earned; // previous earned
     this.earnedNow = 0; // earning now
     this.EPS = 0; // player earning per second
+    this.achieveText = [ // achievement text
+      "Reach a cookie worth of $1M",
+      "Have 60 auto clickers at once",
+      "Reach a stacking bonus of x100",
+      "Longest stacking bonus of 15 mins",
+      "Earn $1D in one prestige",
+      "Longest cookie frenzy of 5 mins",
+      "Spend $1Q in one purchase",
+      "Earn $1O within one second",
+      "Click the cookie 1T times",
+      "Make the cookie explode 1B times",
+      "Prestige 999 times"
+    ];
     setInterval(this.calcEarning.bind(this), 2000);
   };
   returns() {
@@ -802,17 +800,19 @@ class Player {
     if (player.bestEPS < earnings) player.bestEPS = earnings;
   };
   updateStats() {
-    this.achieve0 = utility.convert(utility.multiply(cookie.worth)) + "/" + utility.convert(this.cookieWorthAchieve);
-    this.achieve1 = this.bestAutoclickers + "/" + this.autoClickerAchieve;
-    this.achieve2 = this.bestStackingBonus + "/" + this.stackingBonusAchieve;
-    this.achieve3 = utility.round(this.longestStackingBonus) + "/" + this.stackingBonusTimeAchieve;
-    this.achieve4 = utility.convert(this.bestEarnings) + "/" + utility.convert(this.earningsAchieve);
-    this.achieve5 = this.longestFrenzy + "/" + this.frenzyTimeAchieve;
-    this.achieve6 = utility.convert(this.highestMoneySpent) + "/" + utility.convert(this.spendAchieve);
-    this.achieve7 = utility.convert(player.bestEPS) + "/" + utility.convert(this.EPSAchieve);
-    this.achieve8 = utility.convert(player.cookieClicked) + "/" + utility.convert(this.cookieClicksAchieve);
-    this.achieve9 = utility.convert(player.cookieExploded) + "/" + utility.convert(this.cookieExplodesAchieve);
-    this.achieve10 = utility.convert(player.timesPrestiged) + "/" + utility.convert(this.timesPrestigedAchieve);
+    this.achieve = [
+      utility.convert(utility.multiply(cookie.worth)) + "/" + utility.convert(this.cookieWorthAchieve),
+      this.bestAutoclickers + "/" + this.autoClickerAchieve,
+      this.bestStackingBonus + "/" + this.stackingBonusAchieve,
+      utility.round(this.longestStackingBonus) + "/" + this.stackingBonusTimeAchieve,
+      utility.convert(this.bestEarnings) + "/" + utility.convert(this.earningsAchieve),
+      this.longestFrenzy + "/" + this.frenzyTimeAchieve,
+      utility.convert(this.highestMoneySpent) + "/" + utility.convert(this.spendAchieve),
+      utility.convert(player.bestEPS) + "/" + utility.convert(this.EPSAchieve),
+      utility.convert(player.cookieClicked) + "/" + utility.convert(this.cookieClicksAchieve),
+      utility.convert(player.cookieExploded) + "/" + utility.convert(this.cookieExplodesAchieve),
+      utility.convert(player.timesPrestiged) + "/" + utility.convert(this.timesPrestigedAchieve)
+    ];
     for (let i = 0; i < NUMBER_OF_ACHIEVEMENTS; i++) {
       if (player.achievementsEarned[i] > 0) {
         let txt = "this.achieve" + i;
@@ -821,21 +821,19 @@ class Player {
     };
     PLAYER_STATS = [
       "Player Achievements",
-      "",
-      "Reach a cookie worth of $1M: " + player.achieve0,
-      "Have 60 auto clickers at once: " + player.achieve1,
-      "Reach a stacking bonus of x100: " + player.achieve2,
-      "Longest stacking bonus of 15 mins: " + player.achieve3,
-      "Earn $1D in one prestige: " + player.achieve4,
-      "Longest cookie frenzy of 5 mins: " + player.achieve5,
-      "Spend $1Q in one purchase: " + player.achieve6,
-      "Earn $1O within one second: " + player.achieve7,
-      "Click the cookie 1T times: " + player.achieve8,
-      "Make the cookie explode 1B times: " + player.achieve9,
-      "Prestige 999 times: " + player.achieve10,
+      this.achieveText[0] + ": " + this.achieve[0],
+      this.achieveText[1] + ": " + this.achieve[1],
+      this.achieveText[2] + ": " + this.achieve[2],
+      this.achieveText[3] + ": " + this.achieve[3],
+      this.achieveText[4] + ": " + this.achieve[4],
+      this.achieveText[5] + ": " + this.achieve[5],
+      this.achieveText[6] + ": " + this.achieve[6],
+      this.achieveText[7] + ": " + this.achieve[7],
+      this.achieveText[8] + ": " + this.achieve[8],
+      this.achieveText[9] + ": " + this.achieve[9],
+      this.achieveText[10] + ": " + this.achieve[10],
       " ",
       "Player Statistics",
-      "",
       "Cookie Worth: $" + utility.convert(utility.multiply(cookie.worth)),
       "Cookie Explode Bonus: $" + utility.convert(utility.multiply(cookie.bonusWorth)),
       "Average Container Worth: $" + utility.convert(utility.multiply(utility.containerAverage())),
@@ -861,13 +859,10 @@ class Player {
       "Longest Frenzy: " + utility.round(player.longestFrenzy) + " seconds",
       " ",
       "Units Information",
-      "",
-      "Thousand= " + units[0] + ", Million= " + units[1],
-      "Billion= " + units[2] + ", Trillion= " + units[3],
-      "Quadrillion= " + units[4] + ", Quintillion= " + units[5],
-      "Sextillion= " + units[6] + ", Septillion= " + units[7],
-      "Octillion= " + units[8] + ", Nonillion= " + units[9],
-      "Decillion= " + units[10] + ", Undecillion= " + units[11],
+      "Thousand= " + units[0] + ", Million= " + units[1] + ", Billion= " + units[2], 
+      "Trillion= " + units[3] + ", Quadrillion= " + units[4] + ", Quintillion= " + units[5],
+      "Sextillion= " + units[6] + ", Septillion= " + units[7] + ", Octillion= " + units[8],
+      "Nonillion= " + units[9] + ", Decillion= " + units[10] + ", Undecillion= " + units[11],
       "Duodecillion= " + units[12] + ", Tredecillion= " + units[13],
       "Quattuordecillion= " + units[14] + ", Quindecillion= " + units[15],
       "Sexdecillion= " + units[16] + ", Septdecillion= " + units[17],
@@ -909,7 +904,7 @@ class Player {
     ACHIEVEMENTS_PLAYER[9] = player.cookieExploded;
     ACHIEVEMENTS_PLAYER[10] = player.timesPrestiged;
   };
-  achievement(achievementIndex) {
+  achievement(achieveIndex) {
     ctx.globalAlpha = "0.5";
     ctx.fillStyle = "black";
     ctx.fillRect((-game.width/2), (-game.height/2), game.width, game.height);
@@ -920,14 +915,13 @@ class Player {
     ctx.font = game.textSize + "px calibri";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText("Congrats!", 0,(-game.height/2) + (game.height / 3));
-    ctx.fillText("Achievement", 0, -game.textSize);
-    ctx.fillText(achievementIndex, 0, (-game.textSize / 2));
-    ctx.fillText(achievementIndex, 0, (game.textSize / 2));
-    ctx.fillText("Earned!", 0, game.textSize);
+    let txt = utility.wrapText("Congratulations! You earned the achievement: " + this.achieveText[achieveIndex] + " and earned!", game.width / 1.6);
+    for (let i = 0; i < txt.length; i++) {
+      ctx.fillText(txt[i], 0, (-game.height/2) + (game.height / 3) + (i * game.textSize));
+    };
     ctx.fillText("+1 Talent Point", 0,(-game.height/2) + (2 * game.height) / 3);
     ctx.font = game.textSize / 2 + "px calibri";
-    ctx.fillText("This screen will close in: " + utility.achievementCounter + " taps.", 0, (2.15 * game.height) / 3);
+    ctx.fillText("This screen will close in: " + utility.achievementCounter + " taps.", 0, (-game.height/2) + (2.15 * game.height) / 3);
   };
   reset(everything) {
     player.money = 0;
@@ -1187,7 +1181,7 @@ class Utility {
     else return value;
     //return Number.isInteger(value) ? value : defaultValue;
   }
-  drawCookieScreen() { // draw the dynamic cookie screen
+  drawCookieScreen() { // Cookie screen
     ctx.textAlign = "center";
     ctx.fillStyle = "black";
     ctx.textAlign = "left";
@@ -1237,13 +1231,13 @@ class Utility {
       };
     };
   };
-  drawShop() { // draw the dynamic upgrade screen
+  drawShop() { // Stok screen
     for (let i = 0; i < NUMBER_OF_UPGRADES; i++) {
       SHOP_BUTTONS[i].drawButton();
     };
     utility.resetScroll(SHOP_BUTTONS[0].y, SHOP_BUTTONS[NUMBER_OF_UPGRADES - 1].y + (SHOP_BUTTONS[NUMBER_OF_UPGRADES - 1].size * 1.25)); // first btn + last btn
   };
-  drawPrestigeScreen() { // draw the prestige / R & D screen
+  drawPrestigeScreen() { // R & D screen
     for (let i = 0; i < TALENT_BUTTONS.length; i++) {
       TALENT_BUTTONS[i].drawTalent();
     };
@@ -1305,7 +1299,7 @@ class Utility {
       ctx.fillText("\u2713", -(1.5 * game.textSize), (0.5 * game.textSize));
       ctx.fillText("\u2715", (1.5 * game.textSize), (0.5 * game.textSize));
     };
-    utility.resetScroll(TALENT_BUTTONS[0].y, TALENT_BUTTONS[NUMBER_OF_TALENTS - 1].y + TALENT_BUTTONS[0].height + 30);
+    utility.resetScroll((-game.height / 2) + TALENT_BUTTONS[0].y, TALENT_BUTTONS[NUMBER_OF_TALENTS - 1].y + TALENT_BUTTONS[0].height + 30);
   };
   drawMenuScreen() { // Admin screen
     ctx.font = game.textSize / 2 + "px calibri";
@@ -1324,12 +1318,11 @@ class Utility {
     player.updateStats();
     for (let i = 0; i < PLAYER_STATS.length; i++) {
       // if stat should be a heading
-      if (i == 0 || i == (NUMBER_OF_ACHIEVEMENTS + 3) || i == (PLAYER_STATS.length - 23) || i == (PLAYER_STATS.length - 4)) ctx.font = "bold " + game.textSize + "px calibri";
+      if (i == 0 || i == (NUMBER_OF_ACHIEVEMENTS + 2) || i == (PLAYER_STATS.length - 20) || i == (PLAYER_STATS.length - 4)) ctx.font = "bold " + game.textSize + "px calibri";
       else ctx.font = game.textSize / 2 + "px calibri";
       ctx.fillText(PLAYER_STATS[i], (-game.width / 2) + 25, ((-game.height / 2) + (game.textSize)) + (i + 2.5) * game.textSize - input.dY);
     };
-    utility.resetScroll((game.height / 10) + (game.textSize), (-game.height / 2) + (PLAYER_STATS.length + 5) * game.textSize);
-
+    utility.resetScroll((-game.height/2) + game.menuHeight * 1.05, (-game.height / 2) + (PLAYER_STATS.length + 5) * game.textSize);
   };
   setUgrades() {
     this.activeContainers = player.level[ADD_CONTAINER[0]];
@@ -1436,26 +1429,17 @@ class Utility {
     if (number >= 1e60 && number < 1e63) return +(number / 1e60).toFixed(3) + units[19];
     if (number >= 1e63) return "A lot";
   };
-  resetScroll (top, bottom) {
+  resetScroll (top, btm) {
     if (top - input.dY > top) { // keep first button from scrolling too far
       input.dY += 1;
-      if (top - input.dY > (1.2 * top)) {
-        input.dY += 20;
-      };
-      if (top - input.dY > game.height / 2) {
-        input.dY += 100;
-      };
+      if (top - input.dY > (-game.height / 1.5)) input.dY += 20;
+      if (top - input.dY > 0) input.dY += 100;
     };
-    if (bottom - input.dY < game.height / 2) { // keep last button from scrolling too far
+    if (btm - input.dY < game.height / 2) { // keep last button from scrolling too far
       input.dY -= 1;
-      if (bottom - input.dY < game.height / 1.5) {
-        input.dY -= 20;
-      };
-      if (bottom - input.dY < 0) {
-        input.dY -= 100;
-      };
+      if (btm - input.dY < (game.height / 1.5)) input.dY -= 20;
+      if (btm - input.dY < 0) input.dY -= 100;
     };
-    input.dYSmoothing = 0;
   };
   fillContainer() {
     if (utility.activeContainers == 0) return;
@@ -1497,12 +1481,6 @@ class Utility {
     return lines;
   };
   update() {
-    // if (input.dYSmoothing != 0) {
-    //   input.dY += input.dYSmoothing;
-    //   if (input.dYSmoothing < 0) input.dYSmoothing += Math.ceil(-input.dYSmoothing / 10);
-    //   if (input.dYSmoothing > 0) input.dYSmoothing -= (input.dYSmoothing / 10);
-    //   input.dYSmoothing = Math.floor(input.dYSmoothing);
-    // };
     if (utility.inFrenzy) { // if in frenzy mode
       if (utility.deltaTime(utility.frenzyLeft) > utility.frenzyMax) { // if frenzy time left
         utility.inFrenzy = false;
@@ -1839,7 +1817,7 @@ class Container {
     // container upgrading focus selector
     ctx.globalAlpha = "1";
     if (this.focused) {
-      ctx.font = 0.5 * game.textSize + "px calibri";
+      ctx.font = 0.4 * game.textSize + "px calibri";
       ctx.textAlign = "center";
       for (let i = 0; i < utility.cUpgradeX.length; i++) {
         ctx.fillStyle = "black";
@@ -1985,7 +1963,7 @@ class Button {
     ctx.fillStyle = "black";
     ctx.textAlign = "center";
     ctx.textBaseline = "bottom";
-    ctx.font = 0.45 * game.textSize + "px calibri";
+    ctx.font = 0.4 * game.textSize + "px calibri";
     if (this.oneTimePurchase && this.level > 0 || this.maxLevel == this.level) { // purchased
       ctx.fillText(utility.checkMark, this.x + this.length - (this.size / 2), (this.y + (this.size / 2)) - input.dY);
     } else { // the button price
